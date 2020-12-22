@@ -1,0 +1,23 @@
+{
+  "name": "croustille/croustille-image",
+  "license": "MIT",
+  "description": "",
+  "homepage": "https://github.com/croustille-io/croustille-image",
+  "authors": [
+    {
+      "name": "Patrick Vézina",
+      "email": "patrick@croustille.io",
+      "homepage": "https://croustille.io"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "monolog/monolog": "1.0.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Croustille\\Image\\": "app/"
+    }
+  },
+  "minimum-stability": "dev"
+}
