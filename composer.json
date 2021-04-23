@@ -1,23 +1,26 @@
 {
-  "name": "croustille/croustille-image",
-  "license": "MIT",
-  "description": "",
-  "homepage": "https://github.com/croustille-io/croustille-image",
+  "name": "croustille/image",
   "authors": [
     {
       "name": "Patrick Vézina",
-      "email": "patrick@croustille.io",
-      "homepage": "https://croustille.io"
+      "email": "patrick@croustille.io"
     }
   ],
-  "require": {
-    "php": ">=7.1",
-    "monolog/monolog": "1.0.*"
+  "minimum-stability": "dev",
+  "require": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Croustille\\Image\\ImageServiceProvider"
+      ],
+      "aliases": {
+        "CroustilleImage": "Croustille\\Image\\ImageFacade"
+      }
+    }
   },
   "autoload": {
     "psr-4": {
-      "Croustille\\Image\\": "app/"
+      "Croustille\\Image\\": "src/app/"
     }
-  },
-  "minimum-stability": "dev"
+  }
 }

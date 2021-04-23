@@ -1,8 +1,8 @@
 <?php
 
-namespace Croustille\Image;
+namespace Croustille\Image\Models\Interfaces;
 
-interface ImageSourceInterface
+interface ImageSource
 {
     public function width();
 
@@ -12,11 +12,13 @@ interface ImageSourceInterface
 
     public function alt();
 
-    public function srcSet();
+    public function srcSets();
 
     public function defaultSrc();
 
     public function sizesAttr();
+
+    public function dataAttr();
 
     public function lqip();
 }
