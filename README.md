@@ -30,11 +30,11 @@ php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --
 Init lazyloading
 
 ```js
-import { CroustilleImage } from '../../packages/croustille/image/src/js'
+import { CroustilleImage } from "../../packages/croustille/image/src/js";
 
-document.addEventListener('DOMContentLoaded', function () {
-  const lazyloading = new CroustilleImage()
-})
+document.addEventListener("DOMContentLoaded", function () {
+  const lazyloading = new CroustilleImage();
+});
 ```
 
 ## Config
@@ -111,6 +111,17 @@ return [
 {!! CroustilleImage::fullWidth($block, 'preview_image') !!}
 {!! CroustilleImage::constrained($block, 'preview_image', ['width' => 1000]) !!}
 {!! CroustilleImage::fixed($block, 'preview_image', ['width' => 400]) !!}
+
+@php
+// return source data as an array
+$data = CroustilleImage::getSourceData($block, 'preview_image');
+@endphp
+
+// output image from source data array
+{!! CroustilleImage::fromData($data) !!} {-- default to 'fullWidth' --}
+{!! CroustilleImage::fromData($data, ['layout' => 'fullWidth', 'sizes' => '(max-width: 400px) 100vw, 50vw']) !!}
+{!! CroustilleImage::fromData($data, ['layout' => 'constrained', 'width' => 400]) !!}
+{!! CroustilleImage::fromData($data, ['layout' => 'fixed', 'width' => 100, 'height' => 150]) !!}
 ```
 
 ## TODO

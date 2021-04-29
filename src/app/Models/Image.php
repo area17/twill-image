@@ -2,7 +2,7 @@
 
 namespace Croustille\Image\Models;
 
-use Croustille\Image\Models\Interfaces\ImageSource;
+// use Croustille\Image\Models\Interfaces\ImageSource;
 
 class Image
 {
@@ -16,28 +16,35 @@ class Image
     protected $height;
     protected $width;
 
-    public function __construct(ImageSource $source, array $args = [])
+    public function __construct($source, array $args = [])
     {
-        $this->source = $source;
+        if (is_array($source)) {
+            $this->data = $source;
+        } else {
+            $this->source = $source;
+            $this->data = $this->getSourceData();
+        }
 
+        $this->setAttributes($args);
+    }
+
+    private function setAttributes($args)
+    {
         $this->backgroundColor
-            = $args['backgroundColor'] ??
-            config('images.background_color') ??
-            'transparent';
+          = $args['backgroundColor'] ??
+          config('images.background_color') ??
+          'transparent';
 
         $this->lqip
-            = $args['lqip'] ??
-            config('images.lqip') ??
-            false;
+          = $args['lqip'] ??
+          config('images.lqip') ??
+          true;
 
         $this->layout = $args['layout'] ?? 'fullWidth';
-
         $this->loading = $args['loading'] ?? 'lazy';
-
-        $this->sizes = $args['sizes'] ?? $this->getSizes();
-
-        $this->width = $args['width'] ?? $this->source->width();
-        $this->height = $args['height'] ?? (isset($args['width']) ? $this->width / $this->source->width() * $this->source->height() : $this->source->height());
+        $this->width = $args['width'] ?? $this->data['width'];
+        $this->height = $args['height'] ?? (isset($args['width']) ? $this->width / $this->data['width'] * $this->data['height'] : $this->data['height']);
+        $this->sizes = $args['sizes'] ?? null;
 
         $this->imgStyle = array_merge(
             [
@@ -58,9 +65,9 @@ class Image
         );
     }
 
-    public function getSizes()
+    private function getDefaultSizes($layout)
     {
-        switch ($this->layout) {
+        switch ($layout) {
             // If screen is wider than the max size, image width is the max size,
             // otherwise it's the width of the screen
             case 'constrained':
@@ -79,7 +86,41 @@ class Image
         }
     }
 
-    public function getWrapperProps($width = null, $height = null, $layout = "fullWidth")
+
+
+    private function getPlaceholderPropsFromSource()
+    {
+        $src = $this->lqip ? $this->source->lqip() : false;
+
+        return [
+            'src' => $src,
+        ];
+    }
+
+
+    private function getMainPropsFromSource()
+    {
+        return [
+            'sources' => $this->source->srcSets(),
+            'src' => $this->source->defaultSrc(),
+        ];
+    }
+
+    public function getSourceData()
+    {
+        $placeholder = $this->getPlaceholderPropsFromSource();
+        $main = $this->getMainPropsFromSource();
+
+        return [
+          'placeholder' => $placeholder,
+          'main' => $main,
+          'width' => $this->source->width(),
+          'height' => $this->source->height(),
+          'alt' => $this->source->alt(),
+        ];
+    }
+
+    private function getViewWrapperProps($layout = "fullWidth")
     {
         $style = [
             "position" => "relative",
@@ -89,8 +130,8 @@ class Image
         $classes = "croustille-image-wrapper";
 
         if ($layout === "fixed") {
-            $style['width'] = $width."px";
-            $style['height'] = $height."px";
+            $style['width'] = $this->width."px";
+            $style['height'] = $this->height."px";
         } elseif ($layout === "constrained") {
             $style['display'] = 'inline-block';
             $classes = "croustille-image-wrapper croustille-image-wrapper-constrained";
@@ -104,13 +145,8 @@ class Image
         ];
     }
 
-    public function getPlaceholderProps(
-        $src,
-        $layout,
-        $width,
-        $height,
-        $backgroundColor
-    ) {
+    private function getViewPlaceholderProps($layout = "fullWidth")
+    {
         $style = array_merge(
             $this->imgStyle,
             [
@@ -122,13 +158,13 @@ class Image
             ],
         );
 
-        if ($backgroundColor) {
-            $style['background-color'] = $backgroundColor;
+        if ($this->backgroundColor) {
+            $style['background-color'] = $this->backgroundColor;
 
             if ($layout === 'fixed') {
-                $style['width'] = $width.'px';
-                $style['height'] = $height.'px';
-                $style['background-color'] = $backgroundColor;
+                $style['width'] = $this->width.'px';
+                $style['height'] = $this->height.'px';
+                $style['background-color'] = $this->backgroundColor;
                 $style['position'] = 'relative';
             } elseif ($layout === 'constrained') {
                 $style['position'] = 'absolute';
@@ -149,12 +185,11 @@ class Image
         $style['transition'] =  "opacity 500ms linear";
 
         return [
-            'src' => $src,
             'style' => $this->implodeStyles($style),
         ];
     }
 
-    public function getMainProps($isLoading)
+    private function getViewMainProps($isLoading)
     {
         $style = array_merge(
             [
@@ -170,15 +205,13 @@ class Image
         $style['opacity'] = $this->loading === 'lazy' ? 0 : 1;
 
         return [
-            'sources' => $this->source->srcSets(),
-            'src' => $this->source->defaultSrc(),
             'loading' => $this->loading,
             'shouldLoad' => $isLoading,
             'style' => $this->implodeStyles($style),
         ];
     }
 
-    public function implodeStyles($style)
+    private function implodeStyles($style)
     {
         return implode(
             ';',
@@ -192,36 +225,30 @@ class Image
         );
     }
 
+    private function buildViewData($layout)
+    {
+        $data = $this->data;
+
+        $wrapper = $this->getViewWrapperProps($layout);
+        $placeholder = array_merge($data['placeholder'], $this->getViewPlaceholderProps($layout));
+        $main = array_merge($data['main'], $this->getViewMainProps($this->loading === "eager"));
+
+        return [
+          'layout' => $layout,
+          'wrapper' => $wrapper,
+          'placeholder' => $placeholder,
+          'main' => $main,
+          'width' => $this->width,
+          'height' => $this->height,
+          'sizes' => $this->sizes ?? $this->getDefaultSizes($layout),
+        ];
+    }
+
     public function view()
     {
-        $wrapper = $this->getWrapperProps(
-            $this->width,
-            $this->height,
-            $this->layout
-        );
-        $placeholder = $this->getPlaceholderProps(
-            $this->lqip ? $this->source->lqip() : false,
-            $this->layout,
-            $this->width,
-            $this->height,
-            $this->backgroundColor
-        );
-        $main = $this->getMainProps(
-            $this->loading === "eager"
-        );
-
         return view(
             'image::wrapper',
-            [
-                'layout' => $this->layout,
-                'wrapper' => $wrapper,
-                'placeholder' => $placeholder,
-                'main' => $main,
-                'width' => $this->width,
-                'height' => $this->height,
-                'alt' => $this->source->alt(),
-                'sizes' => $this->sizes ?? $this->source->sizesAttr(),
-            ]
+            $this->buildViewData($this->layout)
         );
     }
 }
