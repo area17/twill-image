@@ -8,7 +8,15 @@
     }
   ],
   "minimum-stability": "dev",
-  "require": {},
+  "prefer-stable": true,
+  "require": {
+    "php": "^7.2.5"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
   "extra": {
     "laravel": {
       "providers": [
