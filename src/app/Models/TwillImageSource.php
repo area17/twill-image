@@ -9,15 +9,10 @@ use Croustille\Image\Models\Interfaces\ImageSource;
 class TwillImageSource implements ImageSource
 {
     protected $model;
-
     protected $role;
-
     protected $crop;
-
     protected $media;
-
     protected $profile;
-
     protected $imageArray;
 
     /**
@@ -35,15 +30,10 @@ class TwillImageSource implements ImageSource
         }
 
         $this->model = $model;
-
         $this->role = $role;
-
         $this->crop = $crop;
-
         $this->media = $media;
-
         $this->imageArray = $this->model->imageAsArray($this->role, $this->crop, [], $this->media);
-
         $profile = config("images.roles.$this->role");
         $this->profile = config("images.profiles.$profile");
     }
@@ -92,7 +82,7 @@ class TwillImageSource implements ImageSource
 
     public function defaultSrc()
     {
-        $defaultWidth = $this->profile['default_width'] ?? 2000;
+        $defaultWidth = $this->profile['default_width'] ?? 1000;
 
         return $this->model->image($this->role, $this->crop, ['w' => $defaultWidth], false, false, $this->media);
     }
@@ -154,9 +144,10 @@ class TwillImageSource implements ImageSource
 
     private function imageSources($mediaQueryConfig, $sourceParams = [])
     {
+        $widths = $mediaQueryConfig['widths'] ?? [250, 500, 1000, 1500, 2000];
         $sourcesList = [];
 
-        foreach ($mediaQueryConfig['widths'] as $width) {
+        foreach ($widths as $width) {
             $params = ['w' => $width];
 
             $sourcesList[] = [
@@ -177,9 +168,13 @@ class TwillImageSource implements ImageSource
         return $sourcesList;
     }
 
+    /**
+     * Build crops list
+     *
+     * @return array
+     */
     private function crops()
     {
-        // build crops list
         $crops = [$this->crop];
 
         foreach ($this->profile['sources'] ?? [] as $source) {

@@ -1,7 +1,7 @@
 @php
 $attributes = 'aria-hidden="true" data-placeholder-image';
 @endphp
-@if($src)
+@if(isset($src) && !!$src)
   @include('image::picture', [
       'fallback' => $src,
       'alt' => "",

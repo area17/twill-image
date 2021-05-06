@@ -10,18 +10,18 @@ return [
 
     'profiles' => [
         'generic_image' => [
-            'default_width' => 989,
-            'sizes' => '100vw',
+            'default_width' => 1000,
+            'sizes' => '(max-width: 767px) 100vw, 50vw',
             'sources' => [
                 [
                     'crop' => 'mobile',
                     'media_query' => '(max-width: 767px)',
-                    'widths' => [413, 826, 649, 989, 1299, 1519, 1919],
+                    'widths' => [250, 500, 1000, 1500, 2000],
                 ],
                 [
                     // 'crop' => 'default',
                     'media_query' => '(min-width: 768px)',
-                    'widths' => [989, 1299, 1519, 1919, 2599, 3038],
+                    'widths' => [250, 500, 1000, 1500, 2000],
                 ]
             ]
         ],
