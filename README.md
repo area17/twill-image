@@ -170,3 +170,8 @@ Will output:
 - Use Blade components
   - `<x-image data="$data" layout="fullWidth"></x-image>`
   - `<x-image model="$project" role="preview_image" layout="fixed" width="200" height="200"></x-image>`
+- Generate programmatically source widths
+- Ability to use with static image assets (public/hello.jpg)
+- Add tests
+- Setup GitHub actions lint, tests, phpcs
+
