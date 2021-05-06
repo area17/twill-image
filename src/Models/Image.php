@@ -40,7 +40,7 @@ class Image
      *
      * backgroundColor: specify css color [string]
      * lqip: use lqip [true|false]
-     * layout: type of image (default full-width) [full-width|fixed|constraind]
+     * layout: type of image (default fullWidth) [fullWidth|fixed|constraind]
      * laoding (default lazy) [lazy|eager]
      * width [int]
      * height [int]

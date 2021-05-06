@@ -168,5 +168,5 @@ Will output:
 
 - Refactor TwillImageSource getData/fromData
 - Use Blade components
-  - `<x-image data="$data" layout="full-width"></x-image>`
+  - `<x-image data="$data" layout="fullWidth"></x-image>`
   - `<x-image model="$project" role="preview_image" layout="fixed" width="200" height="200"></x-image>`
