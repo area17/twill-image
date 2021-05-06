@@ -1,4 +1,4 @@
-# Croustille Image
+# Twill Image
 
 Image module for Twill.
 
@@ -12,7 +12,7 @@ Image module for Twill.
 ## Installation
 
 ```
-composer require croustille/image
+composer require croustille/twill-image
 ```
 
 Publish `config/images.php`.
@@ -124,6 +124,49 @@ $data = CroustilleImage::getSourceData($block, 'preview_image');
 {!! CroustilleImage::fromData($data, ['layout' => 'fixed', 'width' => 100, 'height' => 150]) !!}
 ```
 
+## Art direction
+
+To use different images (and/or crops) with media queries, you need to set size and ratio for the sources other than default. An example on how to do this by adding some styles.
+
+Let's say this is your profile sources config:
+
+```php
+...
+'sources' => [
+    [
+        'crop' => 'mobile',
+        'media_query' => '(max-width: 767px)',
+        'widths' => [413, 826, 649, 989, 1299, 1519, 1919],
+    ],
+    [
+        // 'crop' => 'default',
+        'media_query' => '(min-width: 768px)',
+        'widths' => [989, 1299, 1519, 1919, 2599, 3038],
+    ]
+],
+```
+
+```php
+{!! CroustilleImage::fullWidth($block, 'preview_image', 'default', ['class' => 'art-directed']) !!}
+```
+
+Will output:
+
+```html
+<div class="croustille-image-wrapper art-directed">...</div>
+```
+
+```css
+@media screen and (max-width: 767px) {
+  .art-directed {
+    max-height: 400px;
+  }
+}
+```
+
 ## TODO
 
-- Art direction placeholder (with picture/source/img)
+- Refactor TwillImageSource getData/fromData
+- Use Blade components
+  - `<x-image data="$data" layout="full-width"></x-image>`
+  - `<x-image model="$project" role="preview_image" layout="fixed" width="200" height="200"></x-image>`

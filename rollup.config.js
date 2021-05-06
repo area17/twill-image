@@ -2,7 +2,7 @@ import pkg from './package.json'
 
 export default [
   {
-    input: 'src/js/index.js',
+    input: 'resources/js/index.js',
     output: [
       {
         file: pkg.main,

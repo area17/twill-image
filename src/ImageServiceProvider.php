@@ -26,12 +26,12 @@ class ImageServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/images.php', 'images');
-        $this->loadViewsFrom(__DIR__.'/../views', 'image');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'image');
         $this->publishes([
             __DIR__.'/../config/images.php' => config_path('images.php'),
         ], 'config');
         $this->publishes(
-            [__DIR__.'/../js' => resource_path('js/vendor/croustille/image')],
+            [__DIR__.'/../resources/js' => resource_path('js/vendor/croustille/twill-image')],
             'js'
         );
     }
