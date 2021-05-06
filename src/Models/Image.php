@@ -114,10 +114,6 @@ class Image
 
     private function getPlaceholderPropsFromSource()
     {
-        if (!$this->lqip) {
-            return [];
-        }
-
         $src =  $this->source->lqip();
 
         return [
@@ -219,9 +215,12 @@ class Image
         $style['opacity'] = 1;
         $style['transition'] =  "opacity 500ms linear";
 
-        return [
+        return array_merge(
+            [
             'style' => $this->implodeStyles($style),
-        ];
+            ],
+            !$this->lqip ? ['src' => null] : []
+        );
     }
 
     private function getViewMainProps($isLoading)
