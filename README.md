@@ -30,11 +30,11 @@ php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --
 Init lazyloading
 
 ```js
-import { CroustilleImage } from "../../packages/croustille/image/src/js";
+import { CroustilleImage } from '../../vendor/croustille/twill-image'
 
-document.addEventListener("DOMContentLoaded", function () {
-  const lazyloading = new CroustilleImage();
-});
+document.addEventListener('DOMContentLoaded', function () {
+  const lazyloading = new CroustilleImage()
+})
 ```
 
 ## Config
