@@ -2,7 +2,7 @@ import { createIntersectionObserver } from './intersectionObserver'
 import debounce from './debounce'
 import Wrapper from './Wrapper'
 
-class CroustilleImage {
+class TwillImage {
   constructor() {
     this.reset = debounce(this._reset, 100).bind(this)
 
@@ -10,7 +10,7 @@ class CroustilleImage {
   }
 
   get images() {
-    return document.querySelectorAll('[data-croustille-image-wrapper]')
+    return document.querySelectorAll('[data-twill-image-wrapper]')
   }
 
   start() {
@@ -35,4 +35,4 @@ class CroustilleImage {
   }
 }
 
-export default CroustilleImage
+export default TwillImage

@@ -193,7 +193,7 @@ class Wrapper {
   }
 }
 
-class CroustilleImage {
+class TwillImage {
   constructor() {
     this.reset = debounce(this._reset, 100).bind(this);
 
@@ -201,7 +201,7 @@ class CroustilleImage {
   }
 
   get images() {
-    return document.querySelectorAll('[data-croustille-image-wrapper]')
+    return document.querySelectorAll('[data-twill-image-wrapper]')
   }
 
   start() {
@@ -226,4 +226,4 @@ class CroustilleImage {
   }
 }
 
-exports.CroustilleImage = CroustilleImage;
+exports.TwillImage = TwillImage;

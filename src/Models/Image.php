@@ -156,14 +156,14 @@ class Image
             "overflow" => "hidden",
         ];
 
-        $classes = "croustille-image-wrapper";
+        $classes = "twill-image-wrapper";
 
         if ($layout === "fixed") {
             $style['width'] = $this->width."px";
             $style['height'] = $this->height."px";
         } elseif ($layout === "constrained") {
             $style['display'] = 'inline-block';
-            $classes = "croustille-image-wrapper croustille-image-wrapper-constrained";
+            $classes = "twill-image-wrapper twill-image-wrapper-constrained";
         }
 
         if ($this->backgroundColor) {

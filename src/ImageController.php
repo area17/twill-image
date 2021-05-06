@@ -11,7 +11,7 @@ use Croustille\Image\Models\Image;
 class ImageController
 {
     /**
-     * Helper to return a View of component croustille-image for responsive fluid
+     * Helper to return a View of component twill-image for responsive fluid
      * images.
      *
      * @param A17\Twill\Models\Model $model

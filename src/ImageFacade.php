@@ -8,6 +8,6 @@ class ImageFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'croustille.image';
+        return 'twill.image';
     }
 }

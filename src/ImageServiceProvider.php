@@ -13,7 +13,7 @@ class ImageServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('croustille.image', function ($app) {
+        $this->app->singleton('twill.image', function ($app) {
             return $app->make('Croustille\Image\ImageController');
         });
     }

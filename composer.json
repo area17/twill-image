@@ -14,7 +14,7 @@
         "Croustille\\Image\\ImageServiceProvider"
       ],
       "aliases": {
-        "CroustilleImage": "Croustille\\Image\\ImageFacade"
+        "TwillImage": "Croustille\\Image\\ImageFacade"
       }
     }
   },

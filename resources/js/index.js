@@ -1,1 +1,1 @@
-export { default as CroustilleImage } from './CroustilleImage'
+export { default as TwillImage } from './TwillImage'

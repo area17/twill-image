@@ -1,7 +1,7 @@
 <div
     class="{{$wrapper['classes']}}"
     style="{{$wrapper['style']}}"
-    data-croustille-image-wrapper
+    data-twill-image-wrapper
 >
     @include('image::sizer')
     @include('image::placeholder', $placeholder)

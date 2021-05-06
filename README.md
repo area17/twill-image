@@ -30,10 +30,10 @@ php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --
 Init lazyloading
 
 ```js
-import { CroustilleImage } from '../../vendor/croustille/twill-image'
+import { TwillImage } from '../../vendor/croustille/twill-image'
 
 document.addEventListener('DOMContentLoaded', function () {
-  const lazyloading = new CroustilleImage()
+  const lazyloading = new TwillImage()
 })
 ```
 
@@ -81,18 +81,18 @@ return [
 
     'profiles' => [
         'generic_image' => [
-            'default_width' => 989,
-            'sizes' => '(max-width: 767px) 100vw, 50vw', // default '100vw'
+            'default_width' => 1000,
+            'sizes' => '(max-width: 767px) 100vw, 50vw',
             'sources' => [
                 [
                     'crop' => 'mobile',
                     'media_query' => '(max-width: 767px)',
-                    'widths' => [413, 826, 649, 989, 1299, 1519, 1919],
+                    'widths' => [250, 500, 1000, 1500, 2000],
                 ],
                 [
                     // 'crop' => 'default',
                     'media_query' => '(min-width: 768px)',
-                    'widths' => [989, 1299, 1519, 1919, 2599, 3038],
+                    'widths' => [250, 500, 1000, 1500, 2000],
                 ]
             ]
         ],
@@ -108,20 +108,20 @@ return [
 ## Usage
 
 ```php
-{!! CroustilleImage::fullWidth($block, 'preview_image') !!}
-{!! CroustilleImage::constrained($block, 'preview_image', ['width' => 1000]) !!}
-{!! CroustilleImage::fixed($block, 'preview_image', ['width' => 400]) !!}
+{!! TwillImage::fullWidth($block, 'preview_image') !!}
+{!! TwillImage::constrained($block, 'preview_image', ['width' => 1000]) !!}
+{!! TwillImage::fixed($block, 'preview_image', ['width' => 400]) !!}
 
 @php
 // return source data as an array
-$data = CroustilleImage::getSourceData($block, 'preview_image');
+$data = TwillImage::getSourceData($block, 'preview_image');
 @endphp
 
 // output image from source data array
-{!! CroustilleImage::fromData($data) !!} {-- default to 'fullWidth' --}
-{!! CroustilleImage::fromData($data, ['layout' => 'fullWidth', 'sizes' => '(max-width: 400px) 100vw, 50vw']) !!}
-{!! CroustilleImage::fromData($data, ['layout' => 'constrained', 'width' => 400]) !!}
-{!! CroustilleImage::fromData($data, ['layout' => 'fixed', 'width' => 100, 'height' => 150]) !!}
+{!! TwillImage::fromData($data) !!} {-- default to 'fullWidth' --}
+{!! TwillImage::fromData($data, ['layout' => 'fullWidth', 'sizes' => '(max-width: 400px) 100vw, 50vw']) !!}
+{!! TwillImage::fromData($data, ['layout' => 'constrained', 'width' => 400]) !!}
+{!! TwillImage::fromData($data, ['layout' => 'fixed', 'width' => 100, 'height' => 150]) !!}
 ```
 
 ## Art direction
@@ -147,13 +147,13 @@ Let's say this is your profile sources config:
 ```
 
 ```php
-{!! CroustilleImage::fullWidth($block, 'preview_image', 'default', ['class' => 'art-directed']) !!}
+{!! TwillImage::fullWidth($block, 'preview_image', 'default', ['class' => 'art-directed']) !!}
 ```
 
 Will output:
 
 ```html
-<div class="croustille-image-wrapper art-directed">...</div>
+<div class="twill-image-wrapper art-directed">...</div>
 ```
 
 ```css
