@@ -4,6 +4,7 @@ namespace Croustille\Image\Models;
 
 use Exception;
 use A17\Twill\Models\Media;
+use Croustille\Image\Exceptions\ImageException;
 use Croustille\Image\Models\Interfaces\ImageSource;
 
 class TwillImageSource implements ImageSource
@@ -33,7 +34,7 @@ class TwillImageSource implements ImageSource
         $this->role = $role;
         $this->crop = $crop;
         $this->media = $media;
-        $this->imageArray = $this->model->imageAsArray($this->role, $this->crop, [], $this->media);
+        $this->setImageArray($model, $role, $crop, $media);
         $profile = config("images.roles.$this->role");
         $this->profile = config("images.profiles.$profile");
     }
@@ -184,5 +185,16 @@ class TwillImageSource implements ImageSource
         }
 
         return $crops;
+    }
+
+    protected function setImageArray($model, $role, $crop, $media)
+    {
+        $imageArray = $model->imageAsArray($role, $crop, [], $media);
+
+        if (empty($imageArray)) {
+            throw new ImageException("Crop '{$crop}' is not defined for this image", 1);
+        }
+
+        $this->imageArray = $imageArray;
     }
 }
