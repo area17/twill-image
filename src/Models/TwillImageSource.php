@@ -187,9 +187,7 @@ class TwillImageSource implements ImageSource
 
     protected function setModel($model)
     {
-        $modelHasMedias = Collection::make(class_uses($model))->contains(HasMedias::class);
-
-        if (! $modelHasMedias) {
+        if (! classHasTrait($model, HasMedias::class)) {
             throw new ImageException("Model must use HasMedias trait", 1);
         }
 
