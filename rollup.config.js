@@ -1,3 +1,5 @@
+import cleaner from 'rollup-plugin-cleaner'
+import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
 
 export default [
@@ -13,5 +15,16 @@ export default [
         format: 'es',
       },
     ],
+    plugins: [cleaner({ targets: ['dist'] })],
+  },
+  {
+    input: 'resources/js/browser.js',
+    output: [
+      {
+        file: pkg.browser,
+        format: 'iife',
+      },
+    ],
+    plugins: [terser()],
   },
 ]

@@ -1,4 +1,4 @@
-# Twill Image
+à# Twill Image
 
 Image module for Twill.
 
@@ -6,7 +6,7 @@ Image module for Twill.
 - Twill's LQIP and background color image placeholder
 - Art direction
 - WebP and JPEG support
-- Lazyload (fade-in) image and video with IntersectionOserver
+- Lazyload (fade-in) image with IntersectionOserver
 - Support native lazyloading with `loading='lazy'
 
 ## Installation
@@ -15,19 +15,29 @@ Image module for Twill.
 composer require croustille/twill-image
 ```
 
+### Config file
+
 Publish `config/images.php`.
 
 ```bash
 php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --tag=config
 ```
 
-Publish JavaScript assets for inclusion in frontend bundler.
+### JavaScript module
+
+You can publish a script `twill-image.js` to your public folder and add a `<script>` tag to your project.
 
 ```bash
 php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --tag=js
 ```
 
-Init lazyloading
+In a Blade file.
+
+```php
+<script src="{{ asset('/twill-image.js') }}"></script>
+```
+
+Or you can import the JavaScript module and init the lazyloading class in you own js to be bundled with you application.
 
 ```js
 import { TwillImage } from '../../vendor/croustille/twill-image'
@@ -136,12 +146,12 @@ Let's say this is your profile sources config:
     [
         'crop' => 'mobile',
         'media_query' => '(max-width: 767px)',
-        'widths' => [413, 826, 649, 989, 1299, 1519, 1919],
+        'widths' => [250, 500, 1000, 1500, 2000],
     ],
     [
         // 'crop' => 'default',
         'media_query' => '(min-width: 768px)',
-        'widths' => [989, 1299, 1519, 1919, 2599, 3038],
+        'widths' => [250, 500, 1000, 1500, 2000],
     ]
 ],
 ```
@@ -155,6 +165,8 @@ Will output:
 ```html
 <div class="twill-image-wrapper art-directed">...</div>
 ```
+
+You can define styles for each breakpoints.
 
 ```css
 @media screen and (max-width: 767px) {
@@ -174,4 +186,4 @@ Will output:
 - Ability to use with static image assets (public/hello.jpg)
 - Add tests
 - Setup GitHub actions lint, tests, phpcs
-
+- Art-directed LQIP
