@@ -199,7 +199,7 @@ class TwillImageSource implements ImageSource
         $imageArray = $model->imageAsArray($role, $crop, [], $media);
 
         if (empty($imageArray)) {
-            throw new ImageException("Crop '{$crop}' is not defined for this image", 1);
+            throw new ImageException("No media was found for role '{$role}' and crop '{$crop}'", 1);
         }
 
         $this->imageArray = $imageArray;
