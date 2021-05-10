@@ -4,6 +4,7 @@
   "description": "Image module for Twill.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
+  "browser": "dist/twill-image.js",
   "sideEffects": false,
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -13,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/croustille-io/croustille-image.git"
+    "url": "git+https://github.com/croustille-io/twill-image.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/croustille-io/croustille-image/issues"
+    "url": "https://github.com/croustille-io/twill-image/issues"
   },
-  "homepage": "https://github.com/croustille-io/croustille-image#readme",
+  "homepage": "https://github.com/croustille-io/twill-image#readme",
   "devDependencies": {
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",
@@ -29,6 +30,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
     "prettier": "^2.2.1",
-    "rollup": "^2.47.0"
+    "rollup": "^2.47.0",
+    "rollup-plugin-cleaner": "^1.0.0",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

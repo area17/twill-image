@@ -31,7 +31,7 @@ class ImageServiceProvider extends ServiceProvider
             __DIR__.'/../config/images.php' => config_path('images.php'),
         ], 'config');
         $this->publishes(
-            [__DIR__.'/../resources/js' => resource_path('js/vendor/croustille/twill-image')],
+            [__DIR__.'/../dist/twill-image.js' => public_path('twill-image.js')],
             'js'
         );
     }
