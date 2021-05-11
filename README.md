@@ -187,3 +187,4 @@ You can define styles for each breakpoints.
 - Add tests
 - Setup GitHub actions lint, tests, phpcs
 - Art-directed LQIP
+- Add option to override the image profile specified in config `images.roles`
