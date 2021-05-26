@@ -280,6 +280,7 @@ class Image
           'wrapper' => $wrapper,
           'placeholder' => $placeholder,
           'main' => $main,
+          'alt' => $data['alt'],
           'width' => $this->width,
           'height' => $this->height,
           'sizes' => $this->sizes,
