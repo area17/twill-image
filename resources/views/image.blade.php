@@ -11,5 +11,5 @@ $shouldLoad = $shouldLoad ?? true;
     @isset($sizes) sizes="{{$sizes}}" @endisset
     @isset($alt) alt="{{$alt}}" @endisset
     @isset($style) style="{{$style}}" @endisset
-    @isset($attributes) {{$attributes}} @endisset
+    @isset($attributes) {!! $attributes !!} @endisset
 />
