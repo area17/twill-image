@@ -10,5 +10,5 @@ $attributes = 'aria-hidden="true" data-placeholder-image';
       'style' => $style,
   ])
 @else
-    <div style="{{$style}}" {{$attributes}}></div>
+    <div style="{{$style}}" {!! $attributes !!}></div>
 @endif
