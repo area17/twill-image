@@ -154,7 +154,10 @@ class TwillImageSource implements ImageSource
                     'src' => $this->model->image(
                         $this->role,
                         $mediaQueryConfig['crop'] ?? 'default',
-                        $params + $sourceParams
+                        $params + $sourceParams,
+                        false,
+                        false,
+                        $this->media
                     ),
                     'crop' => $source['crop'] ?? 'default',
                     'width' => $width,
