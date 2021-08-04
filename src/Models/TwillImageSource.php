@@ -101,7 +101,24 @@ class TwillImageSource implements ImageSource
 
     public function lqip()
     {
-        return $this->model->lowQualityImagePlaceholder($this->role, $this->crop);
+        $sources = [];
+
+        foreach ($this->profile['sources'] ?? [] as $source) {
+            $sources[] = [
+              'mediaQuery' => $source['media_query'] ?? 'default',
+              'crop' => $source['crop'] ?? 'default',
+              'type' => 'image/gif',
+              'srcset' => sprintf('%s 1x', $this->model->lowQualityImagePlaceholder(
+                  $this->role,
+                  $source['crop'] ?? 'default'
+              ))
+            ];
+        }
+
+        return [
+          'src' => $this->model->lowQualityImagePlaceholder($this->role, $this->crop),
+          'sources' => $sources,
+        ];
     }
 
     public function dataAttr()

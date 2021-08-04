@@ -114,11 +114,7 @@ class Image
 
     private function getPlaceholderPropsFromSource()
     {
-        $src =  $this->source->lqip();
-
-        return [
-            'src' => $src,
-        ];
+        return $this->source->lqip();
     }
 
 
