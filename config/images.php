@@ -16,12 +16,11 @@ return [
                 [
                     'crop' => 'mobile',
                     'media_query' => '(max-width: 767px)',
-                    'widths' => [250, 500, 1000, 1500, 2000],
+                    'widths' => [250, 500, 1000],
                 ],
                 [
                     // 'crop' => 'default',
                     'media_query' => '(min-width: 768px)',
-                    'widths' => [250, 500, 1000, 1500, 2000],
                 ]
             ]
         ],

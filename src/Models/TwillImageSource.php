@@ -4,12 +4,15 @@ namespace Croustille\Image\Models;
 
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Behaviors\HasMedias;
-use Illuminate\Support\Collection;
 use Croustille\Image\Exceptions\ImageException;
 use Croustille\Image\Models\Interfaces\ImageSource;
 
 class TwillImageSource implements ImageSource
 {
+    const AUTO_WIDTHS = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000];
+    const AUTO_WIDTHS_RATIO = 2.5;
+    const DEFAULT_WIDTH = 1000;
+
     protected $model;
     protected $role;
     protected $crop;
@@ -79,9 +82,14 @@ class TwillImageSource implements ImageSource
         return $srcSets;
     }
 
+    private function defaultWidth()
+    {
+        return $this->profile['default_width'] ?? self::DEFAULT_WIDTH;
+    }
+
     public function defaultSrc()
     {
-        $defaultWidth = $this->profile['default_width'] ?? 1000;
+        $defaultWidth = $this->defaultWidth();
 
         return $this->model->image($this->role, $this->crop, ['w' => $defaultWidth], false, false, $this->media);
     }
@@ -141,9 +149,21 @@ class TwillImageSource implements ImageSource
         return $sources;
     }
 
+    private function defaultWidths()
+    {
+        $defaultWidth = $this->defaultWidth();
+
+        return array_filter(
+            self::AUTO_WIDTHS,
+            function ($width) use ($defaultWidth) {
+                return $width <= $defaultWidth * self::AUTO_WIDTHS_RATIO;
+            }
+        );
+    }
+
     private function imageSources($mediaQueryConfig, $sourceParams = [])
     {
-        $widths = $mediaQueryConfig['widths'] ?? [250, 500, 1000, 1500, 2000];
+        $widths = $mediaQueryConfig['widths'] ?? $this->defaultWidths();
         $sourcesList = [];
 
         foreach ($widths as $width) {
