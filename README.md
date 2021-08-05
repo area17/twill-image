@@ -1,4 +1,4 @@
-à# Twill Image
+# Twill Image
 
 Image module for Twill.
 
@@ -49,34 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 ## Config
 
-Example with a Twill crop `preview_image` defined here:
 
-```php
-    // ...
-    'crops' => [
-        'preview_image' => [
-            'default' => [
-                [
-                    'name' => 'default',
-                    'ratio' => 10 / 16,
-                ],
-            ],
-            'mobile' => [
-                [
-                    'name' => 'landscape',
-                    'ratio' => 10 / 16,
-                ],
-                [
-                    'name' => 'portrait',
-                    'ratio' => 16 / 9,
-                ],
-            ],
-        ],
-    ],
-    // ...
-```
-
-In `config/images.php`, defines image profiles and assocates Twill image roles to an image profile.
+In `config/images.php`, you can define frontend image profiles. A profile informs the `TwillImage::source()` method which crops to output along other options. By default, a profile share the same name as the image `role`.
 
 ```php
 <?php
@@ -90,49 +64,73 @@ return [
     'webp_support' => true,
 
     'profiles' => [
-        'generic_image' => [
-            'default_width' => 1000,
-            'sizes' => '(max-width: 767px) 100vw, 50vw',
-            'sources' => [
-                [
-                    'crop' => 'mobile',
-                    'media_query' => '(max-width: 767px)',
-                    'widths' => [250, 500, 1000, 1500, 2000],
-                ],
-                [
-                    // 'crop' => 'default',
-                    'media_query' => '(min-width: 768px)',
-                    'widths' => [250, 500, 1000, 1500, 2000],
-                ]
-            ]
+        'preview_image' => [
+            'crop' => 'default',
+            'width' => 500,
+            'sizes' => '50vw',
+        ],
+        'listing' => [
+            'crop' => 'card',
+            'width' => 500,
+            'sizes' => '50vw',
         ],
     ],
-
-    'roles' => [
-        'preview_image' => 'generic_image',
-    ],
-
 ];
 ```
 
 ## Usage
 
 ```php
-{!! TwillImage::fullWidth($block, 'preview_image') !!}
-{!! TwillImage::constrained($block, 'preview_image', ['width' => 1000]) !!}
-{!! TwillImage::fixed($block, 'preview_image', ['width' => 400]) !!}
-
 @php
-// return source data as an array
-$data = TwillImage::getSourceData($block, 'preview_image');
+$heroImage = TwillImage::source($item, [
+  'role' => 'preview_image',
+]);
+
+$listingImage = TwillImage::source($item, [
+  'role' => 'preview_image',
+  'profile' => 'listing',
+]);
 @endphp
 
-// output image from source data array
-{!! TwillImage::fromData($data) !!} {-- default to 'fullWidth' --}
-{!! TwillImage::fromData($data, ['layout' => 'fullWidth', 'sizes' => '(max-width: 400px) 100vw, 50vw']) !!}
-{!! TwillImage::fromData($data, ['layout' => 'constrained', 'width' => 400]) !!}
-{!! TwillImage::fromData($data, ['layout' => 'fixed', 'width' => 100, 'height' => 150]) !!}
+{!! TwillImage::render($heroImage) !!}
+
+{!! TwillImage::render($listingImage) !!}
+
+{!! TwillImage::render($listingImage, [
+    'layout' => 'constrained',
+    'width' => 400
+]) !!}
+
+{!! TwillImage::render($listingImage, [
+    'layout' => 'fixed',
+    'width' => 100,
+    'height' => 150
+]) !!}
 ```
+
+## Methods
+
+```
+TwillImage::source($model, $args): array
+```
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`role` (Required)|`string`|   |   |
+|`profile`|`string`|`role` value|   |
+
+
+```
+TwillImage::render($imageSource, $args): string
+```
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
+|`class`|`string`|   |   |
+|`sizes`|`string`|   |   |
+|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
+|`height`|`int`|   |   |
 
 ## Art direction
 
@@ -141,23 +139,33 @@ To use different images (and/or crops) with media queries, you need to set size 
 Let's say this is your profile sources config:
 
 ```php
-...
-'sources' => [
-    [
-        'crop' => 'mobile',
-        'media_query' => '(max-width: 767px)',
-        'widths' => [250, 500, 1000, 1500, 2000],
+    // ...
+    'art_directed' => [
+        'crop' => 'desktop',
+        'width' => 700,
+        'sizes' => '(max-width: 767px) 100vw, 50vw',
+        'sources' => [
+            [
+                'crop' => 'mobile',
+                'media_query' => '(max-width: 767px)',
+            ],
+            [
+                'crop' => 'desktop',
+                'media_query' => '(min-width: 768px)',
+            ]
+        ],
     ],
-    [
-        // 'crop' => 'default',
-        'media_query' => '(min-width: 768px)',
-        'widths' => [250, 500, 1000, 1500, 2000],
-    ]
-],
+    // ...
 ```
 
-```php
-{!! TwillImage::fullWidth($block, 'preview_image', 'default', ['class' => 'art-directed']) !!}
+```blade
+@php
+$imageSource = TwillImage::source('art_directed');
+@endphp
+
+{!! TwillImage::render($imageSource, [
+    'class' => 'art-directed'
+]) !!}
 ```
 
 Will output:
@@ -169,9 +177,13 @@ Will output:
 You can define styles for each breakpoints.
 
 ```css
+.art-directed {
+  aspect-ratio: 16 / 9;
+}
+
 @media screen and (max-width: 767px) {
   .art-directed {
-    max-height: 400px;
+    aspect-ratio: unset;
   }
 }
 ```
