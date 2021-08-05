@@ -9,25 +9,26 @@ return [
     'webp_support' => true,
 
     'profiles' => [
-        'generic_image' => [
-            'default_width' => 1000,
-            'sizes' => '(max-width: 767px) 100vw, 50vw',
-            'sources' => [
-                [
-                    'crop' => 'mobile',
-                    'media_query' => '(max-width: 767px)',
-                    'widths' => [250, 500, 1000],
-                ],
-                [
-                    // 'crop' => 'default',
-                    'media_query' => '(min-width: 768px)',
-                ]
+      'preview_image' => [
+        'sizes' => '100vw',
+        'crop' => 'default',
+      ],
+
+      'art_directed' => [
+        'crop' => 'desktop',
+        'width' => 700,
+        'sizes' => '(max-width: 767px) 100vw, 50vw',
+        'sources' => [
+            [
+                'crop' => 'mobile',
+                'media_query' => '(max-width: 767px)',
+            ],
+            [
+                'crop' => 'desktop',
+                'media_query' => '(min-width: 768px)',
             ]
         ],
-    ],
-
-    'roles' => [
-        'preview_image' => 'generic_image',
+      ],
     ],
 
 ];

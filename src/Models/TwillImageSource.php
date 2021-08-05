@@ -23,21 +23,19 @@ class TwillImageSource implements ImageSource
     /**
      * Build a ImageSource to be used with Croustille\Image\Models\Image
      *
-     * @param [A17\Twill\Models\Model] $model of type Media, Block, module, etc.
-     * @param string $role Twill role defined in Block crops or mediaParams
-     * @param string $crop Twill crop defined in Block crops or mediaParams
+     * @param [A17\Twill\Models\Model] $object of type Media, Block, module, etc.
+     * @param array $args Arguments
      * @param Media $media Twill Media instance
      * @throws ImageException
      */
-    public function __construct($model, string $role, string $crop = 'default', Media $media = null)
+    public function __construct($object, $args, Media $media = null)
     {
-        $this->setModel($model);
-        $this->role = $role;
-        $this->crop = $crop;
+        $this->setModel($object);
+        $this->setProfile($args['profile'] ?? $args['role'] ?? null);
+        $this->role = $args['role'];
+        $this->crop = $this->profile['crop'];
         $this->media = $media;
-        $this->setImageArray($model, $role, $crop, $media);
-        $profile = config("images.roles.$this->role");
-        $this->profile = config("images.profiles.$profile");
+        $this->setImageArray($object, $this->role, $this->crop, $media);
     }
 
     public function width()
@@ -82,10 +80,7 @@ class TwillImageSource implements ImageSource
         return $srcSets;
     }
 
-    private function defaultWidth()
-    {
-        return $this->profile['default_width'] ?? self::DEFAULT_WIDTH;
-    }
+
 
     public function defaultSrc()
     {
@@ -137,7 +132,7 @@ class TwillImageSource implements ImageSource
         return $data;
     }
 
-    private function sources()
+    protected function sources()
     {
         $sources = [];
 
@@ -166,7 +161,12 @@ class TwillImageSource implements ImageSource
         return $sources;
     }
 
-    private function defaultWidths()
+    protected function defaultWidth()
+    {
+        return $this->profile['width'] ?? self::DEFAULT_WIDTH;
+    }
+
+    protected function defaultWidths()
     {
         $defaultWidth = $this->defaultWidth();
 
@@ -178,7 +178,7 @@ class TwillImageSource implements ImageSource
         );
     }
 
-    private function imageSources($mediaQueryConfig, $sourceParams = [])
+    protected function imageSources($mediaQueryConfig, $sourceParams = [])
     {
         $widths = $mediaQueryConfig['widths'] ?? $this->defaultWidths();
         $sourcesList = [];
@@ -212,7 +212,7 @@ class TwillImageSource implements ImageSource
      *
      * @return array
      */
-    private function crops()
+    protected function crops()
     {
         $crops = [$this->crop];
 
@@ -232,6 +232,19 @@ class TwillImageSource implements ImageSource
         }
 
         $this->model = $model;
+    }
+
+    protected function setProfile($profile)
+    {
+        if (! isset($profile)) {
+            throw new ImageException("An image profile must be specified", 1);
+        }
+
+        if (! config()->has("images.profiles.$profile")) {
+            throw new ImageException("The profile key '{$profile}' does not exist in configuration", 1);
+        }
+
+        $this->profile = config("images.profiles.$profile");
     }
 
     protected function setImageArray($model, $role, $crop, $media)
