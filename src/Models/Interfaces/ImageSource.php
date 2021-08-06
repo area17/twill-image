@@ -18,7 +18,5 @@ interface ImageSource
 
     public function sizesAttr();
 
-    public function dataAttr();
-
     public function lqip();
 }
