@@ -4,7 +4,7 @@
   "authors": [
     {
       "name": "Patrick Vézina",
-      "email": "patrick@croustille.io"
+      "email": "patrick@area17.com"
     }
   ],
   "minimum-stability": "dev",
@@ -20,16 +20,16 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Croustille\\Image\\ImageServiceProvider"
+        "A17\\Twill\\Image\\ImageServiceProvider"
       ],
       "aliases": {
-        "TwillImage": "Croustille\\Image\\ImageFacade"
+        "TwillImage": "A17\\Twill\\Image\\ImageFacade"
       }
     }
   },
   "autoload": {
     "psr-4": {
-      "Croustille\\Image\\": "src/"
+      "A17\\Twill\\Image\\": "src/"
     }
   }
 }

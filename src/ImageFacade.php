@@ -1,6 +1,6 @@
 <?php
 
-namespace Croustille\Image;
+namespace A17\Twill\Image;
 
 use Illuminate\Support\Facades\Facade;
 
