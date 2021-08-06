@@ -43,12 +43,12 @@ class TwillImageSource implements ImageSource
      */
     public function __construct($object, $args, Media $media = null)
     {
+        $this->role = $args['role'];
+        $this->media = $media;
         $this->setModel($object);
         $this->setProfile($args['profile'] ?? $args['role'] ?? null);
-        $this->role = $args['role'];
-        $this->crop = $this->profile['crop'];
-        $this->media = $media;
-        $this->setImageArray($object, $this->role, $this->crop, $media);
+        $this->setCrop($this->profile['crop'] ?? null);
+        $this->setImageArray();
     }
 
     /**
@@ -106,14 +106,12 @@ class TwillImageSource implements ImageSource
                 'srcset' => join(',', $srcset),
                 'type' => $sources['type'],
                 'mediaQuery' => $sources['mediaQuery'],
-                'crop' => $sources['crop']
+                'crop' => $sources['crop'],
             ];
         }
 
         return $srcSets;
     }
-
-
 
     public function defaultSrc()
     {
@@ -132,8 +130,16 @@ class TwillImageSource implements ImageSource
         $sources = [];
 
         foreach ($this->profile['sources'] ?? [] as $source) {
+            $crop = $source['crop'] ?? $this->crop;
+
             $sources[] = [
+              'mediaQuery' => $source['media_query'] ?? null,
+              'crop' => $crop,
               'type' => self::TYPE_GIF,
+              'srcset' => sprintf(
+                  '%s 1x',
+                  $this->model->lowQualityImagePlaceholder($this->role, $crop)
+              )
             ];
         }
 
@@ -151,7 +157,9 @@ class TwillImageSource implements ImageSource
         if (config('images.webp_support')) {
             foreach ($this->profile['sources'] ?? [] as $source) {
                 $sources[] = [
+                    'mediaQuery' => $source['media_query'] ?? null,
                     'type' => self::TYPE_WEBP,
+                    'crop' => $source['crop'] ?? $this->crop,
                     'sources' => $this->imageSources($source, ['fm' => 'webp']),
                 ];
             }
@@ -160,7 +168,9 @@ class TwillImageSource implements ImageSource
         // jpeg
         foreach ($this->profile['sources'] ?? [] as $source) {
             $sources[] = [
+                'mediaQuery' => $source['media_query'] ?? null,
                 'type' => self::TYPE_JPEG,
+                'crop' => $source['crop'] ?? $this->crop,
                 'sources' => $this->imageSources($source, ['fm' => 'jpg']),
             ];
         }
@@ -191,24 +201,14 @@ class TwillImageSource implements ImageSource
         $sourcesList = [];
 
         foreach ($widths as $width) {
-            $params = ['w' => $width];
-
             $sourcesList[] = [
-                    'src' => $this->model->image(
-                        $this->role,
-                        $mediaQueryConfig['crop'] ?? 'default',
-                        $params + $sourceParams,
-                        false,
-                        false,
-                        $this->media
-                    ),
-                    'crop' => $source['crop'] ?? 'default',
-                    'width' => $width,
-                    'lqip' => $this->model->lowQualityImagePlaceholder(
-                        $source['role'] ?? $this->role,
-                        $mediaQueryConfig['crop'] ?? 'default'
-                    )
-                ];
+                'src' => $this->model->image(
+                    $this->role,
+                    $mediaQueryConfig['crop'] ?? $this->crop,
+                    ['w' => $width] + $sourceParams
+                ),
+                'width' => $width,
+            ];
         }
 
         return $sourcesList;
@@ -219,17 +219,39 @@ class TwillImageSource implements ImageSource
      *
      * @return array
      */
-    protected function crops()
+    protected function crops(): array
     {
-        $crops = [$this->crop];
+        $role = $this->role;
 
-        foreach ($this->profile['sources'] ?? [] as $source) {
-            if (isset($source['crop'])) {
-                $crops[] = $source['crop'];
-            }
-        }
+        $crops = array_values(
+            $this->model->medias->filter(function ($media) use ($role) {
+                return $media->pivot->role === $role;
+            })->map(function ($media) {
+                return $media->pivot->crop;
+            })->toArray()
+        );
 
         return $crops;
+    }
+
+    protected function setCrop($crop)
+    {
+        if (isset($crop)) {
+            $this->crop = $crop;
+            return;
+        }
+
+        $crops = $this->crops();
+
+        if ($index = array_search('default', $crops)) {
+            return $crops[$index];
+        }
+
+        if (count($crops) > 1) {
+            throw new ImageException("Image role has more than one crop, please add 'crop' key to configuration profile", 1);
+        }
+
+        $this->crop = $crops[0];
     }
 
     protected function setModel($model)
@@ -254,12 +276,12 @@ class TwillImageSource implements ImageSource
         $this->profile = config("images.profiles.$profile");
     }
 
-    protected function setImageArray($model, $role, $crop, $media)
+    protected function setImageArray()
     {
-        $imageArray = $model->imageAsArray($role, $crop, [], $media);
+        $imageArray = $this->model->imageAsArray($this->role, $this->crop, [], $this->media);
 
         if (empty($imageArray)) {
-            throw new ImageException("No media was found for role '{$role}' and crop '{$crop}'", 1);
+            throw new ImageException("No media was found for role '{$this->role}' and crop '{$this->crop}'", 1);
         }
 
         $this->imageArray = $imageArray;

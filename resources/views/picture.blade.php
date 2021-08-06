@@ -7,7 +7,7 @@ $shouldLoad = $shouldLoad ?? true;
             @foreach($sources as $source)
                 <source
                     type="{{ $source['type'] }}"
-                    @if($source['mediaQuery'] !== 'default')
+                    @if(isset($source['mediaQuery']))
                         media="{{ $source['mediaQuery'] }}"
                     @endif
                     @if($shouldLoad)
