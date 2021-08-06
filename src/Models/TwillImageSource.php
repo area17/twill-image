@@ -116,22 +116,6 @@ class TwillImageSource implements ImageSource
         ];
     }
 
-    public function dataAttr()
-    {
-        $data = [];
-        $cropRatios = [];
-
-        foreach ($this->crops() as $crop) {
-            $image_object = $this->model->imageObject($this->role, $crop);
-            $cropRatios[] = $this->role . '-' . $crop . '-' . $image_object->pivot->ratio ?? null;
-        }
-
-        $data['role-crop-ratio'] = join(' ', $cropRatios);
-        $data['role'] = $this->role;
-
-        return $data;
-    }
-
     protected function sources()
     {
         $sources = [];
