@@ -9,19 +9,32 @@ use Croustille\Image\Models\Interfaces\ImageSource;
 
 class TwillImageSource implements ImageSource
 {
-    const AUTO_WIDTHS = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000];
+    const AUTO_WIDTHS = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
+
     const AUTO_WIDTHS_RATIO = 2.5;
+
     const DEFAULT_WIDTH = 1000;
 
+    const TYPE_GIF = 'image/gif';
+
+    const TYPE_JPEG = 'image/jpeg';
+
+    const TYPE_WEBP = 'image/webp';
+
     protected $model;
+
     protected $role;
+
     protected $crop;
+
     protected $media;
+
     protected $profile;
+
     protected $imageArray;
 
     /**
-     * Build a ImageSource to be used with Croustille\Image\Models\Image
+     * Build an ImageSource to be used with Croustille\Image\Models\Image
      *
      * @param [A17\Twill\Models\Model] $object of type Media, Block, module, etc.
      * @param array $args Arguments
@@ -38,22 +51,42 @@ class TwillImageSource implements ImageSource
         $this->setImageArray($object, $this->role, $this->crop, $media);
     }
 
-    public function width()
+    /**
+     * Provide the width of the default crop
+     *
+     * @return int
+     */
+    public function width(): int
     {
         return $this->imageArray['width'];
     }
 
-    public function height()
+    /**
+     * Provide the height of the default crop
+     *
+     * @return int
+     */
+    public function height(): int
     {
         return $this->imageArray['height'];
     }
 
-    public function alt()
+    /**
+     * Provide the text description of the image
+     *
+     * @return string
+     */
+    public function alt(): string
     {
         return $this->model->imageAltText($this->role, $this->media);
     }
 
-    public function caption()
+    /**
+     * Provide the caption of the image
+     *
+     * @return string
+     */
+    public function caption(): string
     {
         return $this->model->imageCaption($this->role, $this->media);
     }
@@ -100,13 +133,7 @@ class TwillImageSource implements ImageSource
 
         foreach ($this->profile['sources'] ?? [] as $source) {
             $sources[] = [
-              'mediaQuery' => $source['media_query'] ?? 'default',
-              'crop' => $source['crop'] ?? 'default',
-              'type' => 'image/gif',
-              'srcset' => sprintf('%s 1x', $this->model->lowQualityImagePlaceholder(
-                  $this->role,
-                  $source['crop'] ?? 'default'
-              ))
+              'type' => self::TYPE_GIF,
             ];
         }
 
@@ -124,9 +151,7 @@ class TwillImageSource implements ImageSource
         if (config('images.webp_support')) {
             foreach ($this->profile['sources'] ?? [] as $source) {
                 $sources[] = [
-                    'mediaQuery' => $source['media_query'] ?? 'default',
-                    'type' => 'image/webp',
-                    'crop' => $source['crop'] ?? 'default',
+                    'type' => self::TYPE_WEBP,
                     'sources' => $this->imageSources($source, ['fm' => 'webp']),
                 ];
             }
@@ -135,10 +160,8 @@ class TwillImageSource implements ImageSource
         // jpeg
         foreach ($this->profile['sources'] ?? [] as $source) {
             $sources[] = [
-                'mediaQuery' => $source['media_query'] ?? 'default',
-                'type' => $this->mimeType($this->extension()),
-                'crop' => $source['crop'] ?? 'default',
-                'sources' => $this->imageSources($source),
+                'type' => self::TYPE_JPEG,
+                'sources' => $this->imageSources($source, ['fm' => 'jpg']),
             ];
         }
 
