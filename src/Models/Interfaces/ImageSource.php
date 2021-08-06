@@ -1,6 +1,6 @@
 <?php
 
-namespace Croustille\Image\Models\Interfaces;
+namespace A17\Twill\Image\Models\Interfaces;
 
 interface ImageSource
 {

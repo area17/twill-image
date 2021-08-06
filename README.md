@@ -12,7 +12,7 @@ Image module for Twill.
 ## Installation
 
 ```
-composer require croustille/twill-image
+composer require area17/twill-image
 ```
 
 ### Config file
@@ -20,7 +20,7 @@ composer require croustille/twill-image
 Publish `config/images.php`.
 
 ```bash
-php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --tag=config
+php artisan vendor:publish --provider="A17\Twill\Image\ImageServiceProvider" --tag=config
 ```
 
 ### JavaScript module
@@ -28,7 +28,7 @@ php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --
 You can publish a script `twill-image.js` to your public folder and add a `<script>` tag to your project.
 
 ```bash
-php artisan vendor:publish --provider="Croustille\Image\ImageServiceProvider" --tag=js
+php artisan vendor:publish --provider="A17\Twill\Image\ImageServiceProvider" --tag=js
 ```
 
 In a Blade file.
@@ -40,7 +40,7 @@ In a Blade file.
 Or you can import the JavaScript module and init the lazyloading class in you own js to be bundled with you application.
 
 ```js
-import { TwillImage } from '../../vendor/croustille/twill-image'
+import { TwillImage } from '../../vendor/area17/twill-image'
 
 document.addEventListener('DOMContentLoaded', function () {
   const lazyloading = new TwillImage()

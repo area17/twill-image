@@ -1,8 +1,8 @@
 <?php
 
-namespace Croustille\Image\Models;
+namespace A17\Twill\Image\Models;
 
-use Croustille\Image\Models\Interfaces\ImageSource;
+use A17\Twill\Image\Models\Interfaces\ImageSource;
 
 class Image
 {

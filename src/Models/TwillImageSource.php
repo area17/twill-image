@@ -1,11 +1,11 @@
 <?php
 
-namespace Croustille\Image\Models;
+namespace A17\Twill\Image\Models;
 
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Behaviors\HasMedias;
-use Croustille\Image\Exceptions\ImageException;
-use Croustille\Image\Models\Interfaces\ImageSource;
+use A17\Twill\Image\Exceptions\ImageException;
+use A17\Twill\Image\Models\Interfaces\ImageSource;
 
 class TwillImageSource implements ImageSource
 {
@@ -34,7 +34,7 @@ class TwillImageSource implements ImageSource
     protected $imageArray;
 
     /**
-     * Build an ImageSource to be used with Croustille\Image\Models\Image
+     * Build an ImageSource to be used with A17\Twill\Image\Models\Image
      *
      * @param [A17\Twill\Models\Model] $object of type Media, Block, module, etc.
      * @param array $args Arguments

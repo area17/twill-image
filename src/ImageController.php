@@ -1,10 +1,10 @@
 <?php
 
-namespace Croustille\Image;
+namespace A17\Twill\Image;
 
 use A17\Twill\Models\Media;
-use Croustille\Image\Models\TwillImageSource;
-use Croustille\Image\Models\Image;
+use A17\Twill\Image\Models\TwillImageSource;
+use A17\Twill\Image\Models\Image;
 
 class ImageController
 {

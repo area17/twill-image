@@ -1,5 +1,5 @@
 {
-  "name": "@croustille/twill-image",
+  "name": "@area17/twill-image",
   "version": "0.1.0",
   "description": "Image module for Twill.",
   "main": "dist/index.js",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/croustille-io/twill-image.git"
+    "url": "git+https://github.com/area17/twill-image.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/croustille-io/twill-image/issues"
+    "url": "https://github.com/area17/twill-image/issues"
   },
-  "homepage": "https://github.com/croustille-io/twill-image#readme",
+  "homepage": "https://github.com/area17/twill-image#readme",
   "devDependencies": {
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",
