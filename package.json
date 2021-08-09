@@ -17,7 +17,7 @@
     "url": "git+https://github.com/area17/twill-image.git"
   },
   "author": "",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/area17/twill-image/issues"
   },
