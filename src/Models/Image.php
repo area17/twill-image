@@ -55,12 +55,12 @@ class Image
     {
         $this->backgroundColor
           = $args['backgroundColor'] ??
-          config('images.background_color') ??
+          config('twill-image.background_color') ??
           'transparent';
 
         $this->lqip
           = $args['lqip'] ??
-          config('images.lqip') ??
+          config('twill-image.lqip') ??
           true;
 
         $this->layout = $args['layout'] ?? 'fullWidth';
