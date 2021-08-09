@@ -29,7 +29,7 @@ class TwillImageSource implements ImageSource
 
     protected $media;
 
-    protected $profile;
+    protected $preset;
 
     protected $imageArray;
 
@@ -46,8 +46,8 @@ class TwillImageSource implements ImageSource
         $this->role = $args['role'];
         $this->media = $media;
         $this->setModel($object);
-        $this->setProfile($args['profile'] ?? $args['role'] ?? null);
-        $this->setCrop($this->profile['crop'] ?? null);
+        $this->setPreset($args['preset'] ?? $args['role'] ?? null);
+        $this->setCrop($this->preset['crop'] ?? null);
         $this->setImageArray();
     }
 
@@ -122,14 +122,14 @@ class TwillImageSource implements ImageSource
 
     public function sizesAttr()
     {
-        return $this->profile['sizes'] ?? null;
+        return $this->preset['sizes'] ?? null;
     }
 
     public function lqip()
     {
         $sources = [];
 
-        foreach ($this->profile['sources'] ?? [] as $source) {
+        foreach ($this->preset['sources'] ?? [] as $source) {
             $crop = $source['crop'] ?? $this->crop;
 
             $sources[] = [
@@ -154,8 +154,8 @@ class TwillImageSource implements ImageSource
         $sources = [];
 
         // webp
-        if (config('images.webp_support')) {
-            foreach ($this->profile['sources'] ?? [] as $source) {
+        if (config('twill-image.webp_support')) {
+            foreach ($this->preset['sources'] ?? [] as $source) {
                 $sources[] = [
                     'mediaQuery' => $source['media_query'] ?? null,
                     'type' => self::TYPE_WEBP,
@@ -166,7 +166,7 @@ class TwillImageSource implements ImageSource
         }
 
         // jpeg
-        foreach ($this->profile['sources'] ?? [] as $source) {
+        foreach ($this->preset['sources'] ?? [] as $source) {
             $sources[] = [
                 'mediaQuery' => $source['media_query'] ?? null,
                 'type' => self::TYPE_JPEG,
@@ -180,7 +180,7 @@ class TwillImageSource implements ImageSource
 
     protected function defaultWidth()
     {
-        return $this->profile['width'] ?? self::DEFAULT_WIDTH;
+        return $this->preset['width'] ?? self::DEFAULT_WIDTH;
     }
 
     protected function defaultWidths()
@@ -248,7 +248,7 @@ class TwillImageSource implements ImageSource
         }
 
         if (count($crops) > 1) {
-            throw new ImageException("Image role has more than one crop, please add 'crop' key to configuration profile", 1);
+            throw new ImageException("Image role has more than one crop, please add 'crop' key to the configuration preset", 1);
         }
 
         $this->crop = $crops[0];
@@ -263,17 +263,17 @@ class TwillImageSource implements ImageSource
         $this->model = $model;
     }
 
-    protected function setProfile($profile)
+    protected function setPreset($preset)
     {
-        if (! isset($profile)) {
-            throw new ImageException("An image profile must be specified", 1);
+        if (! isset($preset)) {
+            throw new ImageException("An image preset must be specified", 1);
         }
 
-        if (! config()->has("images.profiles.$profile")) {
-            throw new ImageException("The profile key '{$profile}' does not exist in configuration", 1);
+        if (! config()->has("twill-image.presets.$preset")) {
+            throw new ImageException("The preset key '{$preset}' does not exist in configuration", 1);
         }
 
-        $this->profile = config("images.profiles.$profile");
+        $this->preset = config("twill-image.presets.$preset");
     }
 
     protected function setImageArray()
