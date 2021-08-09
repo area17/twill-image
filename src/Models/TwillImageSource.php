@@ -2,12 +2,13 @@
 
 namespace A17\Twill\Image\Models;
 
+use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Behaviors\HasMedias;
 use A17\Twill\Image\Exceptions\ImageException;
 use A17\Twill\Image\Models\Interfaces\ImageSource;
 
-class TwillImageSource implements ImageSource
+class TwillImageSource implements ImageSource, Arrayable
 {
     const AUTO_WIDTHS = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
 
@@ -285,5 +286,31 @@ class TwillImageSource implements ImageSource
         }
 
         $this->imageArray = $imageArray;
+    }
+
+    protected function getPlaceholderData()
+    {
+        return $this->lqip();
+    }
+
+
+    protected function getMainData()
+    {
+        return [
+            'sources' => $this->srcSets(),
+            'src' => $this->defaultSrc(),
+        ];
+    }
+
+    public function toArray()
+    {
+        return [
+          'placeholder' => $this->getPlaceholderData(),
+          'main' => $this->getMainData(),
+          'width' => $this->width(),
+          'height' => $this->height(),
+          'sizes' => $this->sizesAttr(),
+          'alt' => $this->alt(),
+        ];
     }
 }
