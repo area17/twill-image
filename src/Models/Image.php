@@ -25,9 +25,6 @@ class Image
     {
         if (is_array($source)) {
             $this->data = $source;
-        } else {
-            $this->source = $source;
-            $this->data = $this->getSourceData();
         }
 
         $this->setAttributes($args);
@@ -108,37 +105,6 @@ class Image
             default:
                 return null;
         }
-    }
-
-
-
-    private function getPlaceholderPropsFromSource()
-    {
-        return $this->source->lqip();
-    }
-
-
-    private function getMainPropsFromSource()
-    {
-        return [
-            'sources' => $this->source->srcSets(),
-            'src' => $this->source->defaultSrc(),
-        ];
-    }
-
-    public function getSourceData()
-    {
-        $placeholder = $this->getPlaceholderPropsFromSource();
-        $main = $this->getMainPropsFromSource();
-
-        return [
-          'placeholder' => $placeholder,
-          'main' => $main,
-          'width' => $this->source->width(),
-          'height' => $this->source->height(),
-          'sizes' => $this->source->sizesAttr(),
-          'alt' => $this->source->alt(),
-        ];
     }
 
     private function getViewWrapperProps($layout = "fullWidth")

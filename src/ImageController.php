@@ -11,9 +11,8 @@ class ImageController
     public function source($object, $args = [], Media $media = null): array
     {
         $source = new TwillImageSource($object, $args, $media);
-        $image = new Image($source, $args);
 
-        return $image->getSourceData();
+        return $source->toArray();
     }
 
     public function render($data, $args = [])

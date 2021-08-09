@@ -10,7 +10,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.2.5"
+    "php": ">=7.2.5",
+    "illuminate/support": "6.*"
   },
   "config": {
     "optimize-autoloader": true,
