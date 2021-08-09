@@ -322,29 +322,16 @@ class TwillImageSource implements ImageSource, Arrayable
         $this->imageArray = $imageArray;
     }
 
-    protected function getPlaceholderData()
-    {
-        return $this->lqip();
-    }
-
-
-    protected function getMainData()
-    {
-        return [
-            'sources' => $this->srcSets(),
-            'src' => $this->defaultSrc(),
-        ];
-    }
-
     public function toArray()
     {
         return [
-          'placeholder' => $this->getPlaceholderData(),
-          'main' => $this->getMainData(),
-          'width' => $this->width(),
-          'height' => $this->height(),
-          'sizes' => $this->sizesAttr(),
-          'alt' => $this->alt(),
+            'lqip' => $this->lqip(),
+            'sources' => $this->srcSets(),
+            'src' => $this->defaultSrc(),
+            'width' => $this->width(),
+            'height' => $this->height(),
+            'sizes' => $this->sizesAttr(),
+            'alt' => $this->alt(),
         ];
     }
 }

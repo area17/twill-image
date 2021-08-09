@@ -229,11 +229,15 @@ class Image
         $data = $this->data;
         $wrapper = $this->getViewWrapperProps($layout);
         $placeholder = array_merge(
-            $data['placeholder'],
+            $data['lqip'],
             $this->getViewPlaceholderProps($layout)
         );
         $main = array_merge(
-            $data['main'],
+            [
+                'src' => $data['src'],
+                'sources' => $data['sources'],
+                'alt' => $data['alt'],
+            ],
             $this->getViewMainProps($this->loading === "eager")
         );
 
