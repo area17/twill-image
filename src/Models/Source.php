@@ -8,7 +8,7 @@ use A17\Twill\Models\Behaviors\HasMedias;
 use A17\Twill\Image\Exceptions\ImageException;
 use A17\Twill\Image\Models\Interfaces\ImageSource;
 
-class TwillImageSource implements ImageSource, Arrayable
+class Source implements ImageSource, Arrayable
 {
     const AUTO_WIDTHS = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
 
@@ -35,7 +35,7 @@ class TwillImageSource implements ImageSource, Arrayable
     protected $imageArray;
 
     /**
-     * Build an ImageSource to be used with A17\Twill\Image\Models\Image
+     * Build an Source to be used with A17\Twill\Image\Models\Image
      *
      * @param [A17\Twill\Models\Model] $object of type Media, Block, module, etc.
      * @param array $args Arguments
