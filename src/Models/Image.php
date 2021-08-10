@@ -18,10 +18,10 @@ class Image
     protected $wrapperClass;
 
     /**
-     * @param ImageSource|array $source
+     * @param array $source
      * @param array $args
      */
-    public function __construct($source, array $args = [])
+    public function __construct(array $source, array $args = [])
     {
         if (is_array($source)) {
             $this->data = $source;
