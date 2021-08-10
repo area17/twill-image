@@ -207,7 +207,10 @@ class Source implements ImageSource, Arrayable
                 'src' => $this->model->image(
                     $this->role,
                     $mediaQueryConfig['crop'] ?? $this->crop,
-                    ['w' => $width] + $sourceParams
+                    ['w' => $width] + $sourceParams,
+                    false,
+                    false,
+                    $this->media
                 ),
                 'width' => $width,
             ];
