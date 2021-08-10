@@ -1,13 +1,28 @@
 # Twill Image
 
-Image module for Twill.
+Twill Image is a package designed to work with [Twill](https://twill.io) to display images easily on your site. It leverages Twill's image processing capabilities and adds modern lazy-loading techniques. It supports responsive images and fixed width and height images.
 
 - `<picture>` with `<source>`
 - Twill's LQIP and background color image placeholder
-- Art direction
+- Art direction (multiple crops)
 - WebP and JPEG support
 - Lazyload (fade-in) image with IntersectionOserver
 - Support native lazyloading with `loading='lazy'
+
+## Contents
+
+- [Installation](#installation)
+  - [Configuration file](#configuration-file)
+  - [JavaScript module](#javascript-module)
+- [Using `twill-image`](#using-twill-image)
+  - [Available methods](#available-methods)
+  - [Examples](#examples)
+- [Configuration options and image presets](#configuration-options-and-image-presets)
+  - [Options](#options)
+  - [Preset options](#presets-options)
+  - [Presets' `sources` array options](#presets-sources-array-options)
+- [Art directed images](#art-directed-images)
+- [Multiple medias](#multiple-medias)
 
 ## Installation
 
@@ -15,7 +30,7 @@ Image module for Twill.
 composer require area17/twill-image
 ```
 
-### Config file
+### Configuration file
 
 Publish `config/images.php`.
 
@@ -47,49 +62,52 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 ```
 
-## Config
+## Using `twill-image`
 
+### Available methods
 
-In `config/images.php`, you can define frontend image profiles. A profile informs the `TwillImage::source()` method which crops to output along other options. By default, a profile share the same name as the image `role`.
-
-```php
-<?php
-
-return [
-
-    'background_color' => '#e3e3e3',
-
-    'lqip' => true,
-
-    'webp_support' => true,
-
-    'profiles' => [
-        'preview_image' => [
-            'crop' => 'default',
-            'width' => 500,
-            'sizes' => '50vw',
-        ],
-        'listing' => [
-            'crop' => 'card',
-            'width' => 500,
-            'sizes' => '50vw',
-        ],
-    ],
-];
+```
+TwillImage::source($object, $role, $args, $preset, $media): array
 ```
 
-## Usage
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`object` (Required)|`string`|   |Twill Media, Block, module, etc.|
+|`role` (Required)|`string`|   |Twill Media role|
+|`args`|`array`|`[]`|   |
+|`preset`|`string`|`role` value|Preset name|
+|`media`|`A17\Twill\Models\Media`|`null`|   |
+
+```
+TwillImage::render($imageSource, $args): string
+```
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
+|`class`|`string`|   |   |
+|`sizes`|`string`|   |   |
+|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
+|`height`|`int`|   |   |
+
+```
+TwillImage::image($object, $role, $args, $preset, $media)
+```
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`object` (Required)|`string`|   |Twill Media, Block, module, etc.|
+|`role` (Required)|`string`|   |Twill Media role|
+|`args`|`array`|`[]`|   |
+|`preset`|`string`|`role` value|Preset name|
+|`media`|`A17\Twill\Models\Media`|`null`|   |
+
+### Examples
 
 ```php
 @php
-$heroImage = TwillImage::source($item, [
-  'role' => 'preview_image',
-]);
-
-$listingImage = TwillImage::source($item, [
-  'role' => 'preview_image',
-  'profile' => 'listing',
-]);
+$heroImage = TwillImage::source($item, 'preview_image');
+$listingImage = TwillImage::source($item, 'preview_image', [], 'listing');
 @endphp
 
 {!! TwillImage::render($heroImage) !!}
@@ -108,31 +126,75 @@ $listingImage = TwillImage::source($item, [
 ]) !!}
 ```
 
-## Methods
+## Configuration options and image presets
 
+
+In `config/twill-image.php`, you can define image presets. A preset informs the `TwillImage::source()` method which crop to output along other options like responsive sources. By default, a profile share the same name as the image `role`, but you can override this by passing a preset name to the `source()` method. This is useful for cases where you might need to re-use the same present with multiple media roles.
+
+```php
+<?php
+
+return [
+
+    'background_color' => '#e3e3e3',
+
+    'lqip' => true,
+
+    'webp_support' => true,
+
+    'presets' => [
+        'preview_image' => [
+            'crop' => 'desktop',
+            'width' => 1500,
+            'sizes' => '(max-width: 767px) 100vw, 50vw',
+            'sources' => [
+                [
+                    'crop' => 'mobile',
+                    'media_query' => '(max-width: 767px)',
+                ],
+                [
+                    'crop' => 'desktop',
+                    'media_query' => '(min-width: 768px)',
+                ]
+            ],
+        ],
+        'listing' => [
+            'crop' => 'card',
+            'width' => 500,
+            'sizes' => '25vw',
+        ],
+    ],
+];
 ```
-TwillImage::source($model, $args): array
-```
+### Options
 
 |Argument|Type|Default|Description|
 |---|---|---|---|
-|`role` (Required)|`string`|   |   |
-|`profile`|`string`|`role` value|   |
+|`background_color`|`string`|`#e3e3e3`|   |
+|`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
+|`webp_support`|`boolean`|`true`|   |
+|`presets`|`object`|   |   |
 
+### Presets options
 
-```
-TwillImage::render($imageSource, $args): string
-```
+If the key name (see above: `preview_image`) match the role name, it will be used as the base preset.
 
 |Argument|Type|Default|Description|
 |---|---|---|---|
-|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
-|`class`|`string`|   |   |
-|`sizes`|`string`|   |   |
-|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
-|`height`|`int`|   |   |
+|`crop`|`string`|   |If omitted, will look for `default` or, if not present and only one crop is available, it will use that one. If more than one crop is available, it will throw an error|
+|`width`|`int`|1000|   |
+|`sizes`|`string`|`100vw`|   |
+|`sources`|`array`|   |   |
 
-## Art direction
+### Presets' `sources` array options
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`crop`|`string`|   |   |
+|`media_query`|`string`|   |   |
+|`widths`|`[int]`|   |By default, a series of sources will be generated up to 5000px wide|
+
+## Art directed images
 
 To use different images (and/or crops) with media queries, you need to set size and ratio for the sources other than default. An example on how to do this by adding some styles.
 
@@ -186,4 +248,20 @@ You can define styles for each breakpoints.
     aspect-ratio: unset;
   }
 }
+```
+
+## Multiple medias
+
+```blade
+@php
+$galleryImages = $item->imageObjects('gallery_image', 'desktop')->map(function ($media) use ($item) {
+    return TwillImage::source($item, 'gallery_image', [], null, $media);
+})->toArray();
+@endphp
+
+@if($galleryImages)
+    @foreach($galleryImages as $image)
+        {!! TwillImage::render($image) !!}
+    @endforeach
+@endif
 ```
