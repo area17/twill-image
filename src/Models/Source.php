@@ -108,6 +108,7 @@ class Source implements ImageSource, Arrayable
                 'type' => $sources['type'],
                 'mediaQuery' => $sources['mediaQuery'],
                 'crop' => $sources['crop'],
+                'ratio' => $this->ratio($sources['crop']),
             ];
         }
 
@@ -286,6 +287,17 @@ class Source implements ImageSource, Arrayable
         }
 
         $this->imageArray = $imageArray;
+    }
+
+    protected function ratio($crop): string
+    {
+        $role = $this->role;
+
+        $media = $this->model->medias->filter(function ($media) use ($role, $crop) {
+            return $media->pivot->role === $role && $media->pivot->crop === $crop;
+        })->first();
+
+        return $media->pivot->ratio;
     }
 
     public function toArray()
