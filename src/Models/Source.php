@@ -2,9 +2,10 @@
 
 namespace A17\Twill\Image\Models;
 
-use Illuminate\Contracts\Support\Arrayable;
+use ImageService;
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Behaviors\HasMedias;
+use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
 use A17\Twill\Image\Models\Interfaces\ImageSource;
 
@@ -140,13 +141,17 @@ class Source implements ImageSource, Arrayable
               'type' => self::TYPE_GIF,
               'srcset' => sprintf(
                   '%s 1x',
-                  $this->model->lowQualityImagePlaceholder($this->role, $crop)
+                  $this->media ?
+                    $this->media->pivot->lqip_data ?? ImageService::getTransparentFallbackUrl() :
+                    $this->model->lowQualityImagePlaceholder($this->role, $crop)
               )
             ];
         }
 
         return [
-          'src' => $this->model->lowQualityImagePlaceholder($this->role, $this->crop),
+          'src' => $this->media ?
+          $this->media->pivot->lqip_data ?? ImageService::getTransparentFallbackUrl() :
+          $this->model->lowQualityImagePlaceholder($this->role, $this->crop),
           'sources' => $sources,
         ];
     }
