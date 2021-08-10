@@ -22,4 +22,11 @@ class ImageController
 
         return $image->view();
     }
+
+    public function image($object, $role, $args = [], $preset = null, Media $media = null)
+    {
+        $source = $this->source($object, $role, $args, $preset, $media);
+
+        return $this->render($source);
+    }
 }
