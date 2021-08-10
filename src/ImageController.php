@@ -8,9 +8,9 @@ use A17\Twill\Image\Models\Image;
 
 class ImageController
 {
-    public function source($object, $args = [], Media $media = null): array
+    public function source($object, $role, $args = [], $preset = null, Media $media = null): array
     {
-        $source = new Source($object, $args, $media);
+        $source = new Source($object, $role, $args, $preset, $media);
 
         return $source->toArray();
     }

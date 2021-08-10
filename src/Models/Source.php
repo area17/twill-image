@@ -36,20 +36,22 @@ class Source implements ImageSource, Arrayable
     protected $imageArray;
 
     /**
-     * Build an Source to be used with A17\Twill\Image\Models\Image
+     * Build a Source to be used with A17\Twill\Image\Models\Image
      *
      * @param [A17\Twill\Models\Model] $object of type Media, Block, module, etc.
+     * @param string $role Twill Media role
      * @param array $args Arguments
+     * @param string $preset Preset name
      * @param Media $media Twill Media instance
      * @throws ImageException
      */
-    public function __construct($object, $args, Media $media = null)
+    public function __construct($object, $role, $args = [], $preset = null, Media $media = null)
     {
-        $this->role = $args['role'];
+        $this->role = $role;
         $this->media = $media;
         $this->setModel($object);
-        $this->setPreset($args['preset'] ?? $args['role'] ?? null);
-        $this->setCrop($this->preset['crop'] ?? null);
+        $this->setPreset($preset);
+        $this->setCrop($args['crop'] ?? null);
         $this->setImageArray();
     }
 
@@ -251,6 +253,11 @@ class Source implements ImageSource, Arrayable
             return;
         }
 
+        if (isset($this->preset['crop'])) {
+            $this->crop = $this->preset['crop'];
+            return;
+        }
+
         $crops = $this->crops();
 
         if ($index = array_search('default', $crops)) {
@@ -309,9 +316,7 @@ class Source implements ImageSource, Arrayable
 
     protected function setPreset($preset)
     {
-        if (! isset($preset)) {
-            throw new ImageException("An image preset must be specified", 1);
-        }
+        $preset = $preset ?? $this->role;
 
         if (! config()->has("twill-image.presets.$preset")) {
             throw new ImageException("The preset key '{$preset}' does not exist in configuration", 1);
