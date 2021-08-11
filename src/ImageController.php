@@ -27,6 +27,6 @@ class ImageController
     {
         $source = $this->source($object, $role, $args, $preset, $media);
 
-        return $this->render($source);
+        return $this->render($source, $args);
     }
 }
