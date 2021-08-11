@@ -105,6 +105,10 @@ TwillImage::image($object, $role, $args, $preset, $media)
 ### Examples
 
 ```php
+{!! TwillImage::image($item, 'preview_image', [
+    'sizes' => '(max-width: 767px) 50vw, 100vw',
+]) !!}
+
 @php
 $heroImage = TwillImage::source($item, 'preview_image');
 $listingImage = TwillImage::source($item, 'preview_image', [], 'listing');
