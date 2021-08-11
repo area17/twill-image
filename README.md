@@ -129,7 +129,7 @@ $listingImage = TwillImage::source($item, 'preview_image', [], 'listing');
 ## Configuration options and image presets
 
 
-In `config/twill-image.php`, you can define image presets. A preset informs the `TwillImage::source()` method which crop to output along other options like responsive sources. By default, a profile share the same name as the image `role`, but you can override this by passing a preset name to the `source()` method. This is useful for cases where you might need to re-use the same present with multiple media roles.
+In `config/twill-image.php`, you can define image presets. A preset informs the `TwillImage::source()` method which crop to output along other options like responsive sources. By default, a profile share the same name as the image `role`, but you can override this by passing a preset name to the `source()` method. This is useful for cases where you might need to re-use the same preset with multiple media roles.
 
 ```php
 <?php
