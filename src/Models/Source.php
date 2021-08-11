@@ -134,7 +134,7 @@ class Source implements ImageSource, Arrayable
     {
         $sources = [];
 
-        foreach ($this->preset['sources'] ?? [] as $source) {
+        foreach ($this->defaultSources() as $source) {
             $crop = $source['crop'] ?? $this->crop;
 
             $sources[] = [
@@ -164,7 +164,7 @@ class Source implements ImageSource, Arrayable
 
         // webp
         if (config('twill-image.webp_support')) {
-            foreach ($this->preset['sources'] ?? [] as $source) {
+            foreach ($this->defaultSources() as $source) {
                 $sources[] = [
                     'mediaQuery' => $source['media_query'] ?? null,
                     'type' => self::TYPE_WEBP,
@@ -175,7 +175,7 @@ class Source implements ImageSource, Arrayable
         }
 
         // jpeg
-        foreach ($this->preset['sources'] ?? [] as $source) {
+        foreach ($this->defaultSources() as $source) {
             $sources[] = [
                 'mediaQuery' => $source['media_query'] ?? null,
                 'type' => self::TYPE_JPEG,
@@ -185,6 +185,15 @@ class Source implements ImageSource, Arrayable
         }
 
         return $sources;
+    }
+
+    protected function defaultSources()
+    {
+        return $this->preset['sources'] ?? [
+            [
+                'crop' => $this->crop,
+            ],
+        ];
     }
 
     protected function defaultWidth()
