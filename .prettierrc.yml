@@ -1,0 +1,18 @@
+trailingComma: none
+printWidth: 80
+tabWidth: 2
+useTabs: false
+singleQuote: true
+requirePragma: false
+insertPragma: false
+semi: false
+
+# php
+phpVersion: '7.4'
+trailingCommaPHP: true
+braceStyle: 'psr-2'
+
+overrides:
+  - files: '*.php'
+    options:
+      tabWidth: 4

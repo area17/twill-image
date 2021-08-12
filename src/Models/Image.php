@@ -82,26 +82,30 @@ class Image implements Arrayable
      */
     protected function setAttributes($args)
     {
-        $this->backgroundColor = $args['backgroundColor'] ??
-        config('twill-image.background_color') ??
-        'transparent';
+        $this->backgroundColor =
+            $args['backgroundColor'] ??
+            (config('twill-image.background_color') ?? 'transparent');
 
         $this->layout = $args['layout'] ?? 'fullWidth';
 
         $this->loading = $args['loading'] ?? 'lazy';
 
-        $this->lqip
-          = $args['lqip'] ??
-          config('twill-image.lqip') ??
-          true;
+        $this->lqip = $args['lqip'] ?? (config('twill-image.lqip') ?? true);
 
-        $this->sizes = $args['sizes'] ?? $this->source['sizes'] ?? $this->defaultSizesAttribute();
+        $this->sizes =
+            $args['sizes'] ??
+            ($this->source['sizes'] ?? $this->defaultSizesAttribute());
 
         $this->alt = $args['alt'] ?? $this->source['alt'];
 
         $this->width = $args['width'] ?? $this->source['width'];
 
-        $this->height = $args['height'] ?? (isset($args['width']) ? $this->width / $this->source['width'] * $this->source['height'] : $this->source['height']);
+        $this->height =
+            $args['height'] ??
+            (isset($args['width'])
+                ? ($this->width / $this->source['width']) *
+                    $this->source['height']
+                : $this->source['height']);
 
         $this->wrapperClass = $args['class'] ?? null;
 
@@ -120,7 +124,7 @@ class Image implements Arrayable
                 'object-fit' => 'cover',
                 'object-position' => 'center center',
             ],
-            $args['imgStyle'] ?? []
+            $args['imgStyle'] ?? [],
         );
     }
 
@@ -130,11 +134,15 @@ class Image implements Arrayable
             // If screen is wider than the max size, image width is the max size,
             // otherwise it's the width of the screen
             case 'constrained':
-                return '(min-width:'.$this->width.'px) '.$this->width.'px, 100vw';
+                return '(min-width:' .
+                    $this->width .
+                    'px) ' .
+                    $this->width .
+                    'px, 100vw';
 
             // Image is always the same width, whatever the size of the screen
             case 'fixed':
-                return $this->width.'px';
+                return $this->width . 'px';
 
             // Image is always the width of the screen
             case 'fullWidth':
@@ -150,18 +158,18 @@ class Image implements Arrayable
         $layout = $this->layout;
 
         $style = [
-            "position" => "relative",
-            "overflow" => "hidden",
+            'position' => 'relative',
+            'overflow' => 'hidden',
         ];
 
-        $classes = "twill-image-wrapper";
+        $classes = 'twill-image-wrapper';
 
-        if ($layout === "fixed") {
-            $style['width'] = $this->width."px";
-            $style['height'] = $this->height."px";
-        } elseif ($layout === "constrained") {
+        if ($layout === 'fixed') {
+            $style['width'] = $this->width . 'px';
+            $style['height'] = $this->height . 'px';
+        } elseif ($layout === 'constrained') {
             $style['display'] = 'inline-block';
-            $classes = "twill-image-wrapper twill-image-wrapper-constrained";
+            $classes = 'twill-image-wrapper twill-image-wrapper-constrained';
         }
 
         if ($this->backgroundColor) {
@@ -169,7 +177,7 @@ class Image implements Arrayable
         }
 
         if (isset($this->wrapperClass)) {
-            $classes = join(" ", [$classes, $this->wrapperClass]);
+            $classes = join(' ', [$classes, $this->wrapperClass]);
         }
 
         return [
@@ -182,23 +190,20 @@ class Image implements Arrayable
     {
         $layout = $this->layout;
 
-        $style = array_merge(
-            $this->imgStyle,
-            [
-                'height' => '100%',
-                'left' => 0,
-                'position' => 'absolute',
-                'top' => 0,
-                'width' => '100%',
-            ],
-        );
+        $style = array_merge($this->imgStyle, [
+            'height' => '100%',
+            'left' => 0,
+            'position' => 'absolute',
+            'top' => 0,
+            'width' => '100%',
+        ]);
 
         if ($this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
 
             if ($layout === 'fixed') {
-                $style['width'] = $this->width.'px';
-                $style['height'] = $this->height.'px';
+                $style['width'] = $this->width . 'px';
+                $style['height'] = $this->height . 'px';
                 $style['background-color'] = $this->backgroundColor;
                 $style['position'] = 'relative';
             } elseif ($layout === 'constrained') {
@@ -217,7 +222,7 @@ class Image implements Arrayable
         }
 
         $style['opacity'] = 1;
-        $style['transition'] =  "opacity 500ms linear";
+        $style['transition'] = 'opacity 500ms linear';
 
         return [
             'style' => $this->implodeStyles($style),
@@ -233,7 +238,7 @@ class Image implements Arrayable
                 'transition' => 'opacity 250ms linear',
                 'will-change' => 'opacity',
             ],
-            $this->imgStyle
+            $this->imgStyle,
         );
 
         if ($this->backgroundColor) {
@@ -258,8 +263,8 @@ class Image implements Arrayable
                     return "$property:$value";
                 },
                 array_keys($style),
-                $style
-            )
+                $style,
+            ),
         );
     }
 
@@ -269,7 +274,7 @@ class Image implements Arrayable
 
         $placeholder = array_merge(
             $this->lqip ? $this->source['lqip'] : [],
-            $this->getViewPlaceholderProps()
+            $this->getViewPlaceholderProps(),
         );
 
         $main = array_merge(
@@ -278,18 +283,18 @@ class Image implements Arrayable
                 'sources' => $this->source['sources'],
                 'alt' => $this->alt,
             ],
-            $this->getViewMainProps($this->loading === "eager")
+            $this->getViewMainProps($this->loading === 'eager'),
         );
 
         return [
-          'layout' => $this->layout,
-          'wrapper' => $wrapper,
-          'placeholder' => $placeholder,
-          'main' => $main,
-          'alt' => $this->alt,
-          'width' => $this->width,
-          'height' => $this->height,
-          'sizes' => $this->sizes,
+            'layout' => $this->layout,
+            'wrapper' => $wrapper,
+            'placeholder' => $placeholder,
+            'main' => $main,
+            'alt' => $this->alt,
+            'width' => $this->width,
+            'height' => $this->height,
+            'sizes' => $this->sizes,
         ];
     }
 

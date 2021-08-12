@@ -8,8 +8,13 @@ use A17\Twill\Image\Models\Image;
 
 class ImageController
 {
-    public function source($object, $role, $args = [], $preset = null, Media $media = null): array
-    {
+    public function source(
+        $object,
+        $role,
+        $args = [],
+        $preset = null,
+        Media $media = null
+    ): array {
         $source = new Source($object, $role, $args, $preset, $media);
 
         return $source->toArray();
@@ -23,8 +28,13 @@ class ImageController
         return $image->view();
     }
 
-    public function image($object, $role, $args = [], $preset = null, Media $media = null)
-    {
+    public function image(
+        $object,
+        $role,
+        $args = [],
+        $preset = null,
+        Media $media = null
+    ) {
         $source = $this->source($object, $role, $args, $preset, $media);
 
         return $this->render($source, $args);

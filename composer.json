@@ -33,5 +33,8 @@
     "psr-4": {
       "A17\\Twill\\Image\\": "src/"
     }
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.0"
   }
 }
