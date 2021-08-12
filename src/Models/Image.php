@@ -6,15 +6,54 @@ use A17\Twill\Image\Models\Interfaces\ImageSource;
 
 class Image
 {
-    protected $backgroundColor;
-    protected $layout;
-    protected $loading;
-    protected $lqip;
-    protected $imgStyle;
-    protected $sizes;
+    /**
+     * @var array $source Array output of Source model
+     */
     protected $source;
+
+    /**
+     * @var null|string $backgroundColor Image background color
+     */
+    protected $backgroundColor;
+
+    /**
+     * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
+     */
+    protected $layout;
+
+    /**
+     * @var string $loading <img> loading attribute "lazy" (default) or "eager"
+     */
+    protected $loading;
+
+    /**
+     * @var bool $lqip Display a low-quality placeholder
+     */
+    protected $lqip;
+
+    /**
+     * @var array $imgStyle Inline CSS styles that are applied to both placeholder and main image
+     */
+    protected $imgStyle;
+
+    /**
+     * @var string $sizes Sizes attributes
+     */
+    protected $sizes;
+
+    /**
+     * @var int $height Height of the image
+     */
     protected $height;
+
+    /**
+     * @var int $width Width of the image
+     */
     protected $width;
+
+    /**
+     * @var int $wrapperClass CSS class added to the wrapper element
+     */
     protected $wrapperClass;
 
     /**
