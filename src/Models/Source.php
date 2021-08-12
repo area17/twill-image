@@ -11,17 +11,30 @@ use A17\Twill\Image\Models\Interfaces\ImageSource;
 
 class Source implements ImageSource, Arrayable
 {
-    const AUTO_WIDTHS = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
+    public const AUTO_WIDTHS = [
+        250,
+        500,
+        750,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000,
+        3500,
+        4000,
+        4500,
+        5000,
+    ];
 
-    const AUTO_WIDTHS_RATIO = 2.5;
+    public const AUTO_WIDTHS_RATIO = 2.5;
 
-    const DEFAULT_WIDTH = 1000;
+    public const DEFAULT_WIDTH = 1000;
 
-    const TYPE_GIF = 'image/gif';
+    public const TYPE_GIF = 'image/gif';
 
-    const TYPE_JPEG = 'image/jpeg';
+    public const TYPE_JPEG = 'image/jpeg';
 
-    const TYPE_WEBP = 'image/webp';
+    public const TYPE_WEBP = 'image/webp';
 
     protected $model;
 
@@ -45,8 +58,13 @@ class Source implements ImageSource, Arrayable
      * @param Media $media Twill Media instance
      * @throws ImageException
      */
-    public function __construct($object, $role, $args = [], $preset = null, Media $media = null)
-    {
+    public function __construct(
+        $object,
+        $role,
+        $args = [],
+        $preset = null,
+        Media $media = null
+    ) {
         $this->role = $role;
         $this->media = $media;
         $this->setModel($object);
@@ -103,7 +121,11 @@ class Source implements ImageSource, Arrayable
             $srcset = [];
             foreach ($sources['sources'] as $source) {
                 if (isset($source['src']) && isset($source['width'])) {
-                    $srcset[] = sprintf('%s %dw', $source['src'], $source['width']);
+                    $srcset[] = sprintf(
+                        '%s %dw',
+                        $source['src'],
+                        $source['width'],
+                    );
                 }
             }
             $srcSets[] = [
@@ -122,7 +144,14 @@ class Source implements ImageSource, Arrayable
     {
         $defaultWidth = $this->defaultWidth();
 
-        return $this->model->image($this->role, $this->crop, ['w' => $defaultWidth], false, false, $this->media);
+        return $this->model->image(
+            $this->role,
+            $this->crop,
+            ['w' => $defaultWidth],
+            false,
+            false,
+            $this->media,
+        );
     }
 
     public function sizesAttr()
@@ -138,23 +167,31 @@ class Source implements ImageSource, Arrayable
             $crop = $source['crop'] ?? $this->crop;
 
             $sources[] = [
-              'mediaQuery' => $source['media_query'] ?? null,
-              'crop' => $crop,
-              'type' => self::TYPE_GIF,
-              'srcset' => sprintf(
-                  '%s 1x',
-                  $this->media ?
-                    $this->media->pivot->lqip_data ?? ImageService::getTransparentFallbackUrl() :
-                    $this->model->lowQualityImagePlaceholder($this->role, $crop)
-              )
+                'mediaQuery' => $source['media_query'] ?? null,
+                'crop' => $crop,
+                'type' => self::TYPE_GIF,
+                'srcset' => sprintf(
+                    '%s 1x',
+                    $this->media
+                        ? $this->media->pivot->lqip_data ??
+                            ImageService::getTransparentFallbackUrl()
+                        : $this->model->lowQualityImagePlaceholder(
+                            $this->role,
+                            $crop,
+                        ),
+                ),
             ];
         }
 
         return [
-          'src' => $this->media ?
-          $this->media->pivot->lqip_data ?? ImageService::getTransparentFallbackUrl() :
-          $this->model->lowQualityImagePlaceholder($this->role, $this->crop),
-          'sources' => $sources,
+            'src' => $this->media
+                ? $this->media->pivot->lqip_data ??
+                    ImageService::getTransparentFallbackUrl()
+                : $this->model->lowQualityImagePlaceholder(
+                    $this->role,
+                    $this->crop,
+                ),
+            'sources' => $sources,
         ];
     }
 
@@ -205,12 +242,11 @@ class Source implements ImageSource, Arrayable
     {
         $defaultWidth = $this->defaultWidth();
 
-        return array_filter(
-            self::AUTO_WIDTHS,
-            function ($width) use ($defaultWidth) {
-                return $width <= $defaultWidth * self::AUTO_WIDTHS_RATIO;
-            }
-        );
+        return array_filter(self::AUTO_WIDTHS, function ($width) use (
+            $defaultWidth
+        ) {
+            return $width <= $defaultWidth * self::AUTO_WIDTHS_RATIO;
+        });
     }
 
     protected function imageSources($mediaQueryConfig, $sourceParams = [])
@@ -226,7 +262,7 @@ class Source implements ImageSource, Arrayable
                     ['w' => $width] + $sourceParams,
                     false,
                     false,
-                    $this->media
+                    $this->media,
                 ),
                 'width' => $width,
             ];
@@ -245,11 +281,14 @@ class Source implements ImageSource, Arrayable
         $role = $this->role;
 
         $crops = array_values(
-            $this->model->medias->filter(function ($media) use ($role) {
-                return $media->pivot->role === $role;
-            })->map(function ($media) {
-                return $media->pivot->crop;
-            })->toArray()
+            $this->model->medias
+                ->filter(function ($media) use ($role) {
+                    return $media->pivot->role === $role;
+                })
+                ->map(function ($media) {
+                    return $media->pivot->crop;
+                })
+                ->toArray(),
         );
 
         return $crops;
@@ -274,7 +313,10 @@ class Source implements ImageSource, Arrayable
         }
 
         if (count($crops) > 1) {
-            throw new ImageException("Image role has more than one crop, please add 'crop' key to the configuration preset", 1);
+            throw new ImageException(
+                "Image role has more than one crop, please add 'crop' key to the configuration preset",
+                1,
+            );
         }
 
         $this->crop = $crops[0];
@@ -282,8 +324,8 @@ class Source implements ImageSource, Arrayable
 
     protected function setModel($model)
     {
-        if (! classHasTrait($model, HasMedias::class)) {
-            throw new ImageException("Model must use HasMedias trait", 1);
+        if (!classHasTrait($model, HasMedias::class)) {
+            throw new ImageException('Model must use HasMedias trait', 1);
         }
 
         $this->model = $model;
@@ -293,7 +335,7 @@ class Source implements ImageSource, Arrayable
     {
         $preset = $preset ?? $this->role;
 
-        if (! config()->has("twill-image.presets.$preset")) {
+        if (!config()->has("twill-image.presets.$preset")) {
             $this->preset = null;
             return;
         }
@@ -303,10 +345,18 @@ class Source implements ImageSource, Arrayable
 
     protected function setImageArray()
     {
-        $imageArray = $this->model->imageAsArray($this->role, $this->crop, [], $this->media);
+        $imageArray = $this->model->imageAsArray(
+            $this->role,
+            $this->crop,
+            [],
+            $this->media,
+        );
 
         if (empty($imageArray)) {
-            throw new ImageException("No media was found for role '{$this->role}' and crop '{$this->crop}'", 1);
+            throw new ImageException(
+                "No media was found for role '{$this->role}' and crop '{$this->crop}'",
+                1,
+            );
         }
 
         $this->imageArray = $imageArray;
@@ -316,9 +366,12 @@ class Source implements ImageSource, Arrayable
     {
         $role = $this->role;
 
-        $media = $this->model->medias->filter(function ($media) use ($role, $crop) {
-            return $media->pivot->role === $role && $media->pivot->crop === $crop;
-        })->first();
+        $media = $this->model->medias
+            ->filter(function ($media) use ($role, $crop) {
+                return $media->pivot->role === $role &&
+                    $media->pivot->crop === $crop;
+            })
+            ->first();
 
         return $media->pivot->ratio;
     }

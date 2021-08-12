@@ -25,14 +25,26 @@ class ImageServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/twill-image.php', 'twill-image');
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'image');
-        $this->publishes([
-            __DIR__.'/../config/twill-image.php' => config_path('twill-image.php'),
-        ], 'config');
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/twill-image.php',
+            'twill-image',
+        );
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'image');
         $this->publishes(
-            [__DIR__.'/../dist/twill-image.js' => public_path('twill-image.js')],
-            'js'
+            [
+                __DIR__ . '/../config/twill-image.php' => config_path(
+                    'twill-image.php',
+                ),
+            ],
+            'config',
+        );
+        $this->publishes(
+            [
+                __DIR__ . '/../dist/twill-image.js' => public_path(
+                    'twill-image.js',
+                ),
+            ],
+            'js',
         );
     }
 }
