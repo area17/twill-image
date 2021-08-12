@@ -2,33 +2,73 @@
 
 return [
 
+    /*
+    |--------------------------------------------------------------------------
+    | Placeholder Background Color
+    |--------------------------------------------------------------------------
+    |
+    | The color which should be used to fill the image space on a page.
+    | Examples: 'gray', 'transparent', 'rgba(0, 0, 0, 0.25)'
+    |
+    */
     'background_color' => '#e3e3e3',
 
-    'lqip' => true,
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Low Quality Placeholder
+    |--------------------------------------------------------------------------
+    |
+    | Tells if LQIP should be used if it is available.
+    |
+    */
+    'lqip' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enable WebP Support
+    |--------------------------------------------------------------------------
+    |
+    | Add sources support for WepP images.
+    |
+    */
     'webp_support' => true,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Image Presets
+    |--------------------------------------------------------------------------
+    |
+    | Define image presets here.
+    |
+    */
     'presets' => [
-        'preview_image' => [
-            'crop' => 'default',
-            'sizes' => '100vw',
-        ],
+        // Preset example
+        // 'preview_image' => [
+        //     'crop' => 'default',
+        //     'sizes' => '25vw',
+        // ],
 
-        'art_directed' => [
-            'crop' => 'desktop',
-            'width' => 700,
-            'sizes' => '(max-width: 767px) 100vw, 50vw',
-            'sources' => [
-                [
-                    'crop' => 'mobile',
-                    'media_query' => '(max-width: 767px)',
-                ],
-                [
-                    'crop' => 'desktop',
-                    'media_query' => '(min-width: 768px)',
-                ]
-            ],
-        ],
+        // Preset example with multiple crops
+        // 'art_directed' => [
+        //     'crop' => 'desktop',
+        //     'width' => 700,
+        //     'sizes' => '(max-width: 767px) 100vw, (min-width: 767px) and (max-width: 1023px) 50vw, 33vw',
+        //     'sources' => [
+        //         [
+        //             'crop' => 'mobile',
+        //             'media_query' => '(max-width: 767px)',
+        //         ],
+        //         [
+        //             'crop' => 'tablet',
+        //             'media_query' => '(min-width: 767px) and (max-width: 1023px)',
+        //         ],
+        //         [
+        //             'crop' => 'desktop',
+        //             'media_query' => '(min-width: 1024px)',
+        //         ]
+        //         // ...
+        //     ],
+        // ],
     ],
 
 ];
