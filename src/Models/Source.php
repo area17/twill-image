@@ -9,7 +9,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
 use A17\Twill\Image\Models\Interfaces\ImageSource;
 
-class Source implements ImageSource, Arrayable
+class Source implements Arrayable
 {
     public const AUTO_WIDTHS = [
         250,
@@ -48,6 +48,10 @@ class Source implements ImageSource, Arrayable
 
     protected $imageArray;
 
+    protected $sources;
+
+    protected $sizes;
+
     /**
      * Build a Source to be used with A17\Twill\Image\Models\Image
      *
@@ -71,6 +75,22 @@ class Source implements ImageSource, Arrayable
         $this->setPreset($preset);
         $this->setCrop($args['crop'] ?? null);
         $this->setImageArray();
+        $this->setSources($args['sources'] ?? null);
+        $this->setSizes($args['sizes'] ?? null);
+    }
+
+    protected function setSources($sources)
+    {
+        $this->sources = $sources ?? $this->preset['sources'] ?? [
+            [
+                'crop' => $this->crop,
+            ]
+        ];
+    }
+
+    protected function setSizes($sizes)
+    {
+        $this->sizes = $sizes ?? $this->preset['sizes'] ?? null;
     }
 
     /**
@@ -113,33 +133,6 @@ class Source implements ImageSource, Arrayable
         return $this->model->imageCaption($this->role, $this->media);
     }
 
-    public function srcSets()
-    {
-        $srcSets = [];
-
-        foreach ($this->sources() ?? [] as $sources) {
-            $srcset = [];
-            foreach ($sources['sources'] as $source) {
-                if (isset($source['src']) && isset($source['width'])) {
-                    $srcset[] = sprintf(
-                        '%s %dw',
-                        $source['src'],
-                        $source['width'],
-                    );
-                }
-            }
-            $srcSets[] = [
-                'srcset' => join(',', $srcset),
-                'type' => $sources['type'],
-                'mediaQuery' => $sources['mediaQuery'],
-                'crop' => $sources['crop'],
-                'ratio' => $this->ratio($sources['crop']),
-            ];
-        }
-
-        return $srcSets;
-    }
-
     public function defaultSrc()
     {
         $defaultWidth = $this->defaultWidth();
@@ -154,16 +147,12 @@ class Source implements ImageSource, Arrayable
         );
     }
 
-    public function sizesAttr()
-    {
-        return $this->preset['sizes'] ?? null;
-    }
 
     public function lqip()
     {
         $sources = [];
 
-        foreach ($this->defaultSources() as $source) {
+        foreach ($this->sources as $source) {
             $crop = $source['crop'] ?? $this->crop;
 
             $sources[] = [
@@ -195,13 +184,42 @@ class Source implements ImageSource, Arrayable
         ];
     }
 
+    public function srcSets()
+    {
+        $srcSets = [];
+
+        foreach ($this->sources() ?? [] as $sources) {
+            $srcset = [];
+
+            foreach ($sources['sources'] as $source) {
+                if (isset($source['src']) && isset($source['width'])) {
+                    $srcset[] = sprintf(
+                        '%s %dw',
+                        $source['src'],
+                        $source['width'],
+                    );
+                }
+            }
+
+            $srcSets[] = [
+                'srcset' => join(',', $srcset),
+                'type' => $sources['type'],
+                'mediaQuery' => $sources['mediaQuery'],
+                'crop' => $sources['crop'],
+                'ratio' => $this->ratio($sources['crop']),
+            ];
+        }
+
+        return $srcSets;
+    }
+
     protected function sources()
     {
         $sources = [];
 
         // webp
         if (config('twill-image.webp_support')) {
-            foreach ($this->defaultSources() as $source) {
+            foreach ($this->sources as $source) {
                 $sources[] = [
                     'mediaQuery' => $source['media_query'] ?? null,
                     'type' => self::TYPE_WEBP,
@@ -212,7 +230,7 @@ class Source implements ImageSource, Arrayable
         }
 
         // jpeg
-        foreach ($this->defaultSources() as $source) {
+        foreach ($this->sources as $source) {
             $sources[] = [
                 'mediaQuery' => $source['media_query'] ?? null,
                 'type' => self::TYPE_JPEG,
@@ -222,31 +240,6 @@ class Source implements ImageSource, Arrayable
         }
 
         return $sources;
-    }
-
-    protected function defaultSources()
-    {
-        return $this->preset['sources'] ?? [
-            [
-                'crop' => $this->crop,
-            ],
-        ];
-    }
-
-    protected function defaultWidth()
-    {
-        return $this->preset['width'] ?? self::DEFAULT_WIDTH;
-    }
-
-    protected function defaultWidths()
-    {
-        $defaultWidth = $this->defaultWidth();
-
-        return array_filter(self::AUTO_WIDTHS, function ($width) use (
-            $defaultWidth
-        ) {
-            return $width <= $defaultWidth * self::AUTO_WIDTHS_RATIO;
-        });
     }
 
     protected function imageSources($mediaQueryConfig, $sourceParams = [])
@@ -271,12 +264,30 @@ class Source implements ImageSource, Arrayable
         return $sourcesList;
     }
 
+    protected function defaultWidth()
+    {
+        return $this->preset['width'] ?? self::DEFAULT_WIDTH;
+    }
+
+    protected function defaultWidths()
+    {
+        $defaultWidth = $this->defaultWidth();
+
+        return array_filter(self::AUTO_WIDTHS, function ($width) use (
+            $defaultWidth
+        ) {
+            return $width <= $defaultWidth * self::AUTO_WIDTHS_RATIO;
+        });
+    }
+
+
+
     /**
      * Build crops list
      *
      * @return array
      */
-    protected function crops(): array
+    protected function getAllCrops(): array
     {
         $role = $this->role;
 
@@ -294,6 +305,12 @@ class Source implements ImageSource, Arrayable
         return $crops;
     }
 
+    /**
+     * Set model crop
+     *
+     * @param null|string $crop
+     * @return void
+     */
     protected function setCrop($crop)
     {
         if (isset($crop)) {
@@ -306,7 +323,7 @@ class Source implements ImageSource, Arrayable
             return;
         }
 
-        $crops = $this->crops();
+        $crops = $this->getAllCrops();
 
         if ($index = array_search('default', $crops)) {
             return $crops[$index];
@@ -322,6 +339,12 @@ class Source implements ImageSource, Arrayable
         $this->crop = $crops[0];
     }
 
+    /**
+     * Set model
+     *
+     * @param object $model
+     * @return void
+     */
     protected function setModel($model)
     {
         if (!classHasTrait($model, HasMedias::class)) {
@@ -384,7 +407,7 @@ class Source implements ImageSource, Arrayable
             'src' => $this->defaultSrc(),
             'width' => $this->width(),
             'height' => $this->height(),
-            'sizes' => $this->sizesAttr(),
+            'sizes' => $this->sizes,
             'alt' => $this->alt(),
         ];
     }
