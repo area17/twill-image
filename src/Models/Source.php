@@ -294,7 +294,8 @@ class Source implements ImageSource, Arrayable
         $preset = $preset ?? $this->role;
 
         if (! config()->has("twill-image.presets.$preset")) {
-            throw new ImageException("The preset key '{$preset}' does not exist in configuration", 1);
+            $this->preset = null;
+            return;
         }
 
         $this->preset = config("twill-image.presets.$preset");
