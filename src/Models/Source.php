@@ -52,6 +52,8 @@ class Source implements Arrayable
 
     protected $sizes;
 
+    protected $width;
+
     /**
      * Build a Source to be used with A17\Twill\Image\Models\Image
      *
@@ -77,6 +79,7 @@ class Source implements Arrayable
         $this->setImageArray();
         $this->setSources($args['sources'] ?? null);
         $this->setSizes($args['sizes'] ?? null);
+        $this->setWidth($args['width'] ?? null);
     }
 
     protected function setSources($sources)
@@ -93,24 +96,9 @@ class Source implements Arrayable
         $this->sizes = $sizes ?? $this->preset['sizes'] ?? null;
     }
 
-    /**
-     * Provide the width of the default crop
-     *
-     * @return int
-     */
-    public function width(): int
+    protected function setWidth($width)
     {
-        return $this->imageArray['width'];
-    }
-
-    /**
-     * Provide the height of the default crop
-     *
-     * @return int
-     */
-    public function height(): int
-    {
-        return $this->imageArray['height'];
+        $this->width = $width ?? $this->preset['width'] ?? self::DEFAULT_WIDTH;
     }
 
     /**
@@ -135,7 +123,7 @@ class Source implements Arrayable
 
     public function defaultSrc()
     {
-        $defaultWidth = $this->defaultWidth();
+        $defaultWidth = $this->width;
 
         return $this->model->image(
             $this->role,
@@ -264,14 +252,9 @@ class Source implements Arrayable
         return $sourcesList;
     }
 
-    protected function defaultWidth()
-    {
-        return $this->preset['width'] ?? self::DEFAULT_WIDTH;
-    }
-
     protected function defaultWidths()
     {
-        $defaultWidth = $this->defaultWidth();
+        $defaultWidth = $this->width;
 
         return array_filter(self::AUTO_WIDTHS, function ($width) use (
             $defaultWidth
@@ -405,8 +388,8 @@ class Source implements Arrayable
             'lqip' => $this->lqip(),
             'sources' => $this->srcSets(),
             'src' => $this->defaultSrc(),
-            'width' => $this->width(),
-            'height' => $this->height(),
+            'width' => $this->imageArray['width'],
+            'height' => $this->imageArray['height'],
             'sizes' => $this->sizes,
             'alt' => $this->alt(),
         ];
