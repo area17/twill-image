@@ -1,10 +1,10 @@
 <?php
 
-namespace A17\Twill\Image;
+namespace A17\Twill\Image\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class ImageFacade extends Facade
+class TwillImage extends Facade
 {
     protected static function getFacadeAccessor()
     {
