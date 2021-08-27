@@ -8,6 +8,24 @@ use A17\Twill\Image\Models\Image;
 
 class ImageController
 {
+    public function sources(
+        $object,
+        $role,
+        $args = [],
+        $preset = null
+    ): array {
+        // TODO
+        $medias = $object->imageObjects($role, $args['crop'] ?? 'default');
+
+        return $medias->map(
+            function ($media) use ($object, $role, $args, $preset) {
+                $source = new Source($object, $role, $args, $preset, $media);
+
+                return $source->toArray();
+            }
+        )->toArray();
+    }
+
     public function source(
         $object,
         $role,
