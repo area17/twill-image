@@ -29,6 +29,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
+    "path-parse": ">=1.0.7",
     "prettier": "^2.3.2",
     "rollup": "^2.47.0",
     "rollup-plugin-cleaner": "^1.0.0",
