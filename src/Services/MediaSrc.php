@@ -81,7 +81,6 @@ class MediaSrc implements Arrayable
 
 
         if ($index = array_search('default', $crops)) {
-            dd(array_search('default', $crops));
             $this->crop = $crops[$index];
             return;
         }
