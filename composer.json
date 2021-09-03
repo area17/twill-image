@@ -22,7 +22,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "A17\\Twill\\Image\\ImageServiceProvider"
+        "A17\\Twill\\Image\\TwillImageServiceProvider"
       ],
       "aliases": {
         "TwillImage": "A17\\Twill\\Image\\Facades\\TwillImage"

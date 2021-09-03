@@ -4,7 +4,7 @@ namespace A17\Twill\Image;
 
 use Illuminate\Support\ServiceProvider;
 
-class ImageServiceProvider extends ServiceProvider
+class TwillImageServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,7 +14,7 @@ class ImageServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('twill.image', function ($app) {
-            return $app->make('A17\Twill\Image\ImageController');
+            return $app->make('A17\Twill\Image\TwillImage');
         });
     }
 
