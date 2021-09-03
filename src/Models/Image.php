@@ -2,304 +2,179 @@
 
 namespace A17\Twill\Image\Models;
 
+use A17\Twill\Models\Media;
+use A17\Twill\Models\Model;
+use A17\Twill\Image\Services\MediaSrc;
 use Illuminate\Contracts\Support\Arrayable;
+use A17\Twill\Image\Exceptions\ImageException;
+use A17\Twill\Image\Facades\TwillImage;
 
 class Image implements Arrayable
 {
-    /**
-     * @var array $source Array output of Source model
-     */
-    protected $source;
+    protected $object;
 
-    /**
-     * @var null|string $backgroundColor Image background color
-     */
-    protected $backgroundColor;
+    protected $role;
 
-    /**
-     * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
-     */
-    protected $layout;
+    protected $media;
 
-    /**
-     * @var string $loading <img> loading attribute "lazy" (default) or "eager"
-     */
-    protected $loading;
+    protected $crop;
 
-    /**
-     * @var bool $lqip Display a low-quality placeholder
-     */
-    protected $lqip;
+    protected $width;
 
-    /**
-     * @var array $imgStyle Inline CSS styles that are applied to both placeholder and main image
-     */
-    protected $imgStyle;
+    protected $height;
 
-    /**
-     * @var string $sizes Sizes attributes
-     */
+    protected $sources = [];
+
+    protected $layout = "fullWidth";
+
     protected $sizes;
 
     /**
-     * @var int $height Height of the image
+     * @param object|Model $object
+     * @param string $role
+     * @param null|Media $media
      */
-    protected $height;
-
-    /**
-     * @var int $width Width of the image
-     */
-    protected $width;
-
-    /**
-     * @var int $wrapperClass CSS class added to the wrapper element
-     */
-    protected $wrapperClass;
-
-    /**
-     * @var string $alt Description of the image
-     */
-    protected $alt;
-
-    /**
-     * @param array $source
-     * @param array $args
-     */
-    public function __construct(array $source, array $args = [])
+    public function __construct($object, $role, $media = null)
     {
-        if (is_array($source)) {
-            $this->source = $source;
-        }
+        $this->object = $object;
 
-        $this->setAttributes($args);
-    }
+        $this->role = $role;
 
-    /**
-     * Process arguments and apply default values.
-     *
-     * @param array $args
-     * @return void
-     */
-    protected function setAttributes($args)
-    {
-        $this->backgroundColor =
-            $args['backgroundColor'] ??
-            (config('twill-image.background_color') ?? 'transparent');
+        $this->media = $media;
 
-        $this->layout = $args['layout'] ?? 'fullWidth';
-
-        $this->loading = $args['loading'] ?? 'lazy';
-
-        $this->lqip = $args['lqip'] ?? (config('twill-image.lqip') ?? true);
-
-        $this->sizes =
-            $args['sizes'] ??
-            ($this->source['sizes'] ?? $this->defaultSizesAttribute());
-
-        $this->alt = $args['alt'] ?? $this->source['alt'];
-
-        $this->width = $args['width'] ?? $this->source['width'];
-
-        $this->height =
-            $args['height'] ??
-            (isset($args['width'])
-                ? ($this->width / $this->source['width']) *
-                    $this->source['height']
-                : $this->source['height']);
-
-        $this->wrapperClass = $args['class'] ?? null;
-
-        $this->imgStyle = array_merge(
-            [
-                'bottom' => 0,
-                'height' => '100%',
-                'left' => 0,
-                'margin' => 0,
-                'max-width' => 'none',
-                'padding' => 0,
-                'position' => 'absolute',
-                'right' => 0,
-                'top' => 0,
-                'width' => '100%',
-                'object-fit' => 'cover',
-                'object-position' => 'center center',
-            ],
-            $args['imgStyle'] ?? [],
+        $this->mediaSrcService = new MediaSrc(
+            $this->object,
+            $this->role,
+            $this->media
         );
     }
 
-    protected function defaultSizesAttribute()
+    /**
+     * @param array|string $preset
+     * @return $this
+     */
+    public function preset($preset)
     {
-        switch ($this->layout) {
-            // If screen is wider than the max size, image width is the max size,
-            // otherwise it's the width of the screen
-            case 'constrained':
-                return '(min-width:' .
-                    $this->width .
-                    'px) ' .
-                    $this->width .
-                    'px, 100vw';
-
-            // Image is always the same width, whatever the size of the screen
-            case 'fixed':
-                return $this->width . 'px';
-
-            // Image is always the width of the screen
-            case 'fullWidth':
-                return '100vw';
-
-            default:
-                return null;
+        if (is_array($preset)) {
+            $this->applyPreset($preset);
+        } elseif (config()->has("twill-image.presets.$preset")) {
+            $this->applyPreset(config("twill-image.presets.$preset"));
+        } else {
+            throw new ImageException("Invalid preset value. Preset must be an array or a string correspondig to an image preset key in the configuration file.");
         }
+
+        return $this;
     }
 
-    protected function getViewWrapperProps()
+    public function crop($crop)
     {
-        $layout = $this->layout;
+        $this->crop = $crop;
 
-        $style = [
-            'position' => 'relative',
-            'overflow' => 'hidden',
-        ];
-
-        $classes = 'twill-image-wrapper';
-
-        if ($layout === 'fixed') {
-            $style['width'] = $this->width . 'px';
-            $style['height'] = $this->height . 'px';
-        } elseif ($layout === 'constrained') {
-            $style['display'] = 'inline-block';
-            $classes = 'twill-image-wrapper twill-image-wrapper-constrained';
-        }
-
-        if ($this->backgroundColor) {
-            $style['background-color'] = $this->backgroundColor;
-        }
-
-        if (isset($this->wrapperClass)) {
-            $classes = join(' ', [$classes, $this->wrapperClass]);
-        }
-
-        return [
-            'classes' => $classes,
-            'style' => $this->implodeStyles($style),
-        ];
+        return $this;
     }
 
-    protected function getViewPlaceholderProps()
+    public function width($width)
     {
-        $layout = $this->layout;
+        $this->width = $width;
 
-        $style = array_merge($this->imgStyle, [
-            'height' => '100%',
-            'left' => 0,
-            'position' => 'absolute',
-            'top' => 0,
-            'width' => '100%',
-        ]);
+        return $this;
+    }
 
-        if ($this->backgroundColor) {
-            $style['background-color'] = $this->backgroundColor;
+    public function height($height)
+    {
+        $this->height = $height;
 
-            if ($layout === 'fixed') {
-                $style['width'] = $this->width . 'px';
-                $style['height'] = $this->height . 'px';
-                $style['background-color'] = $this->backgroundColor;
-                $style['position'] = 'relative';
-            } elseif ($layout === 'constrained') {
-                $style['position'] = 'absolute';
-                $style['top'] = 0;
-                $style['left'] = 0;
-                $style['bottom'] = 0;
-                $style['right'] = 0;
-            } elseif ($layout === 'fullWidth') {
-                $style['position'] = 'absolute';
-                $style['top'] = 0;
-                $style['left'] = 0;
-                $style['bottom'] = 0;
-                $style['right'] = 0;
+        return $this;
+    }
+
+    public function sizes($sizes)
+    {
+        $this->sizes = $sizes;
+
+        return $this;
+    }
+
+    public function layout($layout)
+    {
+        $this->layout = $layout;
+
+        return $this;
+    }
+
+    public function sources($sources)
+    {
+        $this->sources = [];
+
+        foreach ($sources as $source) {
+            if (!isset($source['media_query']) && isset($source['mediaQuery'])) {
+                throw new ImageException("Media query is mandatory in sources.");
             }
+
+            if (!isset($source['crop'])) {
+                throw new ImageException("Crop name is mandatory in sources.");
+            }
+
+            $this->sources[] = [
+                "mediaQuery" => $source['media_query'] ?? $source['mediaQuery'],
+                "crop" => $source['crop'],
+                "image" => $this->mediaSrcService->generate(
+                    $source['crop'],
+                    $source['width'] ?? null,
+                    $source['height'] ?? null,
+                )->toArray()
+            ];
         }
-
-        $style['opacity'] = 1;
-        $style['transition'] = 'opacity 500ms linear';
-
-        return [
-            'style' => $this->implodeStyles($style),
-        ];
     }
 
-    protected function getViewMainProps($isLoading)
+    public function render()
     {
-        $style = array_merge(
-            [
-                'transition' => 'opacity 500ms ease 0s',
-                'transform' => 'translateZ(0px)',
-                'transition' => 'opacity 250ms linear',
-                'will-change' => 'opacity',
-            ],
-            $this->imgStyle,
-        );
-
-        if ($this->backgroundColor) {
-            $style['background-color'] = $this->backgroundColor;
-        }
-
-        $style['opacity'] = $this->loading === 'lazy' ? 0 : 1;
-
-        return [
-            'loading' => $this->loading,
-            'shouldLoad' => $isLoading,
-            'style' => $this->implodeStyles($style),
-        ];
-    }
-
-    protected function implodeStyles($style)
-    {
-        return implode(
-            ';',
-            array_map(
-                function ($property, $value) {
-                    return "$property:$value";
-                },
-                array_keys($style),
-                $style,
-            ),
-        );
+        return TwillImage::render($this->toArray());
     }
 
     public function toArray()
     {
-        $wrapper = $this->getViewWrapperProps();
-
-        $placeholder = array_merge(
-            $this->lqip ? $this->source['lqip'] : [],
-            $this->getViewPlaceholderProps(),
-        );
-
-        $main = array_merge(
-            [
-                'src' => $this->source['src'],
-                'sources' => $this->source['sources'],
-                'alt' => $this->alt,
-            ],
-            $this->getViewMainProps($this->loading === 'eager'),
-        );
-
-        return [
-            'layout' => $this->layout,
-            'wrapper' => $wrapper,
-            'placeholder' => $placeholder,
-            'main' => $main,
-            'alt' => $this->alt,
-            'width' => $this->width,
-            'height' => $this->height,
-            'sizes' => $this->sizes,
+        $arr = [
+            "layout" => $this->layout,
+            "sizes" => $this->sizes,
+            "image" => $this->mediaSrcService->generate(
+                $this->crop,
+                $this->width,
+                $this->height
+            )->toArray(),
+            "sources" => $this->sources,
         ];
+
+        return array_filter($arr);
     }
 
-    public function view()
+    protected function applyPreset($preset)
     {
-        return view('image::wrapper', $this->toArray());
+        if (!isset($preset)) {
+            return;
+        }
+
+        if (isset($preset['crop'])) {
+            $this->crop($preset['crop']);
+        }
+
+        if (isset($preset['width'])) {
+            $this->width($preset['width']);
+        }
+
+        if (isset($preset['height'])) {
+            $this->height($preset['height']);
+        }
+
+        if (isset($preset['sizes'])) {
+            $this->sizes($preset['sizes']);
+        }
+
+        if (isset($preset['layout'])) {
+            $this->layout($preset['layout']);
+        }
+
+        if (isset($preset['sources'])) {
+            $this->sources($preset['sources']);
+        }
     }
 }
