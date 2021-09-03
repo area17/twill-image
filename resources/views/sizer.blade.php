@@ -1,7 +1,7 @@
 @if($layout === "fullWidth")
     <div
         aria-hidden="true"
-        style="padding-top:{{number_format((float) ($height / $width) * 100, 2, '.', '')}}%;"
+        style="padding-top:{{number_format((float) ($aspectRatio) * 100, 2, '.', '')}}%;"
     ></div>
 @endif
 @if($layout === "constrained")
