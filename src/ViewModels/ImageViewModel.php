@@ -3,15 +3,46 @@
 namespace A17\Twill\Image\ViewModels;
 
 use Spatie\ViewModels\ViewModel;
+use A17\Twill\Image\Models\Image;
 use A17\Twill\Image\Services\StyleService;
 use Illuminate\Contracts\Support\Arrayable;
 
 class ImageViewModel extends ViewModel implements Arrayable
 {
     /**
+     * @var string LAYOUT_FULL_WIDTH Set layout to take full width of container element
+     */
+    const LAYOUT_FULL_WIDTH = 'fullWidth';
+
+    /**
+     * @var string LAYOUT_CONSTRAINED Set layout to take full width of container element up to specified max-width or image original width
+     */
+    const LAYOUT_CONSTRAINED = 'constrained';
+
+    /**
+     * @var string LAYOUT_FIXED Set layout to take a fixed exact width and height
+     */
+    const LAYOUT_FIXED = 'fixed';
+
+    /**
+     * @var string $alt Description of the image
+     */
+    protected $alt;
+
+    /**
      * @var null|string $backgroundColor Image background color
      */
     protected $backgroundColor;
+
+    /**
+     * @var array $data Image source
+     */
+    protected $data;
+
+    /**
+     * @var int $height Height of the image
+     */
+    protected $height;
 
     /**
      * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
@@ -29,14 +60,29 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $lqip;
 
     /**
+     * @var array $sources LQIP image sources attributes
+     */
+    protected $lqipSources;
+
+    /**
+     * @var string $lqipSrc Default LQIP image source url
+     */
+    protected $lqipSrc;
+
+    /**
      * @var string $sizes Sizes attributes
      */
     protected $sizes;
 
     /**
-     * @var int $height Height of the image
+     * @var array $sources Image sources attributes
      */
-    protected $height;
+    protected $sources;
+
+    /**
+     * @var string $src Default image source url
+     */
+    protected $src;
 
     /**
      * @var int $width Width of the image
@@ -44,28 +90,30 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $width;
 
     /**
+     * @var StyleService
+     */
+    protected $styleService;
+
+    /**
      * @var int $wrapperClass CSS class added to the wrapper element
      */
     protected $wrapperClass;
 
     /**
-     * @var string $alt Description of the image
+     * ImageViewModel format an Image instance attributes to be passed to the image wrapper view.
+     *
+     * @param Image|array $data Image source
+     * @param array $overrides Overrides frontend options
      */
-    protected $alt;
-
-    protected $sources = null;
-    protected $lqipSrc = null;
-    protected $lqipSources = null;
-
-    public function __construct(array $data, $args = [])
+    public function __construct($data, $overrides = [])
     {
         if ($data instanceof Arrayable) {
             $this->data = $data->toArray();
         } else {
-        $this->data = $data;
+            $this->data = $data;
         }
 
-        $this->setAttributes($args);
+        $this->setAttributes($overrides);
         $this->setImageAttributes();
         $this->setSourcesAttributes();
         $this->setLqipAttributes();
@@ -82,40 +130,45 @@ class ImageViewModel extends ViewModel implements Arrayable
     /**
      * Process arguments and apply default values.
      *
-     * @param array $args
+     * @param array $overrides
      * @return void
      */
-    protected function setAttributes($args)
+    protected function setAttributes($overrides)
     {
         $this->backgroundColor
-            = $args['backgroundColor']
+            = $overrides['backgroundColor']
             ?? config('twill-image.background_color')
             ?? 'transparent';
 
         $this->layout
-            = $args['layout']
+            = $overrides['layout']
             ?? $this->data['layout']
-            ?? 'fullWidth';
+            ?? self::LAYOUT_FULL_WIDTH;
 
-        $this->loading = $args['loading'] ?? 'lazy';
+        $this->loading = $overrides['loading'] ?? 'lazy';
 
         $this->lqip
-            = $args['lqip']
+            = $overrides['lqip']
             ?? config('twill-image.lqip')
             ?? true;
 
         $this->sizes
-            = $args['sizes']
+            = $overrides['sizes']
             ?? $this->data['sizes']
             ?? $this->defaultSizesAttribute();
 
-        $this->wrapperClass = $args['class'] ?? null;
+        $this->wrapperClass = $overrides['class'] ?? null;
 
-        $this->width = $args['width'] ?? null;
+        $this->width = $overrides['width'] ?? null;
 
-        $this->height = $args['height'] ?? null;
+        $this->height = $overrides['height'] ?? null;
     }
 
+    /**
+     * Set main image attributes
+     *
+     * @return void
+     */
     protected function setImageAttributes()
     {
         $image = $this->data['image'];
@@ -126,6 +179,11 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->height = $this->height ?? $image['height'];
     }
 
+    /**
+     * Construct the sources attributes from the image main and additional sources
+     *
+     * @return void
+     */
     protected function setSourcesAttributes()
     {
         if (!isset($this->data['sources'])) {
@@ -209,26 +267,24 @@ class ImageViewModel extends ViewModel implements Arrayable
         return null;
     }
 
+    /**
+     * Create a default sizes attributes when none is passed to the view
+     *
+     * @return void|string
+     */
     protected function defaultSizesAttribute()
     {
         switch ($this->layout) {
-            // If screen is wider than the max size, image width is the max size,
-            // otherwise it's the width of the screen
-            case 'constrained':
+            case self::LAYOUT_CONSTRAINED:
                 return '(min-width:' .
                     $this->width .
                     'px) ' .
                     $this->width .
                     'px, 100vw';
-
-            // Image is always the same width, whatever the size of the screen
-            case 'fixed':
+            case self::LAYOUT_FIXED:
                 return $this->width . 'px';
-
-            // Image is always the width of the screen
-            case 'fullWidth':
+            case self::LAYOUT_FULL_WIDTH:
                 return '100vw';
-
             default:
                 return null;
         }
@@ -239,7 +295,7 @@ class ImageViewModel extends ViewModel implements Arrayable
         $layout = $this->layout;
         $classes = 'twill-image-wrapper';
 
-        if ($layout === 'constrained') {
+        if ($layout === self::LAYOUT_CONSTRAINED) {
             $classes = 'twill-image-wrapper twill-image-wrapper-constrained';
         }
 
@@ -250,6 +306,11 @@ class ImageViewModel extends ViewModel implements Arrayable
         return $classes;
     }
 
+    /**
+     * Set LQIP src and sources attributes
+     *
+     * @return void
+     */
     protected function setLqipAttributes()
     {
         if (!$this->lqip) {
