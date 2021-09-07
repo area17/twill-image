@@ -1,9 +1,9 @@
 <div
-    class="{{$wrapper['classes']}}"
-    style="{{$wrapper['style']}}"
+    class="{{$wrapperClasses}}"
+    style="{{$wrapperStyle}}"
     data-twill-image-wrapper
 >
     @include('image::sizer')
-    @include('image::placeholder', $placeholder)
-    @include('image::main-image', $main)
+    @include('image::placeholder')
+    @include('image::main-image')
 </div>

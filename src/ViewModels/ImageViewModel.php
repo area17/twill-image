@@ -344,29 +344,22 @@ class ImageViewModel extends ViewModel implements Arrayable
     public function toArray(): array
     {
         return array_filter([
-            'layout' => $this->layout,
-            'wrapper' => [
-                'classes' => $this->wrapperClasses(),
-                'style' => $this->styleService->wrapper(),
-            ],
-            'placeholder' => [
-                'src' => $this->lqipSrc,
-                'sources' => $this->lqipSources,
-                'style' => $this->styleService->placeholder(),
-            ],
-            'main' => [
-                'loading' => $this->loading,
-                'shouldLoad' => $this->loading === 'eager',
-                'style' => $this->styleService->main($this->loading),
-                'src' => $this->src,
-                'sources' => $this->sources,
-                'alt' => $this->alt,
-            ],
             'alt' => $this->alt,
-            'width' => $this->width,
-            'height' => $this->height,
-            'sizes' => $this->sizes,
             'aspectRatio' => $this->data['image']['aspectRatio'],
+            'height' => $this->height,
+            'layout' => $this->layout,
+            'loading' => $this->loading,
+            'mainStyle' => $this->styleService->main($this->loading),
+            'mainSrc' => $this->src,
+            'mainSources' => $this->sources,
+            'placeholderSrc' => $this->lqipSrc,
+            'placeholderSources' => $this->lqipSources,
+            'placeholderStyle' => $this->styleService->placeholder(),
+            'shouldLoad' => $this->loading === 'eager',
+            'sizes' => $this->sizes,
+            'width' => $this->width,
+            'wrapperClasses' => $this->wrapperClasses(),
+            'wrapperStyle' => $this->styleService->wrapper(),
         ]);
     }
 }

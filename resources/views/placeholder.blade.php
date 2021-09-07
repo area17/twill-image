@@ -1,13 +1,14 @@
 @php
 $attributes = 'aria-hidden="true" data-placeholder-image';
 @endphp
-@if(isset($src) && !!$src)
+@if(isset($placeholderSrc) && !!$placeholderSrc)
   @include('image::picture', [
-      'fallback' => $src,
+      'fallback' => $placeholderSrc,
       'alt' => "",
       'attributes' => $attributes,
       'sizes' => $sizes,
-      'style' => $style,
+      'sources' => $placeholderSources ?? [],
+      'style' => $placeholderStyle,
   ])
 @else
     <div style="{{$style}}" {!! $attributes !!}></div>
