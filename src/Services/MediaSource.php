@@ -7,7 +7,7 @@ use A17\Twill\Models\Model;
 use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
 
-class MediaSrc implements Arrayable
+class MediaSource implements Arrayable
 {
     public const AUTO_WIDTHS_RATIO = 2.5;
 

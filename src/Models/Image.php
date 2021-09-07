@@ -4,7 +4,7 @@ namespace A17\Twill\Image\Models;
 
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Model;
-use A17\Twill\Image\Services\MediaSrc;
+use A17\Twill\Image\Services\MediaSource;
 use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
 use A17\Twill\Image\Facades\TwillImage;
@@ -42,7 +42,7 @@ class Image implements Arrayable
 
         $this->media = $media;
 
-        $this->mediaSrcService = new MediaSrc(
+        $this->mediaSourceService = new MediaSource(
             $this->object,
             $this->role,
             $this->media
@@ -116,7 +116,7 @@ class Image implements Arrayable
 
             $this->sources[] = [
                 "mediaQuery" => $source['media_query'] ?? $source['mediaQuery'],
-                "image" => $this->mediaSrcService->generate(
+                "image" => $this->mediaSourceService->generate(
                     $source['crop'],
                     $source['width'] ?? null,
                     $source['height'] ?? null,
@@ -135,7 +135,7 @@ class Image implements Arrayable
         $arr = [
             "layout" => $this->layout,
             "sizes" => $this->sizes,
-            "image" => $this->mediaSrcService->generate(
+            "image" => $this->mediaSourceService->generate(
                 $this->crop,
                 $this->width,
                 $this->height
