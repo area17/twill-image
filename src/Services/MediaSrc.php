@@ -232,6 +232,11 @@ class MediaSrc implements Arrayable
         return $this->model->imageAltText($this->role, $this->media);
     }
 
+    public function caption(): string
+    {
+        return $this->model->imageCaption($this->role, $this->media);
+    }
+
     public function extension(): string
     {
         $media = $this->media;
@@ -248,6 +253,7 @@ class MediaSrc implements Arrayable
         return [
             "alt" => $this->alt(),
             "aspectRatio" => $this->aspectRatio(),
+            "caption" => $this->caption(),
             "crop" => $this->crop,
             "extension" => $this->extension(),
             "height" => $this->height,
