@@ -186,31 +186,28 @@ class ImageViewModel extends ViewModel implements Arrayable
      */
     protected function setSourcesAttributes()
     {
-        if (!isset($this->data['sources'])) {
-            $this->sources = null;
-            return;
-        }
-
         $sources = [];
 
-        foreach ($this->data['sources'] as $source) {
-            $mediaQuery = $source['mediaQuery'];
-            $image = $source['image'];
+        if (isset($this->data['sources'])) {
+            foreach ($this->data['sources'] as $source) {
+                $mediaQuery = $source['mediaQuery'];
+                $image = $source['image'];
 
-            $sources[] = $this->buildSourceObject(
-                $image['srcSet'],
-                $image['aspectRatio'],
-                $this->mimeType($image['extension']),
-                $mediaQuery
-            );
-
-            if (config('twill-image.webp_support')) {
                 $sources[] = $this->buildSourceObject(
-                    $image['srcSetWebp'],
+                    $image['srcSet'],
                     $image['aspectRatio'],
-                    $this->mimeType("webp"),
+                    $this->mimeType($image['extension']),
                     $mediaQuery
                 );
+
+                if (config('twill-image.webp_support')) {
+                    $sources[] = $this->buildSourceObject(
+                        $image['srcSetWebp'],
+                        $image['aspectRatio'],
+                        $this->mimeType("webp"),
+                        $mediaQuery
+                    );
+                }
             }
         }
 
