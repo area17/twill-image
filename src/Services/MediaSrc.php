@@ -284,6 +284,10 @@ class MediaSrc implements Arrayable
                 ->toArray(),
         );
 
+        if (empty($crops)) {
+            throw new ImageException("Can't find any crops for role '$this->role'");
+        }
+
         return $crops;
     }
 }
