@@ -234,9 +234,13 @@ class MediaSrc implements Arrayable
 
     public function extension(): string
     {
-        $path = parse_url($this->imageArray['src'], PHP_URL_PATH);
+        $media = $this->media;
 
-        return pathinfo($path, PATHINFO_EXTENSION);
+        if (!isset($media)) {
+            $media = $this->model->imageObject($this->role, $this->crop);
+        }
+
+        return pathinfo($media->filename, PATHINFO_EXTENSION);
     }
 
     public function toArray()
