@@ -59,7 +59,11 @@ class ImageViewModel extends ViewModel implements Arrayable
 
     public function __construct(array $data, $args = [])
     {
+        if ($data instanceof Arrayable) {
+            $this->data = $data->toArray();
+        } else {
         $this->data = $data;
+        }
 
         $this->setAttributes($args);
         $this->setImageAttributes();
