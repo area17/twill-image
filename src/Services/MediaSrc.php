@@ -243,15 +243,16 @@ class MediaSrc implements Arrayable
     {
         return [
             "alt" => $this->alt(),
-            "lqipBase64" => $this->lqipBase64(),
-            "extension" => $this->extension(),
             "aspectRatio" => $this->aspectRatio(),
+            "crop" => $this->crop,
+            "extension" => $this->extension(),
+            "height" => $this->height,
+            "lqipBase64" => $this->lqipBase64(),
             "src" => $this->src($this->width, $this->height),
-            "srcWebp" => $this->src($this->width, $this->height, self::FORMAT_WEBP),
             "srcSet" => $this->srcset(),
+            "srcWebp" => $this->src($this->width, $this->height, self::FORMAT_WEBP),
             "srcSetWebp" => $this->srcset(self::FORMAT_WEBP),
             "width" => $this->width,
-            "height" => $this->height,
         ];
     }
 
