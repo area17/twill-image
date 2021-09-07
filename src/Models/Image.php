@@ -11,22 +11,44 @@ use A17\Twill\Image\Facades\TwillImage;
 
 class Image implements Arrayable
 {
+    /**
+     * @var object|Model The model the media belongs to
+     */
     protected $object;
 
+    /**
+     * @var string The media role
+     */
     protected $role;
 
+    /**
+     * @var null|Media Media object
+     */
     protected $media;
 
+    /**
+     * @var string The media crop
+     */
     protected $crop;
 
+    /**
+     * @var int The media width
+     */
     protected $width;
 
+    /**
+     * @var int The media height
+     */
     protected $height;
 
+    /**
+     * @var array The media sources
+     */
     protected $sources = [];
 
-    protected $layout = "fullWidth";
-
+    /**
+     * @var string Sizes attributes
+     */
     protected $sizes;
 
     /**
@@ -50,6 +72,8 @@ class Image implements Arrayable
     }
 
     /**
+     * Pick a preset from the configuration file or pass an array with the image configuration
+     *
      * @param array|string $preset
      * @return $this
      */
@@ -66,6 +90,12 @@ class Image implements Arrayable
         return $this;
     }
 
+    /**
+     * Set the crop of the media to use
+     *
+     * @param string $crop
+     * @return $this
+     */
     public function crop($crop)
     {
         $this->crop = $crop;
@@ -73,6 +103,12 @@ class Image implements Arrayable
         return $this;
     }
 
+    /**
+     * Set a fixed with or max-width
+     *
+     * @param int $width
+     * @return $this
+     */
     public function width($width)
     {
         $this->width = $width;
@@ -80,6 +116,12 @@ class Image implements Arrayable
         return $this;
     }
 
+    /**
+     * Set a fixed height
+     *
+     * @param int $height
+     * @return $this
+     */
     public function height($height)
     {
         $this->height = $height;
@@ -87,6 +129,12 @@ class Image implements Arrayable
         return $this;
     }
 
+    /**
+     * Set the image sizes attributes
+     *
+     * @param string $sizes
+     * @return $this
+     */
     public function sizes($sizes)
     {
         $this->sizes = $sizes;
@@ -94,14 +142,13 @@ class Image implements Arrayable
         return $this;
     }
 
-    public function layout($layout)
-    {
-        $this->layout = $layout;
-
-        return $this;
-    }
-
-    public function sources($sources)
+    /**
+     * Set alternative sources for the media.
+     *
+     * @param array $sources
+     * @return $this
+     */
+    public function sources($sources = [])
     {
         $this->sources = [];
 
@@ -123,23 +170,29 @@ class Image implements Arrayable
                 )->toArray()
             ];
         }
+
+        return $this;
     }
 
-    public function render()
+    /**
+     * Call the Facade render method to output the view
+     *
+     * @return void
+     */
+    public function render($overrides = [])
     {
-        return TwillImage::render($this->toArray());
+        return TwillImage::render($this, $overrides);
     }
 
     public function toArray()
     {
         $arr = [
-            "layout" => $this->layout,
-            "sizes" => $this->sizes,
             "image" => $this->mediaSourceService->generate(
                 $this->crop,
                 $this->width,
                 $this->height
             )->toArray(),
+            "sizes" => $this->sizes,
             "sources" => $this->sources,
         ];
 
