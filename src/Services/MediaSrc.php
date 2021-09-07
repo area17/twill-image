@@ -145,9 +145,9 @@ class MediaSrc implements Arrayable
         $height
             = isset($this->height)
             ? $width * $this->height / $this->width
-            : null;
+            : $width * $this->imageArray['height'] / $this->imageArray['width'];
 
-        return $height;
+        return (int) $height;
     }
 
     public function src($width, $height, $format = null)
@@ -185,7 +185,7 @@ class MediaSrc implements Arrayable
                     "%s %sw",
                     $this->src(
                         $width,
-                        $this->calcHeightFromWidth($width),
+                        isset($this->height) ? $this->calcHeightFromWidth($width) : null,
                         $format
                     ),
                     $width
@@ -256,7 +256,7 @@ class MediaSrc implements Arrayable
             "caption" => $this->caption(),
             "crop" => $this->crop,
             "extension" => $this->extension(),
-            "height" => $this->height,
+            "height" => isset($this->height) ? $this->height : $this->calcHeightFromWidth($this->width),
             "lqipBase64" => $this->lqipBase64(),
             "src" => $this->src($this->width, $this->height),
             "srcSet" => $this->srcset(),
