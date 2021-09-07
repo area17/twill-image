@@ -4,7 +4,7 @@ namespace A17\Twill\Image\Services;
 
 use A17\Twill\Image\ViewModels\ImageViewModel;
 
-class StyleService
+class ImageStyles
 {
     protected $backgroundColor;
 

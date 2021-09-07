@@ -4,7 +4,7 @@ namespace A17\Twill\Image\ViewModels;
 
 use Spatie\ViewModels\ViewModel;
 use A17\Twill\Image\Models\Image;
-use A17\Twill\Image\Services\StyleService;
+use A17\Twill\Image\Services\ImageStyles;
 use Illuminate\Contracts\Support\Arrayable;
 
 class ImageViewModel extends ViewModel implements Arrayable
@@ -90,7 +90,7 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $width;
 
     /**
-     * @var StyleService
+     * @var ImageStyles
      */
     protected $styleService;
 
@@ -118,7 +118,7 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->setSourcesAttributes();
         $this->setLqipAttributes();
 
-        $this->styleService = new StyleService();
+        $this->styleService = new ImageStyles();
         $this->styleService->setup(
             $this->layout,
             $this->backgroundColor,
