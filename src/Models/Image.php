@@ -116,7 +116,6 @@ class Image implements Arrayable
 
             $this->sources[] = [
                 "mediaQuery" => $source['media_query'] ?? $source['mediaQuery'],
-                "crop" => $source['crop'],
                 "image" => $this->mediaSrcService->generate(
                     $source['crop'],
                     $source['width'] ?? null,
