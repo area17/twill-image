@@ -352,7 +352,7 @@ return [
 
 To use different crops with media queries, you need to list the other sources in a `Image::preset` or by passing them to the `Image::sources` method. The rendered image element with have only the ratio of the main crop and other ratio need to be added with CSS.
 
-Let's say this is your preset `sources` config:
+Let's say this is your preset `art_directed` in your config:
 
 ```php
     // ...
@@ -371,16 +371,7 @@ Let's say this is your preset `sources` config:
 
 ```blade
 @php
-$image = TwillImage::image($page, 'preview')->preset([
-        'crop' => 'desktop',
-        'sizes' => '(max-width: 767px) 100vw, 50vw',
-        'sources' => [
-            [
-                'crop' => 'mobile',
-                'media_query' => '(max-width: 767px)',
-            ]
-        ],
-    ]);
+$image = TwillImage::image($page, 'preview')->preset('art_directed');
 @endphp
 
 <div>
@@ -390,13 +381,13 @@ $image = TwillImage::image($page, 'preview')->preset([
 </div>
 ```
 
-Will output:
+It will output the image element with the class applied to the container.
 
 ```html
 <div class="twill-image-wrapper art-directed">...</div>
 ```
 
-You can define styles for each breakpoint.
+Define styles for each breakpoint.
 
 ```css
 .art-directed {
