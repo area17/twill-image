@@ -2,6 +2,7 @@
 
 namespace A17\Twill\Image\Services;
 
+use A17\Twill\Models\Block;
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Model;
 use Illuminate\Contracts\Support\Arrayable;
@@ -30,9 +31,9 @@ class MediaSource implements Arrayable
     protected $imageArray;
 
     /**
-     * Undocumented function
+     * Create an instance of the service
      *
-     * @param Model|object $object
+     * @param Model|Block|object $object
      * @param string $role
      * @param array $args
      * @param Media|object|null $media
