@@ -403,6 +403,8 @@ Define styles for each breakpoint.
 
 ## Multiple medias
 
+This is an example when you have multiple medias attached to a single `role`.
+
 ```blade
 @php
 $galleryImages = $item->imageObjects('gallery_image', 'desktop')->map(function ($media) use ($item) {
