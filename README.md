@@ -93,7 +93,7 @@ The `Image` model allows you to interact fluently with a media object.
 $image = new A17\Twill\Image\Models\Image($object, $role, $media);
 
 // or using the Facade
-$image = TwillImage::image($object, $role, $media);
+$image = TwillImage::make($object, $role, $media);
 ```
 
 |Argument|Type|Default|Description|
@@ -238,7 +238,7 @@ $image = new Image($page, 'preview');
 If you need to split the image generation from the render (exposing the `Image` model data through a REST API for example), use this method to get all attributes as an array.
 
 ```php
-    $previewImage = TwillImage::image($page, 'preview')->preset('art_directed')->toArray();
+    $previewImage = TwillImage::make($page, 'preview')->preset('art_directed')->toArray();
 ```
 
 And use the `render` method from the facade to render the view.
@@ -254,7 +254,7 @@ And use the `render` method from the facade to render the view.
 As seen in the previous section, the image element rendering can be separated from the image attributes generation. You can use the `Image` model to set up your image and pass the resulting object (or its `array` format to the `render` method to output the view).
 
 ```php
-$previewImage = TwillImage::image($page, 'preview')->toArray();
+$previewImage = TwillImage::make($page, 'preview')->toArray();
 ```
 
 ```blade
@@ -288,13 +288,13 @@ or
 #### Examples
 
 ```blade
-{!! TwillImage::image($item, 'preview_image', [
+{!! TwillImage::make($item, 'preview_image', [
     'sizes' => '(max-width: 767px) 50vw, 100vw',
 ])->render(); !!}
 
 @php
-$heroImage = TwillImage::image($item, 'preview_image');
-$listingImage = TwillImage::image($item, 'preview_image')->crop('listing');
+$heroImage = TwillImage::make($item, 'preview_image');
+$listingImage = TwillImage::make($item, 'preview_image')->crop('listing');
 @endphp
 
 {!! TwillImage::render($heroImage) !!}
@@ -371,7 +371,7 @@ Let's say this is your preset `art_directed` in your config:
 
 ```blade
 @php
-$image = TwillImage::image($page, 'preview')->preset('art_directed');
+$image = TwillImage::make($page, 'preview')->preset('art_directed');
 @endphp
 
 <div>
@@ -408,7 +408,7 @@ This is an example when you have multiple medias attached to a single `role`.
 ```blade
 @php
 $galleryImages = $item->imageObjects('gallery_image', 'desktop')->map(function ($media) use ($item) {
-    return TwillImage::image($item, 'gallery_image', $media);
+    return TwillImage::make($item, 'gallery_image', $media);
 })->toArray();
 @endphp
 
