@@ -1,13 +1,14 @@
 # Twill Image
 
-Twill Image is a package designed to work with [Twill](https://twill.io) to display images easily on your site. It leverages Twill's image processing capabilities and adds modern lazy-loading techniques. It supports responsive images and fixed width and height images.
+Twill Image is a package designed to work with [Twill](https://twill.io) to display responsive images easily on your site. It leverages Twill's image processing capabilities and adds modern lazy-loading techniques. It supports responsive images, art direction and fixed-width images.
 
-- `<picture>` with `<source>`
-- Twill's LQIP and background color image placeholder
+- `<picture>` with multiple `<source>` elements
+- Twill's low-quality placeholder (LQIP)
+- Background-color placeholder
 - Art direction (multiple crops)
 - WebP and JPEG support
-- Lazyload (fade-in) image with IntersectionOserver
-- Support native lazyloading with `loading='lazy'
+- Support native lazy loading with `loading='lazy`
+- Lazyload (fade in) image with IntersectionOserver
 
 ## Contents
 
@@ -15,16 +16,27 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
   - [Configuration file](#configuration-file)
   - [JavaScript module](#javascript-module)
 - [Using `twill-image`](#using-twill-image)
-  - [Available methods](#available-methods)
-  - [Examples](#examples)
+  - [The `Image` model](#the-image-,model)
+    - [Available methods](#available-methods)
+      - [`crop`](#crop)
+      - [`width`](#width)
+      - [`height`](#height)
+      - [`sources`](#sources)
+      - [`sizes`](#sizes)
+      - [`preset`](#preset)
+      - [`render`](#render)
+      - [`toArray`](#toArray)
+  - [The facade `render` method](#the-facade-render-method)
+    - [List of arguments](#list-of-arguments)
+    - [Examples](#examples)
 - [Configuration options and image presets](#configuration-options-and-image-presets)
   - [Options](#options)
-  - [Preset options](#presets-options)
-  - [Presets' `sources` array options](#presets-sources-array-options)
 - [Art directed images](#art-directed-images)
 - [Multiple medias](#multiple-medias)
 
 ## Installation
+
+Install the package to your existing Twill project with Composer.
 
 ```
 composer require area17/twill-image
@@ -32,7 +44,9 @@ composer require area17/twill-image
 
 ### Configuration file
 
-Publish `config/images.php`.
+The configuration file contains a few general settings and this is where you can define preset for your images.
+
+Publish `config/images.php` to your app's config folder.
 
 ```bash
 php artisan vendor:publish --provider="A17\Twill\Image\ImageServiceProvider" --tag=config
@@ -40,7 +54,23 @@ php artisan vendor:publish --provider="A17\Twill\Image\ImageServiceProvider" --t
 
 ### JavaScript module
 
-You can publish a script `twill-image.js` to your public folder and add a `<script>` tag to your project.
+You can import the JavaScript module and initialize the lazy loading class in your application.
+
+```js
+import { TwillImage } from '../../vendor/area17/twill-image'
+
+document.addEventListener('DOMContentLoaded', function () {
+  const lazyloading = new TwillImage()
+})
+```
+
+When adding or refreshing content of a page without a reload, you can trigger a recalculation of TwillImage's observers by calling the `reset()` method. This is an example:
+
+```js
+document.addEventListener('page:updated', () => lazyloading.reset());
+```
+
+If you prefer to use a pre-compiled version of the JavaScrip module, you can publish a script `twill-image.js` to your app's public folder and add a `<script>` tag to your project.
 
 ```bash
 php artisan vendor:publish --provider="A17\Twill\Image\ImageServiceProvider" --tag=js
@@ -52,66 +82,212 @@ In a Blade file.
 <script src="{{ asset('/twill-image.js') }}"></script>
 ```
 
-Or you can import the JavaScript module and init the lazyloading class in you own js to be bundled with you application.
-
-```js
-import { TwillImage } from '../../vendor/area17/twill-image'
-
-document.addEventListener('DOMContentLoaded', function () {
-  const lazyloading = new TwillImage()
-})
-```
 
 ## Using `twill-image`
 
-### Available methods
+### The `Image` model
 
-```
-TwillImage::source($object, $role, $args, $preset, $media): array
-```
-
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`object` (Required)|`string`|   |Twill Media, Block, module, etc.|
-|`role` (Required)|`string`|   |Twill Media role|
-|`args`|`array`|`[]`|   |
-|`preset`|`string`|`role` value|Preset name|
-|`media`|`A17\Twill\Models\Media`|`null`|   |
-
-```
-TwillImage::render($imageSource, $args): string
-```
-
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
-|`class`|`string`|   |   |
-|`sizes`|`string`|   |   |
-|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
-|`height`|`int`|   |   |
-
-```
-TwillImage::image($object, $role, $args, $preset, $media)
-```
-
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`object` (Required)|`string`|   |Twill Media, Block, module, etc.|
-|`role` (Required)|`string`|   |Twill Media role|
-|`args`|`array`|`[]`|   |
-|`preset`|`string`|`role` value|Preset name|
-|`media`|`A17\Twill\Models\Media`|`null`|   |
-
-### Examples
+The `Image` model allows you to interact fluently with a media object.
 
 ```php
+$image = new A17\Twill\Image\Models\Image($object, $role, $media);
+
+// or using the Facade
+$image = TwillImage::image($object, $role, $media);
+```
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`$object` (Required)|`object`|   |`A17\Twill\Models\Media`, `A17\Twill\Models\Block`, module, etc.|
+|`$role` (Required)|`string`|   |`Media` role|
+|`$media`|`A17\Twill\Models\Media`|`null`|`Media` instance|
+
+#### Available methods
+
+Once you have created an instance of the `Image` model, you can interact by using one or chaining many of these methods.
+##### `crop`
+
+You can specify the crop by passing it as an argument. By default, the `Image` model will look for a crop label `default` and if it isn't availble, it will look if there is only one crop available and select it. If it can't determine the crop, it will result in an error.
+
+```php
+$image->crop('listing_card');
+```
+
+##### `width`
+
+To set the width of the image, you can use this method. The default is an image of 1000 pixels wide. This is useful if you need to display an image with a fixed width or if you know in advance that you will a larger image than the default.
+
+Note: the width is applied to the "fallback" image (`<img src="##">`) and to determine the number of image URL to add to the `srcset` attribute.
+
+```php
+$image->width(1500);
+```
+
+##### `height`
+
+You can set the height of the image with this method. Similar to the `width` method above, it is most useful for fixed-size image. When not used, the height is determined by the aspect ratio of the image and inferred from the width.
+
+```php
+$image->height(900);
+
+$image->width(600)->height(400);
+```
+
+##### `sources`
+
+To use mutliples `<source>` elements, you can pass a array to this method by listing the sources other than the main crop. Each item in the array must have a `mediaQuery` and a `crop` key. You can pass an optional width and height. This is useful when used with the `crop` method to set the main image crop. See also [Art directed images](#art-directed-images).
+
+```php
+$image->crop('desktop')->sources([
+    [
+        'mediaQuery' => '(max-width: 400px)', // required
+        'crop' => 'mobile', // required
+        'width' => 200, // optional
+        'height' => 200, // optional
+    ],
+    [
+        'mediaQuery' => '(min-width: 401px) and (max-width: 700px)',
+        'crop' => 'tablet',
+    ],
+]);
+```
+
+##### `sizes`
+
+Use this method to pass a sizes attribute to the model.
+
+```php
+$image->sizes('(max-width: 400px) 100vw, 50vw');
+```
+
+##### `preset`
+
+With this method you can use an object to pass a value to any of the above methods. You can also add a preset key to the config `config/twill-image.php` and pass the name to this method.
+
+```php
+// config/twill-image.php
+
+return [
+    // ...
+    'presets' => [
+        'art_directed' => [
+            'crop' => 'desktop',
+            'width' => 700,
+            'sizes' => '(max-width: 767px) 100vw, (min-width: 767px) and (max-width: 1023px) 50vw, 33vw',
+            'sources' => [
+                [
+                    'crop' => 'mobile',
+                    'media_query' => '(max-width: 767px)',
+                ],
+                [
+                    'crop' => 'tablet',
+                    'media_query' => '(min-width: 767px) and (max-width: 1023px)',
+                ],
+            ],
+        ],
+    ],
+];
+```
+
+```php
+$image->preset('art_directed');
+```
+
+You can directly pass the full object if you prefer.
+
+```php
+$image->preset([
+    'crop' => 'desktop',
+    'width' => 700,
+    'sizes' => '(max-width: 767px) 100vw, (min-width: 767px) and (max-width: 1023px) 50vw, 33vw',
+    'sources' => [
+        [
+            'crop' => 'mobile',
+            'media_query' => '(max-width: 767px)',
+        ],
+        [
+            'crop' => 'tablet',
+            'media_query' => '(min-width: 767px) and (max-width: 1023px)',
+        ],
+    ],
+]);
+```
+
+##### `render`
+
+This method will return the rendered view.
+
+```blade
+{{-- resources/views/home.blade.php --}}
+@php
+$image = new Image($page, 'preview');
+@endphp
+
+{!! $image->preset('art_directed')->render() !!}
+```
+
+##### `toArray`
+
+If you need to split the image generation from the render (exposing the `Image` model data through a REST API for example), use this method to get all attributes as an array.
+
+```php
+    $previewImage = TwillImage::image($page, 'preview')->preset('art_directed')->toArray();
+```
+
+And use the `render` method from the facade to render the view.
+
+```blade
+{{-- resources/views/page.blade.php --}}
+
+<div>{!! TwillImage::render($previewImage) !!}</div>
+```
+
+### The facade `render` method
+
+As seen in the previous section, the image element rendering can be separated from the image attributes generation. You can use the `Image` model to set up your image and pass the resulting object (or its `array` format to the `render` method to output the view).
+
+```php
+$previewImage = TwillImage::image($page, 'preview')->toArray();
+```
+
+```
+{!! TwillImage::render($previewImage) !!}
+```
+
+or
+
+```php
+<div class="w-1/4">
+    {!! TwillImage::render($previewImage, [
+        'layout' => 'constrained',
+        'width' => 700,
+    ]) !!}
+</div>
+```
+
+#### List of arguments
+
+|Argument|Type|Default|Description|
+|---|---|---|---|
+|`backgroundColor`|`hex`, `string`|See config|Set placeholder background color|
+|`class`|`string`|   |Add class(es) to the wrapper element|
+|`height`|`int`|   |   |
+|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
+|`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
+|`lqip`|`boolean`|See config|Use LQIP|
+|`sizes`|`string`|   |The image sizes attributes|
+|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
+
+#### Examples
+
+```blade
 {!! TwillImage::image($item, 'preview_image', [
     'sizes' => '(max-width: 767px) 50vw, 100vw',
-]) !!}
+])->render(); !!}
 
 @php
-$heroImage = TwillImage::source($item, 'preview_image');
-$listingImage = TwillImage::source($item, 'preview_image', [], 'listing');
+$heroImage = TwillImage::image($item, 'preview_image');
+$listingImage = TwillImage::image($item, 'preview_image')->crop('listing');
 @endphp
 
 {!! TwillImage::render($heroImage) !!}
@@ -133,7 +309,7 @@ $listingImage = TwillImage::source($item, 'preview_image', [], 'listing');
 ## Configuration options and image presets
 
 
-In `config/twill-image.php`, you can define image presets. A preset informs the `TwillImage::source()` method which crop to output along other options like responsive sources. By default, a profile share the same name as the image `role`, but you can override this by passing a preset name to the `source()` method. This is useful for cases where you might need to re-use the same preset with multiple media roles.
+In `config/twill-image.php`, you can define general options and image presets. A preset informs the `Image::preset` method which crop to output along other options like responsive sources.
 
 ```php
 <?php
@@ -147,26 +323,12 @@ return [
     'webp_support' => true,
 
     'presets' => [
-        'preview_image' => [
-            'crop' => 'desktop',
-            'width' => 1500,
-            'sizes' => '(max-width: 767px) 100vw, 50vw',
-            'sources' => [
-                [
-                    'crop' => 'mobile',
-                    'media_query' => '(max-width: 767px)',
-                ],
-                [
-                    'crop' => 'desktop',
-                    'media_query' => '(min-width: 768px)',
-                ]
-            ],
-        ],
         'listing' => [
             'crop' => 'card',
             'width' => 500,
             'sizes' => '25vw',
         ],
+        // ...
     ],
 ];
 ```
@@ -179,45 +341,21 @@ return [
 |`webp_support`|`boolean`|`true`|   |
 |`presets`|`object`|   |   |
 
-### Presets options
-
-If the key name (see above: `preview_image`) match the role name, it will be used as the base preset.
-
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`crop`|`string`|   |If omitted, will look for `default` or, if not present and only one crop is available, it will use that one. If more than one crop is available, it will throw an error|
-|`width`|`int`|1000|   |
-|`sizes`|`string`|`100vw`|   |
-|`sources`|`array`|   |   |
-
-### Presets' `sources` array options
-
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`crop`|`string`|   |   |
-|`media_query`|`string`|   |   |
-|`widths`|`[int]`|   |By default, a series of sources will be generated up to 5000px wide|
-
 ## Art directed images
 
-To use different images (and/or crops) with media queries, you need to set size and ratio for the sources other than default. An example on how to do this by adding some styles.
+To use different crops with media queries, you need to list the other sources in a `Image::preset` or by passing them to the `Image::sources` method. The rendered image element with have only the ratio of the main crop and other ratio need to be added with CSS.
 
-Let's say this is your profile sources config:
+Let's say this is your preset `sources` config:
 
 ```php
     // ...
     'art_directed' => [
         'crop' => 'desktop',
-        'width' => 700,
         'sizes' => '(max-width: 767px) 100vw, 50vw',
         'sources' => [
             [
                 'crop' => 'mobile',
                 'media_query' => '(max-width: 767px)',
-            ],
-            [
-                'crop' => 'desktop',
-                'media_query' => '(min-width: 768px)',
             ]
         ],
     ],
@@ -226,12 +364,23 @@ Let's say this is your profile sources config:
 
 ```blade
 @php
-$imageSource = TwillImage::source('art_directed');
+$image = TwillImage::image($page, 'preview')->preset([
+        'crop' => 'desktop',
+        'sizes' => '(max-width: 767px) 100vw, 50vw',
+        'sources' => [
+            [
+                'crop' => 'mobile',
+                'media_query' => '(max-width: 767px)',
+            ]
+        ],
+    ]);
 @endphp
 
-{!! TwillImage::render($imageSource, [
-    'class' => 'art-directed'
-]) !!}
+<div>
+    {!! TwillImage::render($image, [
+        'class' => 'art-directed'
+    ]) !!}
+</div>
 ```
 
 Will output:
@@ -240,7 +389,7 @@ Will output:
 <div class="twill-image-wrapper art-directed">...</div>
 ```
 
-You can define styles for each breakpoints.
+You can define styles for each breakpoint.
 
 ```css
 .art-directed {
@@ -259,7 +408,7 @@ You can define styles for each breakpoints.
 ```blade
 @php
 $galleryImages = $item->imageObjects('gallery_image', 'desktop')->map(function ($media) use ($item) {
-    return TwillImage::source($item, 'gallery_image', [], null, $media);
+    return TwillImage::image($item, 'gallery_image', $media);
 })->toArray();
 @endphp
 
