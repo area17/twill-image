@@ -238,7 +238,7 @@ $image = new Image($page, 'preview');
 If you need to split the image generation from the render (exposing the `Image` model data through a REST API for example), use this method to get all attributes as an array.
 
 ```php
-    $previewImage = TwillImage::make($page, 'preview')->preset('art_directed')->toArray();
+$previewImage = TwillImage::make($page, 'preview')->preset('art_directed')->toArray();
 ```
 
 And use the `render` method from the facade to render the view.
