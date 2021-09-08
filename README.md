@@ -15,7 +15,7 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 - [Installation](#installation)
   - [Configuration file](#configuration-file)
   - [JavaScript module](#javascript-module)
-- [Using `twill-image`](#using-twill-image)
+- [Usage](#usage)
   - [The `Image` model](#the-image-,model)
     - [Available methods](#available-methods)
       - [`crop`](#crop)
@@ -83,7 +83,7 @@ In a Blade file.
 ```
 
 
-## Using `twill-image`
+## Usage
 
 ### The `Image` model
 
