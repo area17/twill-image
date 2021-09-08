@@ -239,13 +239,17 @@ class MediaSource implements Arrayable
 
     public function extension(): string
     {
-        $media = $this->media;
+        return pathinfo($this->media()->filename, PATHINFO_EXTENSION);
+    }
 
-        if (!isset($media)) {
-            $media = $this->model->imageObject($this->role, $this->crop);
-        }
+    public function ratio(): string
+    {
+        return $this->media()->pivot->ratio;
+    }
 
-        return pathinfo($media->filename, PATHINFO_EXTENSION);
+    protected function media()
+    {
+        return $this->media ?? $this->model->imageObject($this->role, $this->crop);
     }
 
     public function toArray()
@@ -258,6 +262,7 @@ class MediaSource implements Arrayable
             "extension" => $this->extension(),
             "height" => isset($this->height) ? $this->height : $this->calcHeightFromWidth($this->width),
             "lqipBase64" => $this->lqipBase64(),
+            "ratio" => $this->ratio(),
             "src" => $this->src($this->width, $this->height),
             "srcSet" => $this->srcset(),
             "srcWebp" => $this->src($this->width, $this->height, self::FORMAT_WEBP),
