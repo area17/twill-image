@@ -98,7 +98,7 @@ $image = TwillImage::image($object, $role, $media);
 
 |Argument|Type|Default|Description|
 |---|---|---|---|
-|`$object` (Required)|`object`|   |`A17\Twill\Models\Media`, `A17\Twill\Models\Block`, module, etc.|
+|`$object` (Required)|`A17\Twill\Models\Media` `A17\Twill\Models\Block` `object`|   |Your Twill module or block object|
 |`$role` (Required)|`string`|   |`Media` role|
 |`$media`|`A17\Twill\Models\Media`|`null`|`Media` instance|
 
