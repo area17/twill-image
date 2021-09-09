@@ -4,10 +4,11 @@ namespace A17\Twill\Image\Models;
 
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Model;
+use A17\Twill\Image\Facades\TwillImage;
 use A17\Twill\Image\Services\MediaSource;
+use A17\Twill\Image\Services\ImageColumns;
 use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
-use A17\Twill\Image\Facades\TwillImage;
 
 class Image implements Arrayable
 {
@@ -69,6 +70,12 @@ class Image implements Arrayable
             $this->role,
             $this->media
         );
+
+        $columnsServiceClass = config('twill-image.columns_class', ImageColumns::class);
+
+        if ($columnsServiceClass::shouldInstantiateService()) {
+            $this->columnsService = new $columnsServiceClass();
+        }
     }
 
     /**
@@ -88,6 +95,24 @@ class Image implements Arrayable
         }
 
         return $this;
+    }
+
+    public function columns($columns)
+    {
+        if (!isset($this->columnsService)) {
+            return;
+        }
+
+        $this->sizes = $this->columnsService->sizes($columns);
+    }
+
+    protected function mediaQueryColumns($args)
+    {
+        if (!isset($this->columnsService)) {
+            return null;
+        }
+
+        return $this->columnsService->mediaQuery($args);
     }
 
     /**
@@ -153,7 +178,7 @@ class Image implements Arrayable
         $this->sources = [];
 
         foreach ($sources as $source) {
-            if (!isset($source['media_query']) && isset($source['mediaQuery'])) {
+            if (!isset($source['media_query']) && !isset($source['mediaQuery']) && !isset($source['columns'])) {
                 throw new ImageException("Media query is mandatory in sources.");
             }
 
@@ -162,7 +187,9 @@ class Image implements Arrayable
             }
 
             $this->sources[] = [
-                "mediaQuery" => $source['media_query'] ?? $source['mediaQuery'],
+                "mediaQuery" => isset($source['columns'])
+                    ? $this->mediaQueryColumns($source['columns'])
+                    : $source['media_query'] ?? $source['mediaQuery'],
                 "image" => $this->mediaSourceService->generate(
                     $source['crop'],
                     $source['width'] ?? null,
@@ -219,6 +246,10 @@ class Image implements Arrayable
 
         if (isset($preset['sizes'])) {
             $this->sizes($preset['sizes']);
+        }
+
+        if (isset($preset['columns'])) {
+            $this->columns($preset['columns']);
         }
 
         if (isset($preset['layout'])) {

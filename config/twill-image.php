@@ -71,4 +71,6 @@ return [
         // ],
     ],
 
+    'columns_class' => A17\Twill\Image\Services\ImageColumns::class,
+
 ];
