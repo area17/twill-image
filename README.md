@@ -184,11 +184,13 @@ return [
         'art_directed' => [
             'crop' => 'desktop',
             'width' => 700,
-            'sizes' => '(max-width: 767px) 100vw, (min-width: 767px) and (max-width: 1023px) 50vw, 33vw',
+            'sizes' => '(max-width: 767px) 25vw, (min-width: 767px) and (max-width: 1023px) 50vw, 33vw',
+            'srcSetWidths' => [350, 700, 1400],
             'sources' => [
                 [
                     'crop' => 'mobile',
                     'media_query' => '(max-width: 767px)',
+                    'srcSetWidths' => [100, 200, 400],
                 ],
                 [
                     'crop' => 'tablet',
