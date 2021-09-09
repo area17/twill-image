@@ -26,6 +26,8 @@ class MediaSource implements Arrayable
 
     protected $width;
 
+    protected $srcSetWidths;
+
     protected $height;
 
     protected $imageArray;
@@ -37,6 +39,7 @@ class MediaSource implements Arrayable
      * @param string $role
      * @param array $args
      * @param Media|object|null $media
+     * @param int[] $srcSetWidths
      */
     public function __construct($object, $role, $media = null)
     {
@@ -46,12 +49,14 @@ class MediaSource implements Arrayable
         $this->media = $media;
     }
 
-    public function generate($crop = null, $width = null, $height = null)
+    public function generate($crop = null, $width = null, $height = null, $srcSetWidths = [])
     {
         $this->setCrop($crop);
         $this->setWidth($width);
         $this->setHeight($height);
         $this->setImageArray();
+
+        $this->srcSetWidths = $srcSetWidths;
 
         return $this;
     }
@@ -178,7 +183,7 @@ class MediaSource implements Arrayable
 
     public function srcset($format = null)
     {
-        $range = collect($this->widthRange());
+        $range = !empty($this->srcSetWidths) ? collect($this->srcSetWidths) : collect($this->widthRange());
 
         return $range
             ->map(function ($width) use ($format) {

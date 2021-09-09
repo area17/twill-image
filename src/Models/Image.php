@@ -53,6 +53,11 @@ class Image implements Arrayable
     protected $sizes;
 
     /**
+     * @var int[] Widths list used to generate the srcset attribute
+     */
+    protected $srcSetWidths = [];
+
+    /**
      * @param object|Model $object
      * @param string $role
      * @param null|Media $media
@@ -113,6 +118,17 @@ class Image implements Arrayable
         }
 
         return $this->columnsService->mediaQuery($args);
+    }
+
+    /**
+     * Set the list of srcset width to generate
+     *
+     * @param int[] $widths
+     * @return $this
+     */
+    public function srcSetWidths($widths)
+    {
+        $this->srcSetWidths = $widths;
     }
 
     /**
@@ -194,6 +210,7 @@ class Image implements Arrayable
                     $source['crop'],
                     $source['width'] ?? null,
                     $source['height'] ?? null,
+                    $source['srcSetWidths'] ?? [],
                 )->toArray()
             ];
         }
@@ -217,7 +234,8 @@ class Image implements Arrayable
             "image" => $this->mediaSourceService->generate(
                 $this->crop,
                 $this->width,
-                $this->height
+                $this->height,
+                $this->srcSetWidths
             )->toArray(),
             "sizes" => $this->sizes,
             "sources" => $this->sources,
@@ -258,6 +276,10 @@ class Image implements Arrayable
 
         if (isset($preset['sources'])) {
             $this->sources($preset['sources']);
+        }
+
+        if (isset($preset['srcSetWidths'])) {
+            $this->srcSetWidths($preset['srcSetWidths']);
         }
     }
 }

@@ -23,6 +23,7 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
       - [`height`](#height)
       - [`sources`](#sources)
       - [`sizes`](#sizes)
+      - [`srcSetWidths`](#srcSetWidths)
       - [`preset`](#preset)
       - [`render`](#render)
       - [`toArray`](#toArray)
@@ -145,6 +146,7 @@ $image->crop('desktop')->sources([
         'crop' => 'mobile', // required
         'width' => 200, // optional
         'height' => 200, // optional
+        'srcSetWidths' => [100, 200, 400], // optional
     ],
     [
         'mediaQuery' => '(min-width: 401px) and (max-width: 700px)',
@@ -159,6 +161,14 @@ Use this method to pass a `sizes` attribute to the model.
 
 ```php
 $image->sizes('(max-width: 400px) 100vw, 50vw');
+```
+
+##### `srcSetWidths`
+
+Use this method to give a list a widths to generate the `srcset` attribute. Without this method, Twill Image will auto generate a series of widths based on the image width.
+
+```php
+$image->srcSetWidths([100, 150, 300, 600, 1200, 2000, 2400, 3600, 5000]);
 ```
 
 ##### `preset`
