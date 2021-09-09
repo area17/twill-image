@@ -29,8 +29,9 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
   - [The facade `render` method](#the-facade-render-method)
     - [List of arguments](#list-of-arguments)
     - [Examples](#examples)
-- [Configuration options and image presets](#configuration-options-and-image-presets)
-  - [Options](#options)
+- [Configuration](#configuration)
+  - [Presets](#presets)
+  - [List of options](#list-of-options)
 - [Art directed images](#art-directed-images)
 - [Multiple medias](#multiple-medias)
 
@@ -117,7 +118,7 @@ $image->crop('listing_card');
 
 To set the width of the image, you can use this method. The default is an image of 1000 pixels wide. This is useful if you need to display an image with a fixed width or if you know in advance that you will a larger image than the default.
 
-Note: the width is applied to the "fallback" image (`<img src="##">`) and to determine the number of image URL to add to the `srcset` attribute.
+Note: the width is applied to the "fallback" image (`<img src="{{ $image }}">`) and to determine the number of image URLs to add to the `srcset` attribute.
 
 ```php
 $image->width(1500);
@@ -221,13 +222,13 @@ This method will return the rendered view.
 ```blade
 {{-- resources/views/home.blade.php --}}
 @php
-$image = new Image($page, 'preview');
+$image = TwillImage::make($page, 'preview')->preset('art_directed');
 @endphp
 
-{!! $image->preset('art_directed')->render() !!}
+{!! $image->render() !!}
 
 {{-- with arguments --}}
-{!! $image->preset('art_directed')->render([
+{!! $image->render([
     'loading' => 'eager',
     'layout' => 'constrained',
 ]) !!}
@@ -288,9 +289,7 @@ or
 #### Examples
 
 ```blade
-{!! TwillImage::make($item, 'preview_image', [
-    'sizes' => '(max-width: 767px) 50vw, 100vw',
-])->render(); !!}
+{!! TwillImage::make($item, 'preview_image')->sizes('(max-width: 767px) 50vw, 100vw')->render(); !!}
 
 @php
 $heroImage = TwillImage::make($item, 'preview_image');
@@ -313,7 +312,7 @@ $listingImage = TwillImage::make($item, 'preview_image')->crop('listing');
 ]) !!}
 ```
 
-## Configuration options and image presets
+## Configuration
 
 
 In `config/twill-image.php`, you can define general options and image presets. A preset informs the `Image::preset` method which crop to output along other options like responsive sources.
@@ -339,7 +338,11 @@ return [
     ],
 ];
 ```
-### Options
+
+### Presets
+
+See [above section](#preset) about the `preset` method.
+### List of options
 
 |Argument|Type|Default|Description|
 |---|---|---|---|
