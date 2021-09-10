@@ -35,11 +35,10 @@ class ImageColumns implements ImageSizes
     {
         $this->config = $this->getFEConfig();
 
-        // array needs to be ordered by largest to smallest. If the config starts with the 'xs' breakpoint we assume it's backwards and reverse the array
+        $breakpoints = Arr::get($this->config, $this->configBreakpoints);
+        $firstBreakpoint = array_key_first($breakpoints);
         $this->breakpoints
-            = array_key_first(Arr::get($this->config, $this->configBreakpoints)) == 'xs'
-            ? array_reverse(Arr::get($this->config, $this->configBreakpoints))
-            : Arr::get($this->config, $this->configBreakpoints);
+            = intval($breakpoints[$firstBreakpoint]) === 0 ? $breakpoints : array_reverse($breakpoints);
 
         $this->mainColWidths = array_map(
             [$this, 'parseConfigToInt'],
@@ -57,52 +56,65 @@ class ImageColumns implements ImageSizes
         );
 
         $this->columns = array_map(
-            [$this, 'parseConfigToInt'],
+            function ($column) {
+                return intval($column);
+            },
             Arr::get($this->config, $this->configColumns)
         );
     }
 
     public function sizes($sizes = []): string
     {
-        $sizes_output = '';
+        $sizes_arr = [];
 
-        foreach ($this->breakpoints as $name => $point):
+        foreach ($this->breakpoints as $name => $point) {
+            $size = $this->calcSize($sizes[$name] ?? null, $name);
 
-        if (!empty($sizes[$name])) {
-            if (strrpos($sizes[$name], 'px') > 0 || strrpos($sizes[$name], 'vw') > 0) {
-                $thisSize = $sizes[$name];
-            } elseif ($this->mainColWidths[$name] !== 'auto') {
-                $thisSize = round(((($this->mainColWidths[$name] - ($this->columns[$name] - 1) * $this->innerGutters[$name]) / $this->columns[$name]) * $sizes[$name]) + ($sizes[$name] - 1) * $this->innerGutters[$name]).'px';
-            } else {
-                $thisSize = '((100vw - '.((($this->columns[$name] - 1) * $this->innerGutters[$name]) + (2 * $this->outerGutters[$name])).'px) / '.$this->columns[$name].') * '.$sizes[$name];
+            if (isset($prevSize)) {
+                // max-width mq
+                $unit = $this->getUnit($point);
+                $max = (intval($point) - 1) . $unit;
+                $mqMax = "(max-width: $max)";
 
-                if ($sizes[$name] >= 1) {
-                    $thisSize = '('.$thisSize.') + '.(($sizes[$name] - 1) * $this->innerGutters[$name]).'px';
-                }
-
-                $thisSize = 'calc('.$thisSize.')';
+                $mq = isset($prevMqMin)
+                    ? "$prevMqMin and $mqMax $prevSize"
+                    : "$mqMax $prevSize";
+                $sizes_arr[] = $mq;
             }
-        } else {
-            if ($this->mainColWidths[$name] !== 'auto') {
-                $thisSize = $this->mainColWidths[$name].'px';
+
+            if ($name !== array_key_first($this->breakpoints)) {
+                // min-width mq
+                $prevMqMin = "(min-width: $point)";
+            }
+
+            if ($name !== array_key_last($this->breakpoints)) {
+                $prevSize = $size;
             } else {
-                $thisSize = 'calc(100vw-'.(2 * $this->outerGutters[$name]).'px)';
+                $sizes_arr[] = $size;
             }
         }
 
-        $sizes_output .= ($name === 'xxl' ? '' : ', ').  '(min-width: '. $point .') '. $thisSize;
-        endforeach;
-
-        return $sizes_output;
+        return join(', ', $sizes_arr);
     }
 
     public function mediaQuery($args): string
     {
-        $mq = is_array($args) ? $args[0] : $args;
-        $constrain = is_array($args) ? $args[1] : 'min';
-        $mq_num = ($constrain == 'max' ? intval($this->breakpoints[$mq]) - 1 : intval($this->breakpoints[$mq]));
+        $mediaQuery = [];
 
-        return '('. $constrain .'-width: '. $mq_num .'px)';
+        foreach ($args as $name => $constrain) {
+            if ($constrain === 'min' || $constrain === 'max') {
+                $bp = $this->parseConfigToInt($this->breakpoints[$name]);
+                $mq_num = ($constrain == 'max' ? $bp[0] - 1 : $bp[0]);
+                $mediaQuery[] = "($constrain-width: $mq_num$bp[1])";
+            }
+        }
+
+        return join(' and ', $mediaQuery);
+    }
+
+    public static function shouldInstantiateService(): bool
+    {
+        return file_exists(base_path(self::$configFile));
     }
 
     protected function getFEConfig()
@@ -112,13 +124,58 @@ class ImageColumns implements ImageSizes
         return json_decode($fe_config_json, true);
     }
 
-    protected function parseConfigToInt($val)
+    protected function parseConfigToInt($str)
     {
-        return $val == 'auto' ? $val : intval($val);
+        if ($str === 'auto') {
+            $value = $str;
+            $unit = '';
+        } else {
+            $value = intval($str);
+            $unit = $this->getUnit($str);
+        }
+
+        return [$value, $unit];
     }
 
-    public static function shouldInstantiateService(): bool
+    protected function calcSize($size, $name)
     {
-        return file_exists(base_path(self::$configFile));
+        $mainColWidth = $this->mainColWidths[$name];
+        $columns = $this->columns[$name];
+        $innerGutter = $this->innerGutters[$name];
+        $outerGutter = $this->outerGutters[$name];
+
+        if (isset($size)) {
+            // if size is set in px/vw, use it
+            if (strrpos($size, 'px') > 0 || strrpos($size, 'vw') > 0 || strrpos($size, 'em') > 0) {
+                $sizeAttr = $size;
+            } elseif ($mainColWidth[0] !== 'auto') {
+                $width = round(((($mainColWidth[0] - ($columns - 1) * $innerGutter[0]) / $columns) * $size) + ($size - 1) * $innerGutter[0]);
+                $sizeAttr = $width . $mainColWidth[1];
+            } else {
+                $gutterOffset = ((($columns - 1) * $innerGutter[0]) + (2 * $outerGutter[0])) . $innerGutter[1];
+                $sizeAttr = "((100vw - $gutterOffset) / $columns) * $size";
+
+                if ($size >= 1) {
+                    $innerGutterOffset = (($size - 1) * $innerGutter[0]) . $innerGutter[1];
+                    $sizeAttr = "($sizeAttr) + $innerGutterOffset";
+                }
+
+                $sizeAttr = 'calc('.$sizeAttr.')';
+            }
+        } else {
+            if ($mainColWidth[0] !== 'auto') {
+                $sizeAttr = $mainColWidth[0] . $mainColWidth[1];
+            } else {
+                $gutterOffset = (2 * $outerGutter[0]) . $outerGutter[1];
+                $sizeAttr = "calc(100vw - $gutterOffset)";
+            }
+        }
+
+        return $sizeAttr;
+    }
+
+    protected function getUnit($str)
+    {
+        return preg_replace('/[^a-z]+/', '', $str);
     }
 }
