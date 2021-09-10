@@ -3,9 +3,9 @@
 namespace A17\Twill\Image\Services;
 
 use Illuminate\Support\Arr;
-use A17\Twill\Image\Services\Interfaces\ImageSizes;
+use A17\Twill\Image\Services\Interfaces\ImageColumns as ImageColumnsInterface;
 
-class ImageColumns implements ImageSizes
+class ImageColumns implements ImageColumnsInterface
 {
     protected $config;
 

@@ -2,7 +2,7 @@
 
 namespace A17\Twill\Image\Services\Interfaces;
 
-interface ImageSizes
+interface ImageColumns
 {
     public static function shouldInstantiateService(): bool;
 
