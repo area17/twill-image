@@ -213,12 +213,6 @@ class ImageViewModel extends ViewModel implements Arrayable
 
         $image = $this->data['image'];
 
-        $sources[] = $this->buildSourceObject(
-            $image['srcSet'],
-            $image['aspectRatio'],
-            $this->mimeType($image['extension'])
-        );
-
         if (config('twill-image.webp_support')) {
             $sources[] = $this->buildSourceObject(
                 $image['srcSet'],
@@ -226,6 +220,12 @@ class ImageViewModel extends ViewModel implements Arrayable
                 $this->mimeType("webp"),
             );
         }
+
+        $sources[] = $this->buildSourceObject(
+            $image['srcSet'],
+            $image['aspectRatio'],
+            $this->mimeType($image['extension'])
+        );
 
         $this->sources = $sources;
     }
