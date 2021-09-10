@@ -193,13 +193,6 @@ class ImageViewModel extends ViewModel implements Arrayable
                 $mediaQuery = $source['mediaQuery'];
                 $image = $source['image'];
 
-                $sources[] = $this->buildSourceObject(
-                    $image['srcSet'],
-                    $image['aspectRatio'],
-                    $this->mimeType($image['extension']),
-                    $mediaQuery
-                );
-
                 if (config('twill-image.webp_support')) {
                     $sources[] = $this->buildSourceObject(
                         $image['srcSetWebp'],
@@ -208,6 +201,13 @@ class ImageViewModel extends ViewModel implements Arrayable
                         $mediaQuery
                     );
                 }
+
+                $sources[] = $this->buildSourceObject(
+                    $image['srcSet'],
+                    $image['aspectRatio'],
+                    $this->mimeType($image['extension']),
+                    $mediaQuery
+                );
             }
         }
 
