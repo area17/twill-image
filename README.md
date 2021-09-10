@@ -23,6 +23,7 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
       - [`height`](#height)
       - [`sources`](#sources)
       - [`sizes`](#sizes)
+      - [`columns`](#columns)
       - [`srcSetWidths`](#srcSetWidths)
       - [`preset`](#preset)
       - [`render`](#render)
@@ -33,6 +34,11 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 - [Configuration](#configuration)
   - [Presets](#presets)
   - [List of options](#list-of-options)
+- [Frontend breakpoints and grid structure](#frontend-breakpoints-and-grid-structure)
+  - [`columns` example](#columns-example)
+    - [`columns` preset](#columns-preset)
+    - [`columns` output](#columns-output)
+  - [`columns` custom class](#columns-custom-class)
 - [Art directed images](#art-directed-images)
 - [Multiple medias](#multiple-medias)
 
@@ -155,6 +161,27 @@ $image->crop('desktop')->sources([
 ]);
 ```
 
+Media queries can also be generated from a [frontend breakpoints and grid structure](#frontend-breakpoints-and-grid-structure) file by passing a `columns` key instead of `mediaQuery`. You can see the format below.
+
+
+```php
+$image->crop('desktop')->sources([
+    [
+        'columns' => [
+            'md' => 'max',
+        ],
+        'crop' => 'mobile',
+    ],
+    [
+        'columns' => [
+            'md' => 'min',
+            'lg' => 'max',
+        ],
+        'crop' => 'tablet',
+    ],
+]);
+```
+
 ##### `sizes`
 
 Use this method to pass a `sizes` attribute to the model.
@@ -162,6 +189,25 @@ Use this method to pass a `sizes` attribute to the model.
 ```php
 $image->sizes('(max-width: 400px) 100vw, 50vw');
 ```
+
+##### `columns`
+
+As an alternative to the `sizes` method, Twill Image provides a way to generate the `sizes` attribute based on a [frontend breakpoints and grid structure](#frontend-breakpoints-and-grid-structure) file. When placing this JSON file at the base folder of your app, the `sizes` attribute can be generated from passing a series of breakpoints and columns number to this method.
+
+```php
+$image->columns([
+    'xxl' => 6,
+    'xl' => 6,
+    'lg' => 8,
+    'md' => 8,
+    'sm' => 8,
+    'xs' => 12,
+]);
+```
+
+This would tell how many columns the image will take at each breakpoint in order to generate to proper `sizes` attribute.
+
+Note: this method will have an effect only when `frontend.config.js` exists at in base folder of your app.
 
 ##### `srcSetWidths`
 
@@ -415,6 +461,97 @@ Define styles for each breakpoint.
   }
 }
 ```
+
+## Frontend breakpoints and grid structure
+
+We provide a way to generate `sizes` and `media` attributes by describing the structure of your page in a JSON file `frontend.config.json` placed at the base of your app. An example is provided [`frontend.config.json.example`](frontend.config.json.example).
+
+This file describes the breakpoints, main container widths, number of columns per breakpoints and inner/outer gutters. When this file exists in your project, you can use the `columns` method on the `Image` model or the `columns` key in your preset and sources objects in order to generate dynamically the `sizes` and `media` attributes.
+
+### `columns` example
+
+This example assumes that you have the provided `frontend.config.json` in your app's `base_path`.
+
+#### `columns` preset
+
+```php
+// config/twill-image.php
+
+return [
+    // ...
+    'presets' => [
+        'art_directed' => [
+            'crop' => 'desktop',
+            'columns' => [
+                'xxl' => 6,
+                'xl' => 6,
+                'lg' => 8,
+                'md' => 8,
+                'sm' => 8,
+                'xs' => 12,
+            ],
+            'sources' => [
+                [
+                    'crop' => 'mobile',
+                    'columns' => [
+                        'md' => 'max',
+                    ],
+                ],
+                [
+                    'crop' => 'tablet',
+                    'columns' => [
+                        'md' => 'min',
+                        'lg' => 'max',
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
+```
+
+#### `columns` output
+
+```blade
+{{-- to use this preset from the config file and render the image --}}
+{!! $image->preset('art_directed')->render() !!}
+```
+
+The image source and fallback would have these `sizes` and `media` attributes (the elements have been simplified for clarity):
+
+```html
+<picture>
+    <source media="(max-width: 767px)" sizes="..." srcset="...">
+    <source media="(min-width: 768px) and (max-width: 1023px)" sizes="..." srcset="...">
+    <img sizes="
+        (max-width: 543px) calc((((100vw - 260px) / 12) * 12) + 220px),
+        (min-width: 544px) and (max-width: 767px) calc((((100vw - 312px) / 12) * 8) + 168px),
+        (min-width: 768px) and (max-width: 1023px) calc((((100vw - 416px) / 12) * 8) + 224px),
+        (min-width: 1024px) and (max-width: 1279px) calc((((100vw - 624px) / 12) * 8) + 336px),
+        (min-width: 1280px) and (max-width: 1680px) calc((((100vw - 832px) / 12) * 6) + 320px),
+        761px
+    " src="...">
+</picture>
+```
+
+### `columns` custom class
+
+You can provide your own custom class to be used instead of the one provided. You can create your own service and provide the class name in the config file:
+
+```php
+// config/twill-image.php
+
+    // ...
+    // default to: A17\Twill\Image\Services\ImageColumns::class
+   'columns_class' => MyApp\Services\MyOwnImageColumnsService::class,
+
+];
+```
+
+The service must implement the interface `A17\Twill\Image\Services\Interfaces\ImageColumns`.
+
+
+This can also be useful if you simply need to override some of the proprties that are defined in the provided services.
 
 ## Multiple medias
 
