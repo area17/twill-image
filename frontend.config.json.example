@@ -1,0 +1,46 @@
+{
+  "structure": {
+    "breakpoints": {
+      "xs": "0",
+      "sm": "544px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px",
+      "xxl": "1681px"
+    },
+    "columns": {
+      "xs": "12",
+      "sm": "12",
+      "md": "12",
+      "lg": "12",
+      "xl": "12",
+      "xxl": "12"
+    },
+    "container": {
+      "xs": "auto",
+      "sm": "auto",
+      "md": "auto",
+      "lg": "auto",
+      "xl": "auto",
+      "xxl": "1601px"
+    },
+    "gutters": {
+      "inner": {
+        "xs": "20px",
+        "sm": "24px",
+        "md": "32px",
+        "lg": "48px",
+        "xl": "64px",
+        "xxl": "80px"
+      },
+      "outer": {
+        "xs": "20px",
+        "sm": "24px",
+        "md": "32px",
+        "lg": "48px",
+        "xl": "64px",
+        "xxl": "80px"
+      }
+    }
+  }
+}
