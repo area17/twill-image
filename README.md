@@ -207,7 +207,7 @@ $image->columns([
 
 This would tell how many columns the image will take at each breakpoint in order to generate to proper `sizes` attribute.
 
-Note: this method will have an effect only when `frontend.config.js` exists at in base folder of your app.
+Note: this method will have an effect only when `frontend.config.json` exists at in base folder of your app.
 
 ##### `srcSetWidths`
 
