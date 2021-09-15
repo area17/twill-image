@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.2.7 (2021-09-15)
+
+### Fixed
+
+- Use media file extension to set image format and MIME type
+
 ## 0.2.6 (2021-06-07)
 
 ### Fixed
