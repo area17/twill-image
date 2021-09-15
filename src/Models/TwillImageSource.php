@@ -133,7 +133,7 @@ class TwillImageSource implements ImageSource
         foreach ($this->profile['sources'] ?? [] as $source) {
             $sources[] = [
                 'mediaQuery' => $source['media_query'] ?? 'default',
-                'type' => 'image/jpeg',
+                'type' => $this->mimeType($this->extension()),
                 'crop' => $source['crop'] ?? 'default',
                 'sources' => $this->imageSources($source, ['fm' => 'jpg']),
             ];
@@ -187,5 +187,39 @@ class TwillImageSource implements ImageSource
         }
 
         return $crops;
+    }
+
+    private function extension(): string
+    {
+        return pathinfo($this->media()->filename, PATHINFO_EXTENSION);
+    }
+
+    private function media()
+    {
+        return $this->media ?? $this->model->imageObject($this->role, $this->crop);
+    }
+
+    private function mimeType($extension)
+    {
+        $types = [
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+            'webp' => 'image/webp',
+        ];
+
+        if (isset($types[$extension])) {
+            return $types[$extension];
+        }
+
+        return null;
     }
 }
