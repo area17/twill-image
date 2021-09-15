@@ -67,7 +67,7 @@ class Image
         $this->loading = $args['loading'] ?? 'lazy';
         $this->width = $args['width'] ?? $this->data['width'];
         $this->height = $args['height'] ?? (isset($args['width']) ? $this->width / $this->data['width'] * $this->data['height'] : $this->data['height']);
-        $this->sizes = $args['sizes'] ?? $this->data['sizes'] ?? $this->getDefaultSizes($layout);
+        $this->sizes = $args['sizes'] ?? $this->data['sizes'] ?? $this->getDefaultSizes($this->layout);
         $this->wrapperClass = $args['class'] ?? false;
 
         $this->imgStyle = array_merge(
