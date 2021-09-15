@@ -7,6 +7,7 @@ use A17\Twill\Models\Media;
 use A17\Twill\Models\Model;
 use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
+use A17\Twill\Services\MediaLibrary\ImageService;
 
 class MediaSource implements Arrayable
 {
