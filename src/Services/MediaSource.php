@@ -157,7 +157,17 @@ class MediaSource implements Arrayable
         return (int) $height;
     }
 
-    public function src($width, $height, $format = null)
+    public function src()
+    {
+        return $this->getSrc($this->width, $this->height);
+    }
+
+    public function srcWebp()
+    {
+        return $this->getSrc($this->width, $this->height, self::FORMAT_WEBP);
+    }
+
+    protected function getSrc($width, $height, $format = null)
     {
         $params = $this->params($width, $height, $format);
 
@@ -182,7 +192,17 @@ class MediaSource implements Arrayable
             );
     }
 
-    public function srcset($format = null)
+    public function srcSet()
+    {
+        return $this->getSrcset();
+    }
+
+    public function srcSetWebp()
+    {
+        return $this->getSrcSet(self::FORMAT_WEBP);
+    }
+
+    protected function getSrcSet($format = null)
     {
         $range = !empty($this->srcSetWidths) ? collect($this->srcSetWidths) : collect($this->widthRange());
 
@@ -190,7 +210,7 @@ class MediaSource implements Arrayable
             ->map(function ($width) use ($format) {
                 return sprintf(
                     "%s %sw",
-                    $this->src(
+                    $this->getSrc(
                         $width,
                         isset($this->height) ? $this->calcHeightFromWidth($width) : null,
                         $format
@@ -214,6 +234,16 @@ class MediaSource implements Arrayable
         return array_filter($range, function ($width) use ($baseWidth) {
             return $width <= $baseWidth * self::AUTO_WIDTHS_RATIO;
         });
+    }
+
+    public function width()
+    {
+        return $this->width;
+    }
+
+    public function height()
+    {
+        return isset($this->height) ? $this->height : $this->calcHeightFromWidth($this->width);
     }
 
     public function aspectRatio(): string
@@ -267,14 +297,14 @@ class MediaSource implements Arrayable
             "caption" => $this->caption(),
             "crop" => $this->crop,
             "extension" => $this->extension(),
-            "height" => isset($this->height) ? $this->height : $this->calcHeightFromWidth($this->width),
+            "height" => $this->height(),
             "lqipBase64" => $this->lqipBase64(),
             "ratio" => $this->ratio(),
-            "src" => $this->src($this->width, $this->height),
-            "srcSet" => $this->srcset(),
-            "srcWebp" => $this->src($this->width, $this->height, self::FORMAT_WEBP),
-            "srcSetWebp" => $this->srcset(self::FORMAT_WEBP),
-            "width" => $this->width,
+            "src" => $this->src(),
+            "srcSet" => $this->srcSet(),
+            "srcWebp" => $this->srcWebp(),
+            "srcSetWebp" => $this->srcSetWebp(),
+            "width" => $this->width(),
         ];
     }
 
