@@ -135,7 +135,7 @@ class TwillImageSource implements ImageSource
                 'mediaQuery' => $source['media_query'] ?? 'default',
                 'type' => $this->mimeType($this->extension()),
                 'crop' => $source['crop'] ?? 'default',
-                'sources' => $this->imageSources($source, ['fm' => 'jpg']),
+                'sources' => $this->imageSources($source),
             ];
         }
 
