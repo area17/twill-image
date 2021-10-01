@@ -350,6 +350,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             'layout' => $this->layout,
             'loading' => $this->loading,
             'mainStyle' => $this->styleService->main($this->loading),
+            'mainNoscriptStyle' => $this->styleService->main(),
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
             'placeholderSrc' => $this->lqipSrc,

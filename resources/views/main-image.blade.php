@@ -10,6 +10,6 @@
         'attributes' => 'data-main-image',
         'shouldLoad' => true,
         'sources' => $mainSources ?? [],
-        'style' => $mainStyle,
+        'style' => $mainNoscriptStyle,
     ])
 </noscript>

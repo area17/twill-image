@@ -134,7 +134,7 @@ class ImageStyles
      *
      * @return string
      */
-    public function main($loading)
+    public function main($loading = 'eager')
     {
         $style = array_merge(
             [
