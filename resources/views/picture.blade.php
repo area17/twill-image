@@ -20,12 +20,12 @@ $shouldLoad = $shouldLoad ?? true;
             @endforeach
         @endisset
 
-        @include('image::image', [
+        @include('twill-image::image', [
             'src' => $fallback,
         ])
     </picture>
 @else
-    @include('image::image', [
+    @include('twill-image::image', [
         'src' => $fallback,
     ])
 @endisset

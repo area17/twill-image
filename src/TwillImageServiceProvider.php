@@ -29,7 +29,7 @@ class TwillImageServiceProvider extends ServiceProvider
             __DIR__ . '/../config/twill-image.php',
             'twill-image',
         );
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'image');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'twill-image');
         $this->publishes(
             [
                 __DIR__ . '/../config/twill-image.php' => config_path(

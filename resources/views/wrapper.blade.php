@@ -3,7 +3,7 @@
     style="{{$wrapperStyle}}"
     data-twill-image-wrapper
 >
-    @include('image::sizer')
-    @include('image::placeholder')
-    @include('image::main-image')
+    @include('twill-image::sizer')
+    @include('twill-image::placeholder')
+    @include('twill-image::main-image')
 </div>

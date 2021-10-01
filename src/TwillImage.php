@@ -30,6 +30,6 @@ class TwillImage
     {
         $viewModel = new ImageViewModel($data, $overrides);
 
-        return view('image::wrapper', $viewModel);
+        return view('twill-image::wrapper', $viewModel);
     }
 }
