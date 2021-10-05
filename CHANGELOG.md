@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-rc2 (2021-10-05)
+
+### Fixed
+
+- Fix wrong variable name in placehoder template [`f17f279`](https://github.com/area17/twill-image/commit/f17f27996d0a994d0bd14610884d8a3113c1a9a7)
+
 ## 1.0.0-rc1 (2021-10-01)
 
 ### Added
