@@ -6,7 +6,9 @@ $shouldLoad = $shouldLoad ?? true;
         @isset($sources)
             @foreach($sources as $source)
                 <source
-                    type="{{ $source['type'] }}"
+                    @if(config('twill-image.webp_support'))
+                        type="{{ $source['type'] }}"
+                    @endif
                     @if(isset($source['mediaQuery']))
                         media="{{ $source['mediaQuery'] }}"
                     @endif
