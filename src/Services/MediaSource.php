@@ -291,7 +291,7 @@ class MediaSource implements Arrayable
 
     public function toArray()
     {
-        return [
+        return array_merge([
             "alt" => $this->alt(),
             "aspectRatio" => $this->aspectRatio(),
             "caption" => $this->caption(),
@@ -302,10 +302,11 @@ class MediaSource implements Arrayable
             "ratio" => $this->ratio(),
             "src" => $this->src(),
             "srcSet" => $this->srcSet(),
+            "width" => $this->width(),
+        ], (config('twill-image.webp_support') ? [
             "srcWebp" => $this->srcWebp(),
             "srcSetWebp" => $this->srcSetWebp(),
-            "width" => $this->width(),
-        ];
+        ] : []));
     }
 
     /**
