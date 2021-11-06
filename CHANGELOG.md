@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## New
+
+### Added
+
+- Minor optimizations when webp_support is not enabled [`c3e06fe`](https://github.com/area17/twill-image/commit/c3e06feed527f889c53f6c56d312de311000432c)
+
 ## 1.0.0-rc2 (2021-10-05)
 
 ### Fixed
