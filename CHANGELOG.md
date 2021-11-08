@@ -2,11 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## New
+## 1.0.0-rc3 (2021-11-08)
 
 ### Added
 
 - Minor optimizations when webp_support is not enabled [`c3e06fe`](https://github.com/area17/twill-image/commit/c3e06feed527f889c53f6c56d312de311000432c)
+
+### Fixed
+
+- Fix problem with uppercase extension [`6be42f4`](https://github.com/area17/twill-image/commit/6be42f402718d17e1333eabdccf83c192123c198)
 
 ## 1.0.0-rc2 (2021-10-05)
 
