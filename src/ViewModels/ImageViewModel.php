@@ -242,6 +242,8 @@ class ImageViewModel extends ViewModel implements Arrayable
 
     protected function mimeType($extension)
     {
+        $ext = strtolower($extension);
+
         $types = [
             'png' => 'image/png',
             'jpe' => 'image/jpeg',
@@ -257,8 +259,8 @@ class ImageViewModel extends ViewModel implements Arrayable
             'webp' => 'image/webp',
         ];
 
-        if (isset($types[$extension])) {
-            return $types[$extension];
+        if (isset($types[$ext])) {
+            return $types[$ext];
         }
 
         return null;
