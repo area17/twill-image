@@ -150,7 +150,7 @@ class ImageStyles
             $style['background-color'] = $this->backgroundColor;
         }
 
-        $style['opacity'] = $loading === 'lazy' ? 0 : 1;
+        $style['opacity'] = (config('twill-image.js') && $loading === 'lazy') ? 0 : 1;
 
         return $this->implodeStyles($style);
     }
