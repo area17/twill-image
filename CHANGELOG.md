@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-rc4 (2021-11-13)
+
+### Added
+
+- Allow using native lazyload with `loading="lazy"` without the JavaScript module [`3db2ef3`](https://github.com/area17/twill-image/commit/3db2ef3372aecea2c3a3b8028d8e59bdb4219da5)
+
+### Fixed
+
+- Fix WebP srcset not using the right set [`c6e8f0b`](https://github.com/area17/twill-image/commit/c6e8f0b5842fba47c176cb62734e678da242980f)
+
 ## 1.0.0-rc3 (2021-11-08)
 
 ### Added
