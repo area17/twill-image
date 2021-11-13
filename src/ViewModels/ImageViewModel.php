@@ -215,7 +215,7 @@ class ImageViewModel extends ViewModel implements Arrayable
 
         if (config('twill-image.webp_support')) {
             $sources[] = $this->buildSourceObject(
-                $image['srcSet'],
+                $image['srcSetWebp'],
                 $image['aspectRatio'],
                 $this->mimeType("webp"),
             );
