@@ -90,6 +90,8 @@ In a Blade file.
 <script src="{{ asset('/twill-image.js') }}"></script>
 ```
 
+The JavaScript module is not required. If you prefer to rely only on the browser's native `loading` attribute, set the [`js` config option](#list-of-options) to `false`.
+
 
 ## Usage
 
@@ -407,6 +409,7 @@ See [above section](#preset) about the `preset` method.
 |`background_color`|`string`|`#e3e3e3`|   |
 |`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
 |`webp_support`|`boolean`|`true`|If set to `false`, the `type` attribute is omitted from `<source>` elements|
+|`js`|`boolean`|`true`|If set to `false`, lazy-loading will simply rely on the image's `loading` attribute|
 |`presets`|`object`|   |   |
 
 ## Art directed images
