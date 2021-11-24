@@ -65,13 +65,7 @@ class MediaSource implements Arrayable
 
         return $this;
     }
-
-    public function setParams($params)
-    {
-        $this->params = $params ?? [];
-    }
-
-
+    
     protected function setModel($object)
     {
         if (!classHasTrait($object, 'A17\Twill\Models\Behaviors\HasMedias')) {
@@ -120,6 +114,11 @@ class MediaSource implements Arrayable
     protected function setHeight($height)
     {
         $this->height = $height ?? null;
+    }
+
+    public function setParams($params)
+    {
+        $this->params = $params ?? [];
     }
 
     protected function setImageArray()

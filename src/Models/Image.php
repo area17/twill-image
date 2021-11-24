@@ -200,7 +200,6 @@ class Image implements Arrayable
     public function params($params)
     {
         $this->params = $params;
-        $this->mediaSourceService->setParams($params);
 
         return $this;
     }
