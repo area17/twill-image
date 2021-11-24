@@ -33,6 +33,8 @@ class MediaSource implements Arrayable
 
     protected $imageArray;
 
+    protected $params;
+
     /**
      * Create an instance of the service
      *
@@ -40,27 +42,35 @@ class MediaSource implements Arrayable
      * @param string $role
      * @param array $args
      * @param Media|object|null $media
-     * @param int[] $srcSetWidths
+     * @param array $params
      */
-    public function __construct($object, $role, $media = null)
+    public function __construct($object, $role, $media = null, $params = [])
     {
         $this->setModel($object);
 
         $this->role = $role;
         $this->media = $media;
+        $this->params = $params;
     }
 
-    public function generate($crop = null, $width = null, $height = null, $srcSetWidths = [])
+    public function generate($crop = null, $width = null, $height = null, $srcSetWidths = [], $params=[])
     {
         $this->setCrop($crop);
         $this->setWidth($width);
         $this->setHeight($height);
+        $this->setParams($params);
         $this->setImageArray();
 
         $this->srcSetWidths = $srcSetWidths;
 
         return $this;
     }
+
+    public function setParams($params)
+    {
+        $this->params = $params ?? [];
+    }
+
 
     protected function setModel($object)
     {
@@ -117,7 +127,7 @@ class MediaSource implements Arrayable
         $this->imageArray = $this->model->imageAsArray(
             $this->role,
             $this->crop,
-            [],
+            $this->params,
             $this->media,
         );
 
@@ -144,7 +154,7 @@ class MediaSource implements Arrayable
             $args['fm'] = $format;
         }
 
-        return $args;
+        return array_merge($this->params, $args);
     }
 
     protected function calcHeightFromWidth($width)

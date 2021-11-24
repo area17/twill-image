@@ -25,6 +25,7 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
       - [`sizes`](#sizes)
       - [`columns`](#columns)
       - [`srcSetWidths`](#srcSetWidths)
+      - [`params`](#params)
       - [`preset`](#preset)
       - [`render`](#render)
       - [`toArray`](#toArray)
@@ -100,10 +101,10 @@ The JavaScript module is not required. If you prefer to rely only on the browser
 The `Image` model allows you to interact fluently with a media object.
 
 ```php
-$image = new A17\Twill\Image\Models\Image($object, $role, $media);
+$image = new A17\Twill\Image\Models\Image($object, $role, $media, $params);
 
 // or using the Facade
-$image = TwillImage::make($object, $role, $media);
+$image = TwillImage::make($object, $role, $media, $params);
 ```
 
 |Argument|Type|Default|Description|
@@ -111,6 +112,7 @@ $image = TwillImage::make($object, $role, $media);
 |`$object` (Required)|`A17\Twill\Models\Media` `A17\Twill\Models\Block` `object`|   |Your Twill module or block object|
 |`$role` (Required)|`string`|   |`Media` role|
 |`$media`|`A17\Twill\Models\Media`|`null`|`Media` instance|
+|`$params`|`array`|`[]`|Array of extra parameters for the ImageService
 
 #### Available methods
 
@@ -154,6 +156,7 @@ $image->crop('desktop')->sources([
         'crop' => 'mobile', // required
         'width' => 200, // optional
         'height' => 200, // optional
+        'params' => ['q'=> 60], //optional
         'srcSetWidths' => [100, 200, 400], // optional
     ],
     [
@@ -219,6 +222,14 @@ Use this method to give a list a widths to generate the `srcset` attribute. With
 $image->srcSetWidths([100, 150, 300, 600, 1200, 2000, 2400, 3600, 5000]);
 ```
 
+##### `params`
+
+This method allows you to pass an array of extra params for the underlying ImageService (e.g. Imgix,Glide).
+
+```php
+$image->params(['q' => 50, 'filt' => 'greyscale']);
+```
+
 ##### `preset`
 
 With this method you can use an object to pass a value to any of the above methods. You can also add a preset key to the config `config/twill-image.php` and pass the name to this method.
@@ -232,6 +243,7 @@ return [
         'art_directed' => [
             'crop' => 'desktop',
             'width' => 700,
+            'params' => ['q' => 75],
             'sizes' => '(max-width: 767px) 25vw, (min-width: 767px) and (max-width: 1023px) 50vw, 33vw',
             'srcSetWidths' => [350, 700, 1400],
             'sources' => [

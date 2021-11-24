@@ -43,6 +43,11 @@ class Image implements Arrayable
     protected $height;
 
     /**
+     * @var array The imageservice params
+     */
+    protected $params;
+
+    /**
      * @var array The media sources
      */
     protected $sources = [];
@@ -62,7 +67,7 @@ class Image implements Arrayable
      * @param string $role
      * @param null|Media $media
      */
-    public function __construct($object, $role, $media = null)
+    public function __construct($object, $role, $media = null, $params = [])
     {
         $this->object = $object;
 
@@ -70,10 +75,13 @@ class Image implements Arrayable
 
         $this->media = $media;
 
+        $this->params = $params;
+
         $this->mediaSourceService = new MediaSource(
             $this->object,
             $this->role,
-            $this->media
+            $this->media,
+            $this->params,
         );
 
         $columnsServiceClass = config('twill-image.columns_class', ImageColumns::class);
@@ -184,6 +192,20 @@ class Image implements Arrayable
     }
 
     /**
+     * Set extra image service params
+     *
+     * @param array $params
+     * @return $this
+     */
+    public function params($params)
+    {
+        $this->params = $params;
+        $this->mediaSourceService->setParams($params);
+
+        return $this;
+    }
+
+    /**
      * Set alternative sources for the media.
      *
      * @param array $sources
@@ -211,6 +233,7 @@ class Image implements Arrayable
                     $source['width'] ?? null,
                     $source['height'] ?? null,
                     $source['srcSetWidths'] ?? [],
+                    $source['params'] ?? [],
                 )->toArray()
             ];
         }
@@ -260,6 +283,10 @@ class Image implements Arrayable
 
         if (isset($preset['height'])) {
             $this->height($preset['height']);
+        }
+
+        if (isset($preset['params'])) {
+            $this->params($preset['params']);
         }
 
         if (isset($preset['sizes'])) {

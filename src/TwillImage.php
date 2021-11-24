@@ -14,11 +14,12 @@ class TwillImage
      * @param object|Model|Block $object
      * @param string $role
      * @param null|Media $media
+     * @param null|array $params
      * @return Image
      */
-    public function make($object, $role, $media = null)
+    public function make($object, $role, $media = null, $params = [])
     {
-        return new Image($object, $role, $media);
+        return new Image($object, $role, $media, $params);
     }
 
     /**
