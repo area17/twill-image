@@ -32,6 +32,10 @@ class Wrapper {
     if (this.isLoading) {
       this.reveal()
     }
+    // if the main image is in the cache, onload function won't be called as an image was already loaded
+    if (this.main.complete) {
+      setTimeout(() => this.onload({currentTarget: this.main}));
+    }
   }
 
   set isLoaded(state) {
