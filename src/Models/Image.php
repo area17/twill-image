@@ -9,6 +9,7 @@ use A17\Twill\Image\Services\MediaSource;
 use A17\Twill\Image\Services\ImageColumns;
 use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
+use A17\Twill\Services\MediaLibrary\ImageServiceInterface;
 
 class Image implements Arrayable
 {
@@ -58,6 +59,11 @@ class Image implements Arrayable
     protected $srcSetWidths = [];
 
     /**
+     * @var string|ImageServiceInterface ImageService instance or class name
+     */
+    protected $service;
+
+    /**
      * @param object|Model $object
      * @param string $role
      * @param null|Media $media
@@ -70,17 +76,26 @@ class Image implements Arrayable
 
         $this->media = $media;
 
-        $this->mediaSourceService = new MediaSource(
-            $this->object,
-            $this->role,
-            $this->media
-        );
-
         $columnsServiceClass = config('twill-image.columns_class', ImageColumns::class);
 
         if ($columnsServiceClass::shouldInstantiateService()) {
             $this->columnsService = new $columnsServiceClass();
         }
+    }
+
+    /**
+     * @return MediaSource
+     */
+    private function mediaSourceService()
+    {
+        return isset($this->mediaSourceService)
+            ? $this->mediaSourceService
+            : $this->mediaSourceService = new MediaSource(
+                $this->object,
+                $this->role,
+                $this->media,
+                $this->service,
+            );
     }
 
     /**
@@ -191,9 +206,36 @@ class Image implements Arrayable
      */
     public function sources($sources = [])
     {
-        $this->sources = [];
+        $this->sources = $sources;
 
-        foreach ($sources as $source) {
+        return $this;
+    }
+
+    /**
+     * Set the ImageService to use instead of the one provided
+     * by the service container
+     *
+     * @param array $service
+     * @return $this
+     */
+    public function service($service)
+    {
+        $this->service = $service;
+
+        return $this;
+    }
+
+    /**
+     * Set alternative sources for the media.
+     *
+     * @param array $sources
+     * @return $this
+     */
+    public function generateSources()
+    {
+        $sources = [];
+
+        foreach ($this->sources ?? [] as $source) {
             if (!isset($source['media_query']) && !isset($source['mediaQuery']) && !isset($source['columns'])) {
                 throw new ImageException("Media query is mandatory in sources.");
             }
@@ -202,11 +244,11 @@ class Image implements Arrayable
                 throw new ImageException("Crop name is mandatory in sources.");
             }
 
-            $this->sources[] = [
+            $sources[] = [
                 "mediaQuery" => isset($source['columns'])
                     ? $this->mediaQueryColumns($source['columns'])
                     : $source['media_query'] ?? $source['mediaQuery'],
-                "image" => $this->mediaSourceService->generate(
+                "image" => $this->mediaSourceService()->generate(
                     $source['crop'],
                     $source['width'] ?? null,
                     $source['height'] ?? null,
@@ -215,7 +257,7 @@ class Image implements Arrayable
             ];
         }
 
-        return $this;
+        return $sources;
     }
 
     /**
@@ -231,14 +273,14 @@ class Image implements Arrayable
     public function toArray()
     {
         $arr = [
-            "image" => $this->mediaSourceService->generate(
+            "image" => $this->mediaSourceService()->generate(
                 $this->crop,
                 $this->width,
                 $this->height,
                 $this->srcSetWidths
             )->toArray(),
             "sizes" => $this->sizes,
-            "sources" => $this->sources,
+            "sources" => $this->generateSources(),
         ];
 
         return array_filter($arr);
@@ -270,16 +312,16 @@ class Image implements Arrayable
             $this->columns($preset['columns']);
         }
 
-        if (isset($preset['layout'])) {
-            $this->layout($preset['layout']);
-        }
-
         if (isset($preset['sources'])) {
             $this->sources($preset['sources']);
         }
 
         if (isset($preset['srcSetWidths'])) {
             $this->srcSetWidths($preset['srcSetWidths']);
+        }
+
+        if (isset($preset['service'])) {
+            $this->service($preset['service']);
         }
     }
 }

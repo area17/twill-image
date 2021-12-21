@@ -5,9 +5,11 @@ namespace A17\Twill\Image\Services;
 use A17\Twill\Models\Block;
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Support\Arrayable;
 use A17\Twill\Image\Exceptions\ImageException;
-use A17\Twill\Services\MediaLibrary\ImageService;
+use A17\Twill\Services\MediaLibrary\ImageServiceInterface;
 
 class MediaSource implements Arrayable
 {
@@ -16,6 +18,8 @@ class MediaSource implements Arrayable
     public const DEFAULT_WIDTH = 1000;
 
     public const FORMAT_WEBP = 'webp';
+
+    public const CROP_KEYS = ['crop_x', 'crop_y', 'crop_w', 'crop_h'];
 
     protected $model;
 
@@ -40,14 +44,15 @@ class MediaSource implements Arrayable
      * @param string $role
      * @param array $args
      * @param Media|object|null $media
-     * @param int[] $srcSetWidths
+     * @param ImageServiceInterface|string $service
      */
-    public function __construct($object, $role, $media = null)
+    public function __construct($object, $role, $media = null, $service = null)
     {
         $this->setModel($object);
 
         $this->role = $role;
         $this->media = $media;
+        $this->service = $this->setService($service);
     }
 
     public function generate($crop = null, $width = null, $height = null, $srcSetWidths = [])
@@ -69,6 +74,16 @@ class MediaSource implements Arrayable
         }
 
         $this->model = $object;
+    }
+
+    protected function setService($service)
+    {
+        if (isset($service) && is_string($service) && class_exists($service)) {
+            return App::make($service);
+        } elseif (isset($service) && is_object($service)) {
+            return $service;
+        }
+        return app('imageService');
     }
 
     /**
@@ -114,12 +129,10 @@ class MediaSource implements Arrayable
 
     protected function setImageArray()
     {
-        $this->imageArray = $this->model->imageAsArray(
-            $this->role,
-            $this->crop,
-            [],
-            $this->media,
-        );
+        $this->imageArray = [
+            'width' => $this->media()->pivot->crop_w ?? $this->media()->width,
+            'height' => $this->media()->pivot->crop_h ?? $this->media()->height,
+        ];
 
         if (empty($this->imageArray)) {
             throw new ImageException(
@@ -157,6 +170,15 @@ class MediaSource implements Arrayable
         return (int) $height;
     }
 
+    protected function image($media, $params)
+    {
+        return $this->service->getUrlWithCrop(
+            $media->uuid,
+            Arr::only($media->pivot->toArray(), self::CROP_KEYS),
+            $params
+        );
+    }
+
     public function src()
     {
         return $this->getSrc($this->width, $this->height);
@@ -171,25 +193,13 @@ class MediaSource implements Arrayable
     {
         $params = $this->params($width, $height, $format);
 
-        return $this->model->image(
-            $this->role,
-            $this->crop,
-            $params,
-            false,
-            false,
-            $this->media,
-        );
+        return $this->image($this->media(), $params);
     }
 
     public function lqipBase64()
     {
-        return $this->media
-            ? $this->media->pivot->lqip_data ??
-                ImageService::getTransparentFallbackUrl()
-            : $this->model->lowQualityImagePlaceholder(
-                $this->role,
-                $this->crop,
-            );
+        return $this->media()->pivot->lqip_data ??
+            $this->service->getTransparentFallbackUrl();
     }
 
     public function srcSet()
