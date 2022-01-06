@@ -58,9 +58,9 @@ class MediaSource implements Arrayable
     public function generate($crop = null, $width = null, $height = null, $srcSetWidths = [])
     {
         $this->setCrop($crop);
+        $this->setImageArray();
         $this->setWidth($width);
         $this->setHeight($height);
-        $this->setImageArray();
 
         $this->srcSetWidths = $srcSetWidths;
 
@@ -119,7 +119,11 @@ class MediaSource implements Arrayable
 
     protected function setWidth($width)
     {
-        $this->width = $width ?? self::DEFAULT_WIDTH;
+        if (isset($width)) {
+            $this->width = $width;
+        } else {
+            $this->width = min($this->imageArray['width'], self::DEFAULT_WIDTH);
+        }
     }
 
     protected function setHeight($height)
