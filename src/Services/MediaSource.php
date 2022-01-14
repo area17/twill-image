@@ -241,7 +241,7 @@ class MediaSource implements Arrayable
 
         // weird science 🥸
         $range = array_merge(
-            range(250, 1250, 250),
+            range(min(250, $baseWidth), 1250, 250),
             range(1500, 10000, 500),
         );
 
