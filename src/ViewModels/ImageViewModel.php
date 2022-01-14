@@ -90,6 +90,11 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $width;
 
     /**
+     * @var int $imageStyles Styles applied to the placeholder and main img tag
+     */
+    protected $imageStyles;
+
+    /**
      * @var ImageStyles
      */
     protected $styleService;
@@ -123,7 +128,8 @@ class ImageViewModel extends ViewModel implements Arrayable
             $this->layout,
             $this->backgroundColor,
             $this->width,
-            $this->height
+            $this->height,
+            $this->imageStyles
         );
     }
 
@@ -162,6 +168,10 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->width = $overrides['width'] ?? null;
 
         $this->height = $overrides['height'] ?? null;
+
+        $this->imageStyles
+            = $overrides['imageStyles']
+            ?? [];
     }
 
     /**

@@ -345,6 +345,7 @@ or
 |`lqip`|`boolean`|See config|Use LQIP|
 |`sizes`|`string`|   |The image sizes attributes|
 |`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
+|`imageStyles`|`array`|`[]`|Apply styles to placeholder and main `img` tags (ex.: `[['object-fit' => 'contain']]`|
 
 #### Examples
 
