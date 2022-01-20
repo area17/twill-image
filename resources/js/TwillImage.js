@@ -19,7 +19,7 @@ class TwillImage {
         image.wrapper = new Wrapper(image)
       }
       const intersectionObserver = createIntersectionObserver(() => {
-        image.wrapper.reveal()
+        !image.wrapper.revealed && image.wrapper.reveal()
         image.wrapper.isCached && (image.wrapper.isLoaded = true)
       })
       image.wrapper.unobserve = intersectionObserver(image)

@@ -138,9 +138,7 @@ class ImageStyles
     {
         $style = array_merge(
             [
-                'transition' => 'opacity 500ms ease 0s',
                 'transform' => 'translateZ(0px)',
-                'transition' => 'opacity 250ms linear',
                 'will-change' => 'opacity',
             ],
             $this->baseStyle,
