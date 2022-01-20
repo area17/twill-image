@@ -164,6 +164,11 @@ class Wrapper {
       this.main.setAttribute('srcset', this.main.dataset.srcset);
       delete this.main.dataset.srcset;
     }
+
+    // if the main image is in the cache, onload function won't be called as an image was already loaded
+    if (this.main.complete) {
+      this.isLoaded = true;
+    }
   }
 
   onload(e) {
