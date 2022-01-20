@@ -32,10 +32,6 @@ class Wrapper {
     if (this.isLoading) {
       this.reveal()
     }
-    // if the main image is in the cache, onload function won't be called as an image was already loaded
-    if (this.main.complete) {
-      setTimeout(() => this.onload({currentTarget: this.main}));
-    }
   }
 
   set isLoaded(state) {
@@ -81,6 +77,11 @@ class Wrapper {
     if (this.main.dataset.srcset) {
       this.main.setAttribute('srcset', this.main.dataset.srcset)
       delete this.main.dataset.srcset
+    }
+
+    // if the main image is in the cache, onload function won't be called as an image was already loaded
+    if (this.main.complete) {
+      this.isLoaded = true
     }
   }
 
