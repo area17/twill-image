@@ -6,15 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Add option to set a custom ImageService [`0fa779`](https://github.com/area17/twill-image/commit/0fa77994b9489e00d561def79ab72327ad195880)
+- Add option to set a custom `ImageService` [`0fa7799`](https://github.com/area17/twill-image/commit/0fa77994b9489e00d561def79ab72327ad195880)
 
 ### Fixed
 
-- Fix bug where cached image are revealed twice [`#33`](https://github.com/area17/twill-image/pull/33) [`ffcdc9`](https://github.com/area17/twill-image/commit/ffcdc93691c1bae4de1566bc77cbff71369d5cad)
-- Apply imageStyles to placeholder and main img tag [`b5a6fc`](https://github.com/area17/twill-image/commit/b5a6fc24eec990da122d16e9cd52b463bc940f93)
-- Check image width to set minimum in srcset [`233c87`](https://github.com/area17/twill-image/commit/233c8708ed7f370e33be9b48241df59d3298dbf3)
-- Check source width to set image default [`253bf7`](https://github.com/area17/twill-image/commit/253bf743438aa5282b5c24bde7227df5748df26b)
-- Remove duplicate background color style [`f7edf3`](https://github.com/area17/twill-image/commit/f7edf3e6ec0ac5d6fee0e63510778734f3bf8a3e)
+- Fix bug where cached image are revealed twice [`#33`](https://github.com/area17/twill-image/pull/33) [`ffcdc93`](https://github.com/area17/twill-image/commit/ffcdc93691c1bae4de1566bc77cbff71369d5cad)
+- Apply image styles to placeholder and main `img` tag [`b5a6fc2`](https://github.com/area17/twill-image/commit/b5a6fc24eec990da122d16e9cd52b463bc940f93)
+- Check image width to set minimum in `srcset` [`233c870`](https://github.com/area17/twill-image/commit/233c8708ed7f370e33be9b48241df59d3298dbf3)
+- Check source width to set image default [`253bf74`](https://github.com/area17/twill-image/commit/253bf743438aa5282b5c24bde7227df5748df26b)
+- Remove duplicate background color style [`f7edf3e`](https://github.com/area17/twill-image/commit/f7edf3e6ec0ac5d6fee0e63510778734f3bf8a3e)
 
 ## 1.0.0-rc4 (2021-11-13)
 
