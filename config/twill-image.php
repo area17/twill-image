@@ -81,6 +81,15 @@ return [
         // ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Columns - Frontend breakpoints and grid structure
+    |--------------------------------------------------------------------------
+    |
+    | Define the columns class that is used to dynamically generates
+    | `sizes` and `media`.
+    |
+    */
     'columns_class' => A17\Twill\Image\Services\ImageColumns::class,
 
 ];
