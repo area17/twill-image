@@ -92,4 +92,16 @@ return [
     */
     'columns_class' => A17\Twill\Image\Services\ImageColumns::class,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Static Images Local Path
+    |--------------------------------------------------------------------------
+    |
+    | Define the local path where the static images
+    | are located. This should correcponds to the Twill `ImageService`
+    | source folder and be publicly available.
+    |
+    */
+    'static_local_path' => storage_path('app/public/uploads'),
+
 ];
