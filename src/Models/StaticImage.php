@@ -5,6 +5,7 @@ namespace A17\Twill\Image\Models;
 use A17\Twill\Models\Model;
 use A17\Twill\Image\Models\Image;
 use A17\Twill\Models\Behaviors\HasMedias;
+use A17\Twill\Image\Exceptions\ImageException;
 
 class StaticImage extends Model
 {
