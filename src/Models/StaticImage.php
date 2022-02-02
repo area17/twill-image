@@ -37,6 +37,7 @@ class StaticImage extends Model
             'ratio' => self::getRatio($ratios, $crop),
             'role' => $role,
             'crop' => $crop,
+            'alt' => $args['alt'] ?? null,
         ]);
 
         if (!empty($preset['sources']) && $sources = $preset['sources']) {
@@ -119,6 +120,7 @@ class StaticImage extends Model
             'filename' => basename($uuid),
             'width' => $width,
             'height' => $height,
+            'alt_text' => $args['alt'] ?? null,
         ]);
 
         $data = [
