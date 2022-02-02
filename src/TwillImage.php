@@ -22,9 +22,9 @@ class TwillImage
         return new Image($object, $role, $media);
     }
 
-    public function makeStatic($src, $preset = [])
+    public function makeStatic($args)
     {
-        return StaticImage::makeFromSrc($src, $preset);
+        return StaticImage::makeFromSrc($args);
     }
 
     /**
