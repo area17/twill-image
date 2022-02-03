@@ -105,20 +105,33 @@ class Wrapper {
     this.placeholder = el.querySelector('[data-placeholder-image]');
     this.isLoading = hasNativeLazyLoadSupport();
     this.isLoaded = false;
-    this.onload = this.onload.bind(this);
+    this.load = this.load.bind(this);
     this.reveal = this.reveal.bind(this);
     this.cacheKey = JSON.stringify(this.main.src || this.main.dataset.src);
+    this.revealed = false;
 
-    this.main.onload = this.onload;
+    this.main.onload = (e) => this.load(e.currentTarget);
 
     if (this.isLoading) {
       this.reveal();
+    }
+
+    if (this.isLoading || this.main.complete) {
+      this.load(this.main);
     }
   }
 
   set isLoaded(state) {
     this._isLoaded = state;
-    this.main.style.opacity = state ? 1 : 0;
+
+    if (state) {
+      this.main.style.transition = 'opacity 500ms linear';
+      this.main.style.opacity = 1;
+    } else {
+      this.main.style.transition = '';
+      this.main.style.opacity = 0;
+    }
+
     state && this.unobserve();
   }
 
@@ -161,20 +174,16 @@ class Wrapper {
       delete this.main.dataset.srcset;
     }
 
-    // if the main image is in the cache, onload function won't be called as an image was already loaded
-    if (this.main.complete) {
-      this.isLoaded = true;
-    }
+    this.revealed = true;
   }
 
-  onload(e) {
+  load(target) {
     if (this.isLoaded) {
       return
     }
 
     storeImageloaded(this.cacheKey);
 
-    const target = e.currentTarget;
     const img = new Image();
     img.src = target.currentSrc;
 
@@ -211,7 +220,7 @@ class TwillImage {
         image.wrapper = new Wrapper(image);
       }
       const intersectionObserver = createIntersectionObserver(() => {
-        image.wrapper.reveal();
+        !image.wrapper.revealed && image.wrapper.reveal();
         image.wrapper.isCached && (image.wrapper.isLoaded = true);
       });
       image.wrapper.unobserve = intersectionObserver(image);
@@ -221,7 +230,9 @@ class TwillImage {
   _reset() {
     this.images.forEach((image) => {
       image.wrapper && image.wrapper.unobserve && image.wrapper.unobserve();
-      image.wrapper.unobserve = () => {};
+      image.wrapper &&
+        image.wrapper.unobserve &&
+        (image.wrapper.unobserve = () => {});
       this.start();
     });
   }
