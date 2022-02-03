@@ -102,6 +102,14 @@ return [
     | source folder and be publicly available.
     |
     */
-    'static_local_path' => storage_path('app/public/uploads'),
+    'static_local_path' => public_path(),
+
+    'static_image_support' => false,
+
+    // Glide config overrides
+    'glide' => [
+        'source' => public_path(),
+        'base_path' => 'static',
+    ],
 
 ];

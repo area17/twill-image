@@ -56,6 +56,8 @@ class StaticImage extends Model
 
         $image = new Image($model, $role);
 
+        $image->service(\A17\Twill\Image\Services\Glide::class);
+
         if (isset($args['preset'])) {
             $image->preset($args['preset']);
         }
