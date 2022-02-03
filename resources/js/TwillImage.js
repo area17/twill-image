@@ -29,7 +29,9 @@ class TwillImage {
   _reset() {
     this.images.forEach((image) => {
       image.wrapper && image.wrapper.unobserve && image.wrapper.unobserve()
-      image.wrapper.unobserve = () => {}
+      image.wrapper &&
+        image.wrapper.unobserve &&
+        (image.wrapper.unobserve = () => {})
       this.start()
     })
   }
