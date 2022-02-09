@@ -158,7 +158,7 @@ class StaticImage extends Model
     private function calcCrop($inputWidth, $inputHeight, $outputRatio = null)
     {
         $inputImageAspectRatio =  $inputWidth / $inputHeight;
-        $outputImageAspectRatio = isset($outputRatio) ? 1 /$outputRatio : $inputImageAspectRatio;
+        $outputImageAspectRatio = isset($outputRatio) ? $outputRatio : $inputImageAspectRatio;
 
         $outputWidth = $inputWidth;
         $outputHeight = $inputHeight;
