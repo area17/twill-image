@@ -33,8 +33,6 @@ class StaticImage extends Model
 
         $model->makeMedia([
             'src' => self::getFile($files, $crop),
-            'width' => $preset['width'] ?? null,
-            'height' => $preset['height'] ?? null,
             'ratio' => self::getRatio($ratios, $crop),
             'role' => $role,
             'crop' => $crop,
@@ -45,8 +43,6 @@ class StaticImage extends Model
             foreach ($sources as $source) {
                 $model->makeMedia([
                     'src' => self::getFile($files, $source['crop']),
-                    'width' => $source['width'] ?? null,
-                    'height' => $source['height'] ?? null,
                     'ratio' => self::getRatio($ratios, $source['crop']),
                     'role' => $role,
                     'crop' => $source['crop'],
