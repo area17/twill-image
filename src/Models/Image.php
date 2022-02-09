@@ -111,7 +111,7 @@ class Image implements Arrayable
         } elseif (config()->has("twill-image.presets.$preset")) {
             $this->applyPreset(config("twill-image.presets.$preset"));
         } else {
-            throw new ImageException("Invalid preset value. Preset must be an array or a string correspondig to an image preset key in the configuration file.");
+            throw new ImageException("Invalid preset value. Preset must be an array or a string corresponding to an image preset key in the configuration file.");
         }
 
         return $this;
