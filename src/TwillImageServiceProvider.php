@@ -18,6 +18,12 @@ class TwillImageServiceProvider extends ServiceProvider
             return $app->make('A17\Twill\Image\TwillImage');
         });
 
+        if (config('twill-image.static_image_support')) {
+            $this->app->singleton('twill.static-image', function ($app) {
+                return $app->make('A17\Twill\Image\TwillStaticImage');
+            });
+        }
+
         $this->mergeConfigFrom(
             __DIR__ . '/../config/twill-image.php',
             'twill-image',

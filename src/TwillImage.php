@@ -22,11 +22,6 @@ class TwillImage
         return new Image($object, $role, $media);
     }
 
-    public function makeStatic($args)
-    {
-        return StaticImage::makeFromSrc($args);
-    }
-
     /**
      * @param Image|array $data
      * @param array $overrides
