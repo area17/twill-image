@@ -6,6 +6,7 @@ use A17\Twill\Models\Block;
 use A17\Twill\Models\Media;
 use A17\Twill\Models\Model;
 use A17\Twill\Image\Models\Image;
+use A17\Twill\Image\Models\StaticImage;
 use A17\Twill\Image\ViewModels\ImageViewModel;
 
 class TwillImage

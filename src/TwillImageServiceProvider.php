@@ -3,6 +3,7 @@
 namespace A17\Twill\Image;
 
 use Illuminate\Support\ServiceProvider;
+use A17\Twill\Image\Providers\RouteServiceProvider;
 
 class TwillImageServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,19 @@ class TwillImageServiceProvider extends ServiceProvider
         $this->app->singleton('twill.image', function ($app) {
             return $app->make('A17\Twill\Image\TwillImage');
         });
+
+        if (config('twill-image.static_image_support')) {
+            $this->app->singleton('twill.static-image', function ($app) {
+                return $app->make('A17\Twill\Image\TwillStaticImage');
+            });
+        }
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/twill-image.php',
+            'twill-image',
+        );
+
+        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
@@ -25,10 +39,6 @@ class TwillImageServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/twill-image.php',
-            'twill-image',
-        );
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'twill-image');
         $this->publishes(
             [

@@ -92,4 +92,24 @@ return [
     */
     'columns_class' => A17\Twill\Image\Services\ImageColumns::class,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Static Images Local Path
+    |--------------------------------------------------------------------------
+    |
+    | Define the local path where the static images
+    | are located. This should correcponds to the Twill `ImageService`
+    | source folder and be publicly available.
+    |
+    */
+    'static_local_path' => public_path(),
+
+    'static_image_support' => false,
+
+    // Glide config overrides
+    'glide' => [
+        'source' => public_path(),
+        'base_path' => 'static',
+    ],
+
 ];
