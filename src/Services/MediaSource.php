@@ -133,10 +133,15 @@ class MediaSource implements Arrayable
 
     protected function setImageArray()
     {
-        $this->imageArray = [
-            'width' => $this->media()->pivot->crop_w ?? $this->media()->width,
-            'height' => $this->media()->pivot->crop_h ?? $this->media()->height,
-        ];
+        $width = $this->media()->pivot->crop_w ?? $this->media()->width ?? null;
+        $height = $this->media()->pivot->crop_h ?? $this->media()->height ?? null;
+
+        if (isset($width) && isset($height)) {
+            $this->imageArray = [
+                'width' => $width,
+                'height' => $height,
+            ];
+        }
 
         if (empty($this->imageArray)) {
             throw new ImageException(
