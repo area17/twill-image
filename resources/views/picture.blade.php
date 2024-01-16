@@ -1,5 +1,5 @@
 @php
-$shouldLoad = $shouldLoad ?? true;
+$shouldLazyloadJS = $shouldLazyloadJS ?? false;
 @endphp
 @if(isset($sources) && count($sources) > 1)
     <picture>
@@ -12,7 +12,7 @@ $shouldLoad = $shouldLoad ?? true;
                     @if(isset($source['mediaQuery']))
                         media="{{ $source['mediaQuery'] }}"
                     @endif
-                    @if($shouldLoad)
+                    @if(!$shouldLazyloadJS)
                         srcset="{{ $source['srcset'] }}"
                     @else
                         data-srcset="{{ $source['srcset'] }}"

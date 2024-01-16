@@ -1,5 +1,5 @@
 @php
-$shouldLoad = $shouldLoad ?? true;
+$shouldLazyloadJS = $shouldLazyloadJS ?? false;
 @endphp
 @include('twill-image::picture', [
     'fallback' => $mainSrc,
@@ -8,12 +8,12 @@ $shouldLoad = $shouldLoad ?? true;
     'style' => $mainStyle ?? null,
     'class' => $mainClasses ?? null,
 ])
-@if($shouldLoad === false)
+@if($shouldLazyloadJS)
 <noscript>
     @include('twill-image::picture', [
         'fallback' => $mainSrc,
         'attributes' => 'data-main-image',
-        'shouldLoad' => true,
+        'shouldLazyloadJS' => false,
         'sources' => $mainSources ?? [],
         'style' => $mainNoscriptStyle ?? null,
         'class' => $mainNoscriptClasses ?? null,

@@ -386,7 +386,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             'placeholderSources' => $this->lqipSources,
             'placeholderStyle' => $stylePlaceholder ?? null,
             'placeholderClasses' => $placeholderClasses ?? null,
-            'shouldLoad' => $this->loading === 'eager',
+            'shouldLazyloadJS' => $this->loading === 'lazy' && config('twill-image.js') ? true : false,
             'sizes' => $this->sizes,
             'width' => $this->width,
             'wrapperClasses' => $this->wrapperClasses(),

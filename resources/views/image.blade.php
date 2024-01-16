@@ -1,13 +1,13 @@
 @php
-$shouldLoad = $shouldLoad ?? true;
+$shouldLazyloadJS = $shouldLazyloadJS ?? false;
 @endphp
 <img
     decoding="async"
     @isset($loading) loading="{{$loading}}" @endisset
-    @if($shouldLoad) src="{{$src}}" @endif
-    @if(!$shouldLoad) data-src="{{$src}}" @endif
-    @if($shouldLoad && isset($srcSet)) srcset="{{$srcSet}}" @endif
-    @if(!$shouldLoad && isset($srcSet)) data-srcset="{{$srcSet}}" @endif
+    @if(!$shouldLazyloadJS) src="{{$src}}" @endif
+    @if($shouldLazyloadJS) data-src="{{$src}}" @endif
+    @if(!$shouldLazyloadJS && isset($srcSet)) srcset="{{$srcSet}}" @endif
+    @if($shouldLazyloadJS && isset($srcSet)) data-srcset="{{$srcSet}}" @endif
     @if(isset($srcSet) && isset($sizes)) sizes="{{$sizes}}" @endif
     @isset($alt) alt="{{$alt}}" @endisset
     @isset($style) style="{{$style}}" @endisset
