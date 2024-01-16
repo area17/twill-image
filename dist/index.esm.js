@@ -101,8 +101,8 @@ class Wrapper {
 
   constructor(el) {
     this.el = el;
-    this.main = el.querySelector('[data-main-image]');
-    this.placeholder = el.querySelector('[data-placeholder-image]');
+    this.main = el.querySelector('[data-twill-image-main]');
+    this.placeholder = el.querySelector('[data-twill-image-placeholder]');
     this.isLoading = hasNativeLazyLoadSupport();
     this.isLoaded = false;
     this.load = this.load.bind(this);
