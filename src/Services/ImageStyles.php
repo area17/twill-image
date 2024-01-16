@@ -49,7 +49,25 @@ class ImageStyles
                 'top' => 0,
                 'width' => '100%',
                 'object-fit' => 'cover',
-                'object-position' => 'center center',
+                'object-position' => 'center',
+            ],
+            $imgStyle,
+        );
+
+        $this->baseTailwindCSS = array_merge(
+            [
+                'bottom-0',
+                'h-full',
+                'left-0',
+                'm-0',
+                'max-w-none',
+                'p-0',
+                'absolute',
+                'right-0',
+                'top-0',
+                'w-full' => '100%',
+                'object-cover',
+                'object-center'
             ],
             $imgStyle,
         );
@@ -69,18 +87,30 @@ class ImageStyles
             'overflow' => 'hidden',
         ];
 
+        $tailwindCSS = [
+            'relative',
+            'overflow-hidden',
+        ];
+
         if ($layout === ImageViewModel::LAYOUT_FIXED) {
             $style['width'] = $this->width . 'px';
             $style['height'] = $this->height . 'px';
+            $tailwindCSS[] = 'w-[' . $this->width . 'px]';
+            $tailwindCSS[] = 'h-[' . $this->height . 'px]';
         } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
             $style['display'] = 'inline-block';
+            $tailwindCSS[] = 'inline-block';
         }
 
         if (!! $this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
+            $tailwindCSS[] = 'bg-[' . $this->backgroundColor .']';
         }
 
-        return $this->implodeStyles($style);
+        return [
+            'inline' => $this->implodeStyles($style),
+            'tailwind' => implode(' ', $tailwindCSS),
+        ];
     }
 
     /**
@@ -93,29 +123,34 @@ class ImageStyles
         $layout = $this->layout;
 
         $style = $this->baseStyle;
+        $tailwindCSS = $this->baseTailwindCSS;
 
         if (!!$this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
+            $tailwindCSS[] = 'bg-[' . $this->backgroundColor .']';
 
             if ($layout === ImageViewModel::LAYOUT_FIXED) {
                 $style['width'] = $this->width . 'px';
                 $style['height'] = $this->height . 'px';
                 $style['position'] = 'relative';
-            } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
+                $tailwindCSS[] = 'w-[' . $this->width . 'px]';
+                $tailwindCSS[] = 'h-[' . $this->height . 'px]';
+                $tailwindCSS[] = 'relative';
+            } elseif (
+                $layout === ImageViewModel::LAYOUT_CONSTRAINED ||
+                $layout === ImageViewModel::LAYOUT_FULL_WIDTH
+            ) {
                 $style['bottom'] = 0;
                 $style['right'] = 0;
-            } elseif ($layout === ImageViewModel::LAYOUT_FULL_WIDTH) {
-                $style['bottom'] = 0;
-                $style['right'] = 0;
+                $tailwindCSS[] = 'bottom-0';
+                $tailwindCSS[] = 'right-0';
             }
         }
 
-        if($loading === 'lazy') {
-            $style['opacity'] = 1;
-            $style['transition'] = 'opacity 500ms linear';
-        }
-
-        return $this->implodeStyles($style);
+        return [
+            'inline' => $this->implodeStyles($style),
+            'tailwind' => implode(' ', $tailwindCSS),
+        ];
     }
 
     /**
@@ -126,15 +161,19 @@ class ImageStyles
     public function main($loading = 'eager')
     {
         $style = $this->baseStyle;
+        $tailwindCSS = $this->baseTailwindCSS;
 
         // Only set CSS to animate IMG if JS is enabled
         if(config('twill-image.js') && $loading === 'lazy') {
             $style['opacity'] = 0;
             $style['transform'] = 'translateZ(0px)';
-            $style['will-change'] = 'opacity';
+            $tailwindCSS[] = 'opacity-0';
         }
 
-        return $this->implodeStyles($style);
+        return [
+            'inline' => $this->implodeStyles($style),
+            'tailwind' => implode(' ', $this->baseTailwindCSS),
+        ];
     }
 
     protected function implodeStyles($style)

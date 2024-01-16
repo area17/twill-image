@@ -1,5 +1,5 @@
 @php
-$attributes = 'aria-hidden="true" data-placeholder-image';
+$attributes = 'aria-hidden="true" data-twill-image-placeholder';
 @endphp
 @if(isset($placeholderSrc) && !!$placeholderSrc)
   @include('twill-image::picture', [
@@ -11,5 +11,5 @@ $attributes = 'aria-hidden="true" data-placeholder-image';
       'style' => $placeholderStyle,
   ])
 @else
-    <div style="{{$placeholderStyle}}" {!! $attributes !!}></div>
+    <div class='{{$placeholderClasses ?? null}}' style="{{$placeholderStyle ?? null}}" {!! $attributes !!}></div>
 @endif

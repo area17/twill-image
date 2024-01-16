@@ -11,5 +11,6 @@ $shouldLoad = $shouldLoad ?? true;
     @if(isset($srcSet) && isset($sizes)) sizes="{{$sizes}}" @endif
     @isset($alt) alt="{{$alt}}" @endisset
     @isset($style) style="{{$style}}" @endisset
+    @isset($class) class="{{$class}}" @endisset
     @isset($attributes) {!! $attributes !!} @endisset
 />

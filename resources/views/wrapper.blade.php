@@ -1,6 +1,6 @@
 <div
     class="{{$wrapperClasses}}"
-    style="{{$wrapperStyle}}"
+    style="{{$wrapperStyle ?? null}}"
     data-twill-image-wrapper
 >
     @include('twill-image::sizer')

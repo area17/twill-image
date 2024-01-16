@@ -312,6 +312,10 @@ class ImageViewModel extends ViewModel implements Arrayable
             $classes = join(' ', [$classes, $this->wrapperClass]);
         }
 
+        if(config('twill-image.tailwind_css')) {
+            $classes = join(' ', [$classes, $this->styleService->wrapper()['tailwind']]);
+        }
+
         return $classes;
     }
 
@@ -355,24 +359,38 @@ class ImageViewModel extends ViewModel implements Arrayable
 
     public function toArray(): array
     {
+        if(config('twill-image.tailwind_css') === false) {
+            $styleMain = $this->styleService->main($this->loading)['inline'];
+            $styleMainNoScript = $this->styleService->main()['inline'];
+            $stylePlaceholder = $this->styleService->placeholder()['inline'];
+            $styleWrapper = $this->styleService->wrapper()['inline'];
+        } else {
+            $mainClasses = $this->styleService->main($this->loading)['tailwind'];
+            $mainNoscriptClasses = $this->styleService->main()['tailwind'];
+            $placeholderClasses = $this->styleService->placeholder()['tailwind'];
+        }
+
         return array_filter([
             'alt' => $this->alt,
             'aspectRatio' => $this->data['image']['aspectRatio'],
             'height' => $this->height,
             'layout' => $this->layout,
             'loading' => $this->loading,
-            'mainStyle' => $this->styleService->main($this->loading),
-            'mainNoscriptStyle' => $this->styleService->main(),
+            'mainStyle' => $styleMain ?? null,
+            'mainClasses' => $mainClasses ?? null,
+            'mainNoscriptStyle' => $styleMainNoScript ?? null,
+            'mainNoscriptClasses' => $mainNoscriptClasses ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
             'placeholderSrc' => $this->lqipSrc,
             'placeholderSources' => $this->lqipSources,
-            'placeholderStyle' => $this->styleService->placeholder(),
+            'placeholderStyle' => $stylePlaceholder ?? null,
+            'placeholderClasses' => $placeholderClasses ?? null,
             'shouldLoad' => $this->loading === 'eager',
             'sizes' => $this->sizes,
             'width' => $this->width,
             'wrapperClasses' => $this->wrapperClasses(),
-            'wrapperStyle' => $this->styleService->wrapper(),
+            'wrapperStyle' => $styleWrapper ?? null,
         ]);
     }
 }
