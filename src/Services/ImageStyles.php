@@ -92,13 +92,7 @@ class ImageStyles
     {
         $layout = $this->layout;
 
-        $style = array_merge($this->baseStyle, [
-            'height' => '100%',
-            'left' => 0,
-            'position' => 'absolute',
-            'top' => 0,
-            'width' => '100%',
-        ]);
+        $style = $this->baseStyle;
 
         if (!!$this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
@@ -106,25 +100,20 @@ class ImageStyles
             if ($layout === ImageViewModel::LAYOUT_FIXED) {
                 $style['width'] = $this->width . 'px';
                 $style['height'] = $this->height . 'px';
-                $style['background-color'] = $this->backgroundColor;
                 $style['position'] = 'relative';
             } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
-                $style['position'] = 'absolute';
-                $style['top'] = 0;
-                $style['left'] = 0;
                 $style['bottom'] = 0;
                 $style['right'] = 0;
             } elseif ($layout === ImageViewModel::LAYOUT_FULL_WIDTH) {
-                $style['position'] = 'absolute';
-                $style['top'] = 0;
-                $style['left'] = 0;
                 $style['bottom'] = 0;
                 $style['right'] = 0;
             }
         }
 
-        $style['opacity'] = 1;
-        $style['transition'] = 'opacity 500ms linear';
+        if($loading === 'lazy') {
+            $style['opacity'] = 1;
+            $style['transition'] = 'opacity 500ms linear';
+        }
 
         return $this->implodeStyles($style);
     }
@@ -136,15 +125,14 @@ class ImageStyles
      */
     public function main($loading = 'eager')
     {
-        $style = array_merge(
-            [
-                'transform' => 'translateZ(0px)',
-                'will-change' => 'opacity',
-            ],
-            $this->baseStyle,
-        );
+        $style = $this->baseStyle;
 
-        $style['opacity'] = (config('twill-image.js') && $loading === 'lazy') ? 0 : 1;
+        // Only set CSS to animate IMG if JS is enabled
+        if(config('twill-image.js') && $loading === 'lazy') {
+            $style['opacity'] = 0;
+            $style['transform'] = 'translateZ(0px)';
+            $style['will-change'] = 'opacity';
+        }
 
         return $this->implodeStyles($style);
     }
