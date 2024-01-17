@@ -340,6 +340,7 @@ or
 |`backgroundColor`|`hex`  `string`|See config|Set placeholder background color|
 |`class`|`string`|   |Add class(es) to the wrapper element|
 |`height`|`int`|   |   |
+|`imgSizer`|`boolean`|True|Render the image sizer markup. If set as `false`, CSS classes need to be setup into `class` to size properly the wrapper element|
 |`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
 |`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
 |`lqip`|`boolean`|See config|Use LQIP|

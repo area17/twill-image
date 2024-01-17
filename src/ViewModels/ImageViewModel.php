@@ -45,6 +45,11 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $height;
 
     /**
+     * @var bool $imgSizer Should render the image sizer markup : false (default) or true
+     */
+    protected $imgSizer;
+
+    /**
      * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
      */
     protected $layout;
@@ -145,6 +150,8 @@ class ImageViewModel extends ViewModel implements Arrayable
             = $overrides['backgroundColor']
             ?? config('twill-image.background_color')
             ?? 'transparent';
+
+        $this->imgSizer = $overrides['imgSizer'] ?? true;
 
         $this->layout
             = $overrides['layout']
@@ -359,12 +366,14 @@ class ImageViewModel extends ViewModel implements Arrayable
 
     public function toArray(): array
     {
-        if(config('twill-image.tailwind_css') === false) {
-            $styleMain = $this->styleService->main($this->loading)['inline'];
-            $styleMainNoScript = $this->styleService->main()['inline'];
-            $stylePlaceholder = $this->styleService->placeholder()['inline'];
-            $styleWrapper = $this->styleService->wrapper()['inline'];
-        } else {
+        // CSS classes and styles
+        $styleType = config('twill-image.tailwind_css') === false ? 'inline' : 'tailwind-inline';
+        $styleMain = $this->styleService->main($this->loading)[styleType];
+        $styleMainNoScript = $this->styleService->main()[styleType];
+        $stylePlaceholder = $this->styleService->placeholder()[styleType];
+        $styleWrapper = $this->styleService->wrapper()[styleType];
+
+        if(config('twill-image.tailwind_css')) {
             $mainClasses = $this->styleService->main($this->loading)['tailwind'];
             $mainNoscriptClasses = $this->styleService->main()['tailwind'];
             $placeholderClasses = $this->styleService->placeholder()['tailwind'];
@@ -378,14 +387,15 @@ class ImageViewModel extends ViewModel implements Arrayable
             'loading' => $this->loading,
             'mainStyle' => $styleMain ?? null,
             'mainClasses' => $mainClasses ?? null,
-            'mainNoscriptStyle' => $styleMainNoScript ?? null,
             'mainNoscriptClasses' => $mainNoscriptClasses ?? null,
+            'mainNoscriptStyle' => $styleMainNoScript ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
+            'needSizer' => $this->imgSizer,
+            'placeholderClasses' => $placeholderClasses ?? null,
             'placeholderSrc' => $this->lqipSrc,
             'placeholderSources' => $this->lqipSources,
             'placeholderStyle' => $stylePlaceholder ?? null,
-            'placeholderClasses' => $placeholderClasses ?? null,
             'shouldLazyloadJS' => $this->loading === 'lazy' && config('twill-image.js') ? true : false,
             'sizes' => $this->sizes,
             'width' => $this->width,

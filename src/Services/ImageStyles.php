@@ -82,21 +82,26 @@ class ImageStyles
     {
         $layout = $this->layout;
 
+        // Regular CSS
         $style = [
             'position' => 'relative',
             'overflow' => 'hidden',
         ];
 
+        // Tailwind Classes
         $tailwindCSS = [
             'relative',
             'overflow-hidden',
         ];
 
+        // Extra CSS for arbitrary values
+        $tailwindStyle = [];
+
         if ($layout === ImageViewModel::LAYOUT_FIXED) {
             $style['width'] = $this->width . 'px';
             $style['height'] = $this->height . 'px';
-            $tailwindCSS[] = 'w-[' . $this->width . 'px]';
-            $tailwindCSS[] = 'h-[' . $this->height . 'px]';
+            $tailwindStyle['width'] = $style['width'];
+            $tailwindStyle['height'] = $style['height'];
         } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
             $style['display'] = 'inline-block';
             $tailwindCSS[] = 'inline-block';
@@ -104,12 +109,13 @@ class ImageStyles
 
         if (!! $this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
-            $tailwindCSS[] = 'bg-[' . $this->backgroundColor .']';
+            $tailwindStyle['background-color'] = $style['background-color'];
         }
 
         return [
             'inline' => $this->implodeStyles($style),
             'tailwind' => implode(' ', $tailwindCSS),
+            'tailwind-inline' => $this->implodeStyles($tailwindStyle),
         ];
     }
 
@@ -124,17 +130,18 @@ class ImageStyles
 
         $style = $this->baseStyle;
         $tailwindCSS = $this->baseTailwindCSS;
+        $tailwindStyle = [];
 
         if (!!$this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
-            $tailwindCSS[] = 'bg-[' . $this->backgroundColor .']';
+            $tailwindStyle['background-color'] = $style['background-color'];
 
             if ($layout === ImageViewModel::LAYOUT_FIXED) {
                 $style['width'] = $this->width . 'px';
                 $style['height'] = $this->height . 'px';
                 $style['position'] = 'relative';
-                $tailwindCSS[] = 'w-[' . $this->width . 'px]';
-                $tailwindCSS[] = 'h-[' . $this->height . 'px]';
+                $tailwindStyle['width'] = $style['width'];
+                $tailwindStyle['height'] = $style['height'];
                 $tailwindCSS[] = 'relative';
             } elseif (
                 $layout === ImageViewModel::LAYOUT_CONSTRAINED ||
@@ -150,6 +157,7 @@ class ImageStyles
         return [
             'inline' => $this->implodeStyles($style),
             'tailwind' => implode(' ', $tailwindCSS),
+            'tailwind-inline' => $this->implodeStyles($tailwindStyle),
         ];
     }
 
@@ -173,6 +181,7 @@ class ImageStyles
         return [
             'inline' => $this->implodeStyles($style),
             'tailwind' => implode(' ', $this->baseTailwindCSS),
+            'tailwind-inline' => '',
         ];
     }
 
