@@ -9,6 +9,7 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 - WebP and JPEG support
 - Lazy load (fade in) image with `IntersectionOserver`
 - Support native lazy loading with `loading='lazy'`
+- Support Tailwind CSS to apply default styles on images
 
 ## Contents
 
@@ -410,8 +411,9 @@ See [above section](#preset) about the `preset` method.
 |---|---|---|---|
 |`background_color`|`string`|`#e3e3e3`|   |
 |`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
+|`tailwind_css`|`boolean`|`false`|Uses Tailwind CSS classes to setup default style on images. If set to `false` it will set CSS using inline style attributes.|
 |`webp_support`|`boolean`|`true`|If set to `false`, the `type` attribute is omitted from `<source>` elements|
-|`js`|`boolean`|`false`|Default is set to `false`, lazy-loading will simply rely on the image's `loading` attribute. If set to `true`, you will need to add the JS behvaior so image are properly lazy loaded|
+|`js`|`boolean`|`false`|Default is set to `false`, lazy-loading will simply rely on the image's `loading` attribute. If set to `true`, you will need to add the JS library so images are properly lazy loaded|
 |`presets`|`object`|   |   |
 
 ## Art directed images
