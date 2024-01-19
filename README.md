@@ -340,7 +340,7 @@ or
 |`backgroundColor`|`hex`  `string`|See config|Set placeholder background color|
 |`class`|`string`|   |Add class(es) to the wrapper element|
 |`height`|`int`|   |   |
-|`imgSizer`|`boolean`|True|Render the image sizer markup. If set as `false`, CSS classes need to be setup into `class` to size properly the wrapper element|
+|`imageSizer`|`boolean`|True|Render the image sizer markup. If set as `false`, CSS classes need to be setup into `class` to size properly the wrapper element|
 |`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
 |`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
 |`lqip`|`boolean`|See config|Use LQIP|
@@ -411,7 +411,7 @@ See [above section](#preset) about the `preset` method.
 |`background_color`|`string`|`#e3e3e3`|   |
 |`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
 |`webp_support`|`boolean`|`true`|If set to `false`, the `type` attribute is omitted from `<source>` elements|
-|`js`|`boolean`|`true`|If set to `false`, lazy-loading will simply rely on the image's `loading` attribute|
+|`js`|`boolean`|`false`|Default is set to `false`, lazy-loading will simply rely on the image's `loading` attribute. If set to `true`, you will need to add the JS behvaior so image are properly lazy loaded|
 |`presets`|`object`|   |   |
 
 ## Art directed images

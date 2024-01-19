@@ -45,9 +45,9 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $height;
 
     /**
-     * @var bool $imgSizer Should render the image sizer markup : false (default) or true
+     * @var bool $imageSizer Should render the image sizer markup : false (default) or true
      */
-    protected $imgSizer;
+    protected $imageSizer;
 
     /**
      * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
@@ -151,7 +151,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             ?? config('twill-image.background_color')
             ?? 'transparent';
 
-        $this->imgSizer = $overrides['imgSizer'] ?? true;
+        $this->imageSizer = $overrides['imageSizer'] ?? true;
 
         $this->layout
             = $overrides['layout']
@@ -391,7 +391,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             'mainNoscriptStyle' => $styleMainNoScript ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
-            'needSizer' => $this->imgSizer,
+            'needSizer' => $this->imageSizer,
             'placeholderClasses' => $placeholderClasses ?? null,
             'placeholderSrc' => $this->lqipSrc,
             'placeholderSources' => $this->lqipSources,

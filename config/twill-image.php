@@ -41,7 +41,7 @@ return [
     | Tells if the JavaScript module should be used.
     |
     */
-    'js' => true,
+    'js' => false,
 
     /*
     |--------------------------------------------------------------------------
