@@ -48,13 +48,5 @@ class TwillImageServiceProvider extends ServiceProvider
             ],
             'config',
         );
-        $this->publishes(
-            [
-                __DIR__ . '/../dist/twill-image.js' => public_path(
-                    'twill-image.js',
-                ),
-            ],
-            'js',
-        );
     }
 }

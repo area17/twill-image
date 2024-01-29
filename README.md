@@ -15,7 +15,6 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 
 - [Installation](#installation)
   - [Configuration file](#configuration-file)
-  - [JavaScript module](#javascript-module)
 - [Usage](#usage)
   - [The `Image` model](#the-image-,model)
     - [Available methods](#available-methods)
@@ -60,38 +59,6 @@ Publish `config/twill-image.php` to your app's config folder.
 ```bash
 php artisan vendor:publish --provider="A17\Twill\Image\TwillImageServiceProvider" --tag=config
 ```
-
-### JavaScript module
-
-You can import the JavaScript module and initialize the lazy loading class in your application.
-
-```js
-import { TwillImage } from '../../vendor/area17/twill-image'
-
-document.addEventListener('DOMContentLoaded', function () {
-  const lazyloading = new TwillImage()
-})
-```
-
-When adding or refreshing content of a page without a reload, you can trigger a recalculation of TwillImage's observers by calling the `reset()` method. This is an example:
-
-```js
-document.addEventListener('page:updated', () => lazyloading.reset());
-```
-
-If you prefer to use a pre-compiled version of the JavaScrip module, you can publish a script `twill-image.js` to your app's public folder and add a `<script>` tag to your project.
-
-```bash
-php artisan vendor:publish --provider="A17\Twill\Image\TwillImageServiceProvider" --tag=js
-```
-
-In a Blade file.
-
-```php
-<script src="{{ asset('/twill-image.js') }}"></script>
-```
-
-The JavaScript module is not required. If you prefer to rely only on the browser's native `loading` attribute, set the [`js` config option](#list-of-options) to `false`.
 
 
 ## Usage
@@ -413,7 +380,6 @@ See [above section](#preset) about the `preset` method.
 |`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
 |`tailwind_css`|`boolean`|`false`|Uses Tailwind CSS classes to setup default style on images. If set to `false` it will set CSS using inline style attributes.|
 |`webp_support`|`boolean`|`true`|If set to `false`, the `type` attribute is omitted from `<source>` elements|
-|`js`|`boolean`|`false`|Default is set to `false`, lazy-loading will simply rely on the image's `loading` attribute. If set to `true`, you will need to add the JS library so images are properly lazy loaded|
 |`presets`|`object`|   |   |
 
 ## Art directed images

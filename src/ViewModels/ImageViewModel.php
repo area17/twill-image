@@ -369,13 +369,11 @@ class ImageViewModel extends ViewModel implements Arrayable
         // CSS classes and styles
         $styleType = config('twill-image.tailwind_css') === false ? 'inline' : 'tailwind-inline';
         $styleMain = $this->styleService->main($this->loading)[$styleType];
-        $styleMainNoScript = $this->styleService->main()[$styleType];
         $stylePlaceholder = $this->styleService->placeholder()[$styleType];
         $styleWrapper = $this->styleService->wrapper()[$styleType];
 
         if(config('twill-image.tailwind_css')) {
             $mainClasses = $this->styleService->main($this->loading)['tailwind'];
-            $mainNoscriptClasses = $this->styleService->main()['tailwind'];
             $placeholderClasses = $this->styleService->placeholder()['tailwind'];
         }
 
@@ -387,8 +385,6 @@ class ImageViewModel extends ViewModel implements Arrayable
             'loading' => $this->loading,
             'mainStyle' => $styleMain ?? null,
             'mainClasses' => $mainClasses ?? null,
-            'mainNoscriptClasses' => $mainNoscriptClasses ?? null,
-            'mainNoscriptStyle' => $styleMainNoScript ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
             'needSizer' => $this->imageSizer,
@@ -396,7 +392,6 @@ class ImageViewModel extends ViewModel implements Arrayable
             'placeholderSrc' => $this->lqipSrc,
             'placeholderSources' => $this->lqipSources,
             'placeholderStyle' => $stylePlaceholder ?? null,
-            'shouldLazyloadJS' => $this->loading === 'lazy' && config('twill-image.js') ? true : false,
             'sizes' => $this->sizes,
             'width' => $this->width,
             'wrapperClasses' => $this->wrapperClasses(),

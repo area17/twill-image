@@ -168,18 +168,8 @@ class ImageStyles
      */
     public function main($loading = 'eager')
     {
-        $style = $this->baseStyle;
-        $tailwindCSS = $this->baseTailwindCSS;
-
-        // Only set CSS to animate IMG if JS is enabled
-        if(config('twill-image.js') && $loading === 'lazy') {
-            $style['opacity'] = 0;
-            $style['transform'] = 'translateZ(0px)';
-            $tailwindCSS[] = 'opacity-0';
-        }
-
         return [
-            'inline' => $this->implodeStyles($style),
+            'inline' => $this->implodeStyles($this->baseStyle),
             'tailwind' => implode(' ', $this->baseTailwindCSS),
             'tailwind-inline' => '',
         ];
