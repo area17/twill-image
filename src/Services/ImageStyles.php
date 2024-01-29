@@ -24,7 +24,7 @@ class ImageStyles
      * @param array $imgStyle
      * @return void
      */
-    public function setup($needPlaceholder = false, $backgroundColor, $width, $height, $imgStyle = [])
+    public function setup($needPlaceholder = false, $backgroundColor, $width, $height, $imgStyle = [], $imgClass = '')
     {
 
         $this->backgroundColor = $backgroundColor;
@@ -48,7 +48,7 @@ class ImageStyles
                 'object-fit' => 'cover',
                 'object-position' => 'center',
             ] : [],
-            !config('twill-image.tailwind_css') ? $imgStyle : [],
+            $imgStyle,
         );
 
         $this->baseTailwindCSS = array_merge(
@@ -66,7 +66,7 @@ class ImageStyles
                 'object-cover',
                 'object-center'
             ] : [],
-            config('twill-image.tailwind_css') ? $imgStyle : [],
+            $imgClass ? explode(" ", $imgClass) : [],
         );
     }
 

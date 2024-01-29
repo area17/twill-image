@@ -305,6 +305,7 @@ or
 |---|---|---|---|
 |`backgroundColor`|`hex`  `string`|See config|Set placeholder background color|
 |`class`|`string`|   |Add class(es) to the wrapper element|
+|`imageClass`|`string`|   |Add class(es) to the img element|
 |`height`|`int`|   |   |
 |`imageSizer`|`boolean`|True|Render the image sizer markup. If set as `false`, CSS classes need to be setup into `class` to size properly the wrapper element|
 |`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|

@@ -76,6 +76,11 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $width;
 
     /**
+     * @var int $imageClass Tailwind CSS class applied to the placeholder and main img tag
+     */
+    protected $imageClass;
+
+    /**
      * @var int $imageStyles Styles applied to the placeholder and main img tag
      */
     protected $imageStyles;
@@ -110,14 +115,16 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->setLqipAttributes();
 
         $this->needPlaceholder = $this->lqip && $this->lqipSrc;
+        $this->needPlaceholderOrSizer = $this->needPlaceholder || $this->imageSizer;
 
         $this->styleService = new ImageStyles();
         $this->styleService->setup(
-            $this->needPlaceholder,
+            $this->needPlaceholderOrSizer,
             $this->backgroundColor,
             $this->width,
             $this->height,
-            $this->imageStyles
+            $this->imageStyles,
+            $this->imageClass
         );
     }
 
@@ -157,6 +164,10 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->imageStyles
             = $overrides['imageStyles']
             ?? [];
+
+        $this->imageClass
+            = $overrides['imageClass']
+            ?? '';
     }
 
     /**
