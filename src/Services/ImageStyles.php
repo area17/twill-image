@@ -12,23 +12,20 @@ class ImageStyles
 
     protected $height;
 
-    protected $layout;
-
     protected $width;
 
     /**
      * Set up the service to generate view inline styles for the wrapper, main image and placeholder elements
      *
-     * @param string $layout
+     * @param bool $needPlaceholder
      * @param string $backgroundColor
      * @param int $width
      * @param int|null $height
      * @param array $imgStyle
      * @return void
      */
-    public function setup($layout, $backgroundColor, $width, $height, $imgStyle = [])
+    public function setup($needPlaceholder = false, $backgroundColor, $width, $height, $imgStyle = [])
     {
-        $this->layout = $layout;
 
         $this->backgroundColor = $backgroundColor;
 
@@ -37,7 +34,7 @@ class ImageStyles
         $this->height = $height;
 
         $this->baseStyle = array_merge(
-            [
+            $$needPlaceholder ? [
                 'bottom' => 0,
                 'height' => '100%',
                 'left' => 0,
@@ -50,12 +47,12 @@ class ImageStyles
                 'width' => '100%',
                 'object-fit' => 'cover',
                 'object-position' => 'center',
-            ],
-            $imgStyle,
+            ] : [],
+            !config('twill-image.tailwind_css') ? $imgStyle : [],
         );
 
         $this->baseTailwindCSS = array_merge(
-            [
+            $$needPlaceholder ? [
                 'bottom-0',
                 'h-full',
                 'left-0',
@@ -68,8 +65,8 @@ class ImageStyles
                 'w-full',
                 'object-cover',
                 'object-center'
-            ],
-            $imgStyle,
+            ] : [],
+            config('twill-image.tailwind_css') ? $imgStyle : [],
         );
     }
 
@@ -80,7 +77,6 @@ class ImageStyles
      */
     public function wrapper()
     {
-        $layout = $this->layout;
 
         // Regular CSS
         $style = [
@@ -96,16 +92,6 @@ class ImageStyles
 
         // Extra CSS for arbitrary values
         $tailwindStyle = [];
-
-        if ($layout === ImageViewModel::LAYOUT_FIXED) {
-            $style['width'] = $this->width . 'px';
-            $style['height'] = $this->height . 'px';
-            $tailwindStyle['width'] = $style['width'];
-            $tailwindStyle['height'] = $style['height'];
-        } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
-            $style['display'] = 'inline-block';
-            $tailwindCSS[] = 'inline-block';
-        }
 
         if (!! $this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
@@ -126,8 +112,6 @@ class ImageStyles
      */
     public function placeholder()
     {
-        $layout = $this->layout;
-
         $style = $this->baseStyle;
         $tailwindCSS = $this->baseTailwindCSS;
         $tailwindStyle = [];
@@ -135,23 +119,10 @@ class ImageStyles
         if (!!$this->backgroundColor) {
             $style['background-color'] = $this->backgroundColor;
             $tailwindStyle['background-color'] = $style['background-color'];
-
-            if ($layout === ImageViewModel::LAYOUT_FIXED) {
-                $style['width'] = $this->width . 'px';
-                $style['height'] = $this->height . 'px';
-                $style['position'] = 'relative';
-                $tailwindStyle['width'] = $style['width'];
-                $tailwindStyle['height'] = $style['height'];
-                $tailwindCSS[] = 'relative';
-            } elseif (
-                $layout === ImageViewModel::LAYOUT_CONSTRAINED ||
-                $layout === ImageViewModel::LAYOUT_FULL_WIDTH
-            ) {
-                $style['bottom'] = 0;
-                $style['right'] = 0;
-                $tailwindCSS[] = 'bottom-0';
-                $tailwindCSS[] = 'right-0';
-            }
+            $style['bottom'] = 0;
+            $style['right'] = 0;
+            $tailwindCSS[] = 'bottom-0';
+            $tailwindCSS[] = 'right-0';
         }
 
         return [

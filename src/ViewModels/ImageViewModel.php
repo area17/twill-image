@@ -9,20 +9,6 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class ImageViewModel extends ViewModel implements Arrayable
 {
-    /**
-     * @var string LAYOUT_FULL_WIDTH Set layout to take full width of container element
-     */
-    const LAYOUT_FULL_WIDTH = 'fullWidth';
-
-    /**
-     * @var string LAYOUT_CONSTRAINED Set layout to take full width of container element up to specified max-width or image original width
-     */
-    const LAYOUT_CONSTRAINED = 'constrained';
-
-    /**
-     * @var string LAYOUT_FIXED Set layout to take a fixed exact width and height
-     */
-    const LAYOUT_FIXED = 'fixed';
 
     /**
      * @var string $alt Description of the image
@@ -48,11 +34,6 @@ class ImageViewModel extends ViewModel implements Arrayable
      * @var bool $imageSizer Should render the image sizer markup : false (default) or true
      */
     protected $imageSizer;
-
-    /**
-     * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
-     */
-    protected $layout;
 
     /**
      * @var string $loading <img> loading attribute "lazy" (default) or "eager"
@@ -128,9 +109,11 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->setSourcesAttributes();
         $this->setLqipAttributes();
 
+        $this->needPlaceholder = $this->lqip && $this->lqipSrc;
+
         $this->styleService = new ImageStyles();
         $this->styleService->setup(
-            $this->layout,
+            $this->needPlaceholder,
             $this->backgroundColor,
             $this->width,
             $this->height,
@@ -153,11 +136,6 @@ class ImageViewModel extends ViewModel implements Arrayable
 
         $this->imageSizer = $overrides['imageSizer'] ?? true;
 
-        $this->layout
-            = $overrides['layout']
-            ?? $this->data['layout']
-            ?? self::LAYOUT_FULL_WIDTH;
-
         $this->loading = $overrides['loading'] ?? 'lazy';
 
         $this->lqip
@@ -168,7 +146,7 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->sizes
             = $overrides['sizes']
             ?? $this->data['sizes']
-            ?? $this->defaultSizesAttribute();
+            ?? null;
 
         $this->wrapperClass = $overrides['class'] ?? null;
 
@@ -283,37 +261,9 @@ class ImageViewModel extends ViewModel implements Arrayable
         return null;
     }
 
-    /**
-     * Create a default sizes attributes when none is passed to the view
-     *
-     * @return void|string
-     */
-    protected function defaultSizesAttribute()
-    {
-        switch ($this->layout) {
-            case self::LAYOUT_CONSTRAINED:
-                return '(min-width:' .
-                    $this->width .
-                    'px) ' .
-                    $this->width .
-                    'px, 100vw';
-            case self::LAYOUT_FIXED:
-                return $this->width . 'px';
-            case self::LAYOUT_FULL_WIDTH:
-                return '100vw';
-            default:
-                return null;
-        }
-    }
-
     protected function wrapperClasses()
     {
-        $layout = $this->layout;
         $classes = 'twill-image-wrapper';
-
-        if ($layout === self::LAYOUT_CONSTRAINED) {
-            $classes = 'twill-image-wrapper twill-image-wrapper-constrained';
-        }
 
         if (isset($this->wrapperClass)) {
             $classes = join(' ', [$classes, $this->wrapperClass]);
@@ -381,12 +331,12 @@ class ImageViewModel extends ViewModel implements Arrayable
             'alt' => $this->alt,
             'aspectRatio' => $this->data['image']['aspectRatio'],
             'height' => $this->height,
-            'layout' => $this->layout,
             'loading' => $this->loading,
             'mainStyle' => $styleMain ?? null,
             'mainClasses' => $mainClasses ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
+            'needPlaceholder' => $this->needPlaceholder,
             'needSizer' => $this->imageSizer,
             'placeholderClasses' => $placeholderClasses ?? null,
             'placeholderSrc' => $this->lqipSrc,

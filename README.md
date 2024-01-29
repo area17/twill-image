@@ -258,7 +258,6 @@ $image = TwillImage::make($page, 'preview')->preset('art_directed');
 {{-- with arguments --}}
 {!! $image->render([
     'loading' => 'eager',
-    'layout' => 'constrained',
 ]) !!}
 ```
 
@@ -295,7 +294,6 @@ or
 ```php
 <div class="w-1/4">
     {!! TwillImage::render($previewImage, [
-        'layout' => 'constrained',
         'width' => 700,
     ]) !!}
 </div>
@@ -309,11 +307,9 @@ or
 |`class`|`string`|   |Add class(es) to the wrapper element|
 |`height`|`int`|   |   |
 |`imageSizer`|`boolean`|True|Render the image sizer markup. If set as `false`, CSS classes need to be setup into `class` to size properly the wrapper element|
-|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
 |`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
 |`lqip`|`boolean`|See config|Use LQIP|
 |`sizes`|`string`|   |The image sizes attributes|
-|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
 |`imageStyles`|`array`|`[]`|Apply styles to placeholder and main `img` tags (ex.: `[['object-fit' => 'contain']]`|
 
 #### Examples
@@ -329,17 +325,6 @@ $listingImage = TwillImage::make($item, 'preview_image')->crop('listing');
 {!! TwillImage::render($heroImage) !!}
 
 {!! TwillImage::render($listingImage) !!}
-
-{!! TwillImage::render($listingImage, [
-    'layout' => 'constrained',
-    'width' => 400
-]) !!}
-
-{!! TwillImage::render($listingImage, [
-    'layout' => 'fixed',
-    'width' => 100,
-    'height' => 150
-]) !!}
 ```
 
 ## Configuration
