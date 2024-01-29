@@ -34,7 +34,7 @@ class ImageStyles
         $this->height = $height;
 
         $this->baseStyle = array_merge(
-            $$needPlaceholder ? [
+            $needPlaceholder ? [
                 'bottom' => 0,
                 'height' => '100%',
                 'left' => 0,
@@ -52,7 +52,7 @@ class ImageStyles
         );
 
         $this->baseTailwindCSS = array_merge(
-            $$needPlaceholder ? [
+            $needPlaceholder ? [
                 'bottom-0',
                 'h-full',
                 'left-0',
