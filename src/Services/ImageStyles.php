@@ -65,7 +65,7 @@ class ImageStyles
                 'absolute',
                 'right-0',
                 'top-0',
-                'w-full' => '100%',
+                'w-full',
                 'object-cover',
                 'object-center'
             ],
