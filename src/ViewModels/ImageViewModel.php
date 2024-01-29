@@ -141,7 +141,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             ?? config('twill-image.background_color')
             ?? 'transparent';
 
-        $this->imageSizer = $overrides['imageSizer'] ?? true;
+        $this->imageSizer = $overrides['imageSizer'] ?? false;
 
         $this->loading = $overrides['loading'] ?? 'lazy';
 
@@ -155,7 +155,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             ?? $this->data['sizes']
             ?? null;
 
-        $this->wrapperClass = $overrides['class'] ?? null;
+        $this->wrapperClass = $overrides['wrapperClass'] ?? $overrides['class'] ?? null;
 
         $this->width = $overrides['width'] ?? null;
 

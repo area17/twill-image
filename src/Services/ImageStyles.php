@@ -93,7 +93,7 @@ class ImageStyles
         // Extra CSS for arbitrary values
         $tailwindStyle = [];
 
-        if (!! $this->backgroundColor) {
+        if (!! $this->backgroundColor && $this->backgroundColor !== 'transparent') {
             $style['background-color'] = $this->backgroundColor;
             $tailwindStyle['background-color'] = $style['background-color'];
         }
@@ -116,7 +116,7 @@ class ImageStyles
         $tailwindCSS = $this->baseTailwindCSS;
         $tailwindStyle = [];
 
-        if (!!$this->backgroundColor) {
+        if (!!$this->backgroundColor && $this->backgroundColor !== 'transparent') {
             $style['background-color'] = $this->backgroundColor;
             $tailwindStyle['background-color'] = $style['background-color'];
             $style['bottom'] = 0;
