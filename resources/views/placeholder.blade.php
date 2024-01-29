@@ -9,6 +9,7 @@ $attributes = 'aria-hidden="true" data-twill-image-placeholder';
       'sizes' => $sizes,
       'sources' => $placeholderSources ?? [],
       'style' => $placeholderStyle,
+      'class' => $placeholderClasses ?? null,
   ])
 @else
     <div class='{{$placeholderClasses ?? null}}' style="{{$placeholderStyle ?? null}}" {!! $attributes !!}></div>
