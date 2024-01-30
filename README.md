@@ -307,7 +307,7 @@ or
 |`class`|`string`|   |Add class(es) to the wrapper element|
 |`imageClass`|`string`|   |Add class(es) to the img element|
 |`height`|`int`|   |   |
-|`imageSizer`|`boolean`|True|Render the image sizer markup. If set as `false`, CSS classes need to be setup into `class` to size properly the wrapper element|
+|`imageSizer`|`boolean`|False|Render the image sizer markup if `true`|
 |`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
 |`lqip`|`boolean`|See config|Use LQIP|
 |`sizes`|`string`|   |The image sizes attributes|
