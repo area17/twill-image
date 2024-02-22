@@ -10,7 +10,9 @@
                         media="{{ $source['mediaQuery'] }}"
                     @endif
                     srcset="{{ $source['srcset'] }}"
-                    sizes="{{ $sizes }}"
+                    @if(isset($sizes))
+                        sizes="{{ $sizes }}"
+                    @endif
                 />
             @endforeach
         @endisset
