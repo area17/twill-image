@@ -8,7 +8,7 @@ $attributes = 'aria-hidden="true" data-twill-image-placeholder';
       'attributes' => $attributes,
       'sizes' => $sizes,
       'sources' => $placeholderSources ?? [],
-      'style' => $placeholderStyle,
+      'style' => $placeholderStyle ?? null,
       'class' => $placeholderClasses ?? null,
   ])
 @else

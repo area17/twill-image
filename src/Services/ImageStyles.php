@@ -6,34 +6,36 @@ use A17\Twill\Image\ViewModels\ImageViewModel;
 
 class ImageStyles
 {
+    /**
+     * @var string $backgroundColor CSS color value to backgound-color directive
+     */
     protected $backgroundColor;
 
-    protected $baseStyle;
+    /**
+     * @var array $baseStyle
+     */
+    protected $baseStyle = [];
 
-    protected $height;
-
-    protected $width;
+    /**
+     * @var array $baseClass
+     */
+    protected $baseClass = [];
 
     /**
      * Set up the service to generate view inline styles for the wrapper, main image and placeholder elements
      *
      * @param bool $needPlaceholder
      * @param string $backgroundColor
-     * @param int $width
-     * @param int|null $height
      * @param array $imgStyle
      * @return void
      */
-    public function setup($needPlaceholder = false, $backgroundColor, $width, $height, $imgStyle = [], $imgClass = '')
+    public function setup($needPlaceholder = false, $backgroundColor, $imgStyle = [], $imgClass = '')
     {
 
         $this->backgroundColor = $backgroundColor;
 
-        $this->width = $width;
-
-        $this->height = $height;
-
-        $this->baseStyle = array_merge(
+        if (config('twill-image.inline_styles') !== false) {
+            $this->baseStyle = array_merge(
             $needPlaceholder ? [
                 'bottom' => 0,
                 'height' => '100%',
@@ -48,26 +50,18 @@ class ImageStyles
                 'object-fit' => 'cover',
                 'object-position' => 'center',
             ] : [],
-            $imgStyle,
-        );
+                $imgStyle,
+            );
+        } else {
+            $this->baseClass = array_merge(
+                $this->baseClass,
+                $needPlaceholder ? config('twill-image.custom_classes.main') ?? [] : []
+            );
+        }
 
-        $this->baseTailwindCSS = array_merge(
-            $needPlaceholder ? [
-                'bottom-0',
-                'h-full',
-                'left-0',
-                'm-0',
-                'max-w-none',
-                'p-0',
-                'absolute',
-                'right-0',
-                'top-0',
-                'w-full',
-                'object-cover',
-                'object-center'
-            ] : [],
-            $imgClass ? explode(" ", $imgClass) : [],
-        );
+        if ($imgClass) {
+            $this->baseClass = array_merge($this->baseClass, explode(" ", $imgClass));
+        }
     }
 
     /**
@@ -77,31 +71,25 @@ class ImageStyles
      */
     public function wrapper()
     {
+        $style = [];
+        $class = [];
 
-        // Regular CSS
-        $style = [
-            'position' => 'relative',
-            'overflow' => 'hidden',
-        ];
-
-        // Tailwind Classes
-        $tailwindCSS = [
-            'relative',
-            'overflow-hidden',
-        ];
-
-        // Extra CSS for arbitrary values
-        $tailwindStyle = [];
+        if (config('twill-image.inline_styles') !== false) {
+            $style = [
+                'position' => 'relative',
+                'overflow' => 'hidden',
+            ];
+        } else {
+            $class = array_merge(config('twill-image.custom_classes.wrapper') ?? [], $class);
+        }
 
         if (!! $this->backgroundColor && $this->backgroundColor !== 'transparent') {
             $style['background-color'] = $this->backgroundColor;
-            $tailwindStyle['background-color'] = $style['background-color'];
         }
 
         return [
-            'inline' => $this->implodeStyles($style),
-            'tailwind' => implode(' ', $tailwindCSS),
-            'tailwind-inline' => $this->implodeStyles($tailwindStyle),
+            'style' => $this->implodeStyles($style),
+            'class' => implode(' ', $class),
         ];
     }
 
@@ -113,22 +101,21 @@ class ImageStyles
     public function placeholder()
     {
         $style = $this->baseStyle;
-        $tailwindCSS = $this->baseTailwindCSS;
-        $tailwindStyle = [];
+        $class = $this->baseClass;
 
         if (!!$this->backgroundColor && $this->backgroundColor !== 'transparent') {
-            $style['background-color'] = $this->backgroundColor;
-            $tailwindStyle['background-color'] = $style['background-color'];
-            $style['bottom'] = 0;
-            $style['right'] = 0;
-            $tailwindCSS[] = 'bottom-0';
-            $tailwindCSS[] = 'right-0';
+             if (config('twill-image.inline_styles') !== false) {
+                $style['background-color'] = $this->backgroundColor;
+                $style['bottom'] = 0;
+                $style['right'] = 0;
+            } else {
+                $class = array_merge(config('twill-image.custom_classes.placeholder') ?? [], $class);
+            }
         }
 
         return [
-            'inline' => $this->implodeStyles($style),
-            'tailwind' => implode(' ', $tailwindCSS),
-            'tailwind-inline' => $this->implodeStyles($tailwindStyle),
+            'style' => $this->implodeStyles($style),
+            'class' => implode(' ', $class),
         ];
     }
 
@@ -140,9 +127,8 @@ class ImageStyles
     public function main($loading = 'eager')
     {
         return [
-            'inline' => $this->implodeStyles($this->baseStyle),
-            'tailwind' => implode(' ', $this->baseTailwindCSS),
-            'tailwind-inline' => '',
+            'style' => $this->implodeStyles($this->baseStyle),
+            'class' => implode(' ', $this->baseClass),
         ];
     }
 

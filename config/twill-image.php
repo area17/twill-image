@@ -46,13 +46,42 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Tailwind CSS
+    | Inline styles
     |--------------------------------------------------------------------------
     |
-    | Tells if the default style should be Tailwind CSS classes or inline CSS in style attribute
+    | Use inline styles for default styling or disable and use custom classes
+    | instead.
+    |
+    | Custom classes can be used for applying Tailwind CSS classes if
+    | inline styles are set to false.
     |
     */
-    'tailwind_css' => false,
+    'inline_styles' => true,
+
+    'custom_classes' => [
+        'main' => [
+            'bottom-0',
+            'h-full',
+            'left-0',
+            'm-0',
+            'max-w-none',
+            'p-0',
+            'absolute',
+            'right-0',
+            'top-0',
+            'w-full',
+            'object-cover',
+            'object-center'
+        ],
+        'wrapper' => [
+            'relative',
+            'overflow-hidden',
+        ],
+        'placeholder' => [
+            'bottom-0',
+            'right-0'
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------

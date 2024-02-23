@@ -121,8 +121,6 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->styleService->setup(
             $this->needPlaceholderOrSizer,
             $this->backgroundColor,
-            $this->width,
-            $this->height,
             $this->imageStyles,
             $this->imageClass
         );
@@ -285,9 +283,7 @@ class ImageViewModel extends ViewModel implements Arrayable
             $classes = join(' ', [$classes, $this->wrapperClass]);
         }
 
-        if(config('twill-image.tailwind_css')) {
-            $classes = join(' ', [$classes, $this->styleService->wrapper()['tailwind']]);
-        }
+        $classes = join(' ', [$classes, $this->styleService->wrapper()['class']]);
 
         return $classes;
     }
@@ -333,22 +329,18 @@ class ImageViewModel extends ViewModel implements Arrayable
     public function toArray(): array
     {
         // CSS classes and styles
-        $styleType = config('twill-image.tailwind_css') === false ? 'inline' : 'tailwind-inline';
-        $styleMain = $this->styleService->main($this->loading)[$styleType];
-        $stylePlaceholder = $this->styleService->placeholder()[$styleType];
-        $styleWrapper = $this->styleService->wrapper()[$styleType];
-
-        if(config('twill-image.tailwind_css')) {
-            $mainClasses = $this->styleService->main($this->loading)['tailwind'];
-            $placeholderClasses = $this->styleService->placeholder()['tailwind'];
-        }
+        $mainStyles = $this->styleService->main($this->loading)['style'];
+        $mainClasses = $this->styleService->main($this->loading)['class'];
+        $placeholderStyles = $this->styleService->placeholder()['style'];
+        $placeholderClasses = $this->styleService->placeholder()['class'];
+        $wrapperStyles = $this->styleService->wrapper()['style'];
 
         return array_filter([
             'alt' => $this->alt,
             'aspectRatio' => $this->data['image']['aspectRatio'],
             'height' => $this->height,
             'loading' => $this->loading,
-            'mainStyle' => $styleMain ?? null,
+            'mainStyle' => $mainStyles ?? null,
             'mainClasses' => $mainClasses ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
@@ -357,11 +349,11 @@ class ImageViewModel extends ViewModel implements Arrayable
             'placeholderClasses' => $placeholderClasses ?? null,
             'placeholderSrc' => $this->lqipSrc,
             'placeholderSources' => $this->lqipSources,
-            'placeholderStyle' => $stylePlaceholder ?? null,
+            'placeholderStyle' => $placeholderStyles ?? null,
             'sizes' => $this->sizes,
             'width' => $this->width,
             'wrapperClasses' => $this->wrapperClasses(),
-            'wrapperStyle' => $styleWrapper ?? null,
+            'wrapperStyle' => $wrapperStyles ?? null,
         ]);
     }
 }

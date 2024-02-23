@@ -7,9 +7,8 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 - Background-color placeholder
 - Art direction (multiple crops)
 - WebP and JPEG support
-- Lazy load (fade in) image with `IntersectionOserver`
-- Support native lazy loading with `loading='lazy'`
-- Support Tailwind CSS to apply default styles on images
+- Native lazy loading with `loading='lazy'`
+- Support custom CSS classes to use with Tailwind CSS
 
 ## Contents
 
@@ -301,17 +300,17 @@ or
 
 #### List of arguments
 
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`backgroundColor`|`hex`  `string`|See config|Set placeholder background color|
-|`class`|`string`|   |Add class(es) to the wrapper element|
-|`imageClass`|`string`|   |Add class(es) to the img element|
-|`height`|`int`|   |   |
-|`imageSizer`|`boolean`|False|Render the image sizer markup if `true`|
-|`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
-|`lqip`|`boolean`|See config|Use LQIP|
-|`sizes`|`string`|   |The image sizes attributes|
-|`imageStyles`|`array`|`[]`|Apply styles to placeholder and main `img` tags (ex.: `[['object-fit' => 'contain']]`|
+|Argument|Type| Default | Description                                                                                               |
+|---|---|-------|-----------------------------------------------------------------------------------------------------------|
+|`backgroundColor`|`hex`  `string`| See config | Set placeholder background color                                                                          |
+|`class`|`string`|       | Add class(es) to the wrapper element                                                                      |
+|`imageClass`|`string`|       | Add class(es) to the img element                                                                          |
+|`height`|`int`|       |                                                                                                           |
+|`imageSizer`|`boolean`| 'auto'| Render the image sizer markup if `true`, if set to 'auto', the sizer is rendered when LQIP is set to true |
+|`loading`|`"lazy" \| "eager"`| `lazy` | Set native lazy loading attribute                                                                         |
+|`lqip`|`boolean`| See config | Use LQIP                                                                                                  |
+|`sizes`|`string`|       | The image sizes attributes                                                                                |
+|`imageStyles`|`array`| `[]`  | Apply styles to placeholder and main `img` tags (ex.: `[['object-fit' => 'contain']]`                     |
 
 #### Examples
 
@@ -338,11 +337,7 @@ In `config/twill-image.php`, you can define general options and image presets. A
 
 return [
 
-    'background_color' => '#e3e3e3',
-
-    'lqip' => true,
-
-    'webp_support' => true,
+    // ...
 
     'presets' => [
         'listing' => [
@@ -360,13 +355,15 @@ return [
 See [above section](#preset) about the `preset` method.
 ### List of options
 
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`background_color`|`string`|`#e3e3e3`|   |
-|`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
-|`tailwind_css`|`boolean`|`false`|Uses Tailwind CSS classes to setup default style on images. If set to `false` it will set CSS using inline style attributes.|
-|`webp_support`|`boolean`|`true`|If set to `false`, the `type` attribute is omitted from `<source>` elements|
-|`presets`|`object`|   |   |
+| Argument           | Type                                       | Default   | Description                                                                                  |
+|--------------------|--------------------------------------------|-----------|----------------------------------------------------------------------------------------------|
+| `background_color` | `string`                                   | `#e3e3e3` |                                                                                              |
+| `lqip`             | `boolean`                                  | `true`    | Uses Twill LQIP method to generate responsive placeholder                                    |
+| `image_sizer`      | `boolean\|'auto'`                          | `auto`    | Output the sizer element. If left to auto, it will render the sizer if LQIP is set to `true`  |
+| `inline_styles`    | `boolean`                                  | `true`    | Output default inline styles                                                                 |
+| `custom_classes`   | `object['main'\|'wrapper'\|'placeholder']` |           | If inline styles are off, custom classes will be used instead allowing use with Tailwind CSS |
+| `webp_support`     | `boolean`                                  | `true`    | If set to `false`, the `type` attribute is omitted from `<source>` elements                  |
+| `presets`          | `object`                                   |           |                                                                                              |
 
 ## Art directed images
 
