@@ -141,14 +141,19 @@ class ImageViewModel extends ViewModel implements Arrayable
             ?? config('twill-image.background_color')
             ?? 'transparent';
 
-        $this->imageSizer = $overrides['imageSizer'] ?? false;
-
-        $this->loading = $overrides['loading'] ?? 'lazy';
-
         $this->lqip
             = $overrides['lqip']
             ?? config('twill-image.lqip')
             ?? true;
+
+        $this->imageSizer
+            = $overrides['imageSizer']
+            ?? (
+                (config('twill-image.image_sizer') === 'auto' && $this->lqip)
+                || config('twill-image.image_sizer') === true
+            );
+
+        $this->loading = $overrides['loading'] ?? 'lazy';
 
         $this->sizes
             = $overrides['sizes']
