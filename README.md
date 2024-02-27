@@ -4,7 +4,6 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 
 - `<picture>` with multiple `<source>` elements
 - Twill's low-quality placeholder (LQIP)
-- Background-color placeholder
 - Art direction (multiple crops)
 - WebP and JPEG support
 - Native lazy loading with `loading='lazy'`
@@ -302,7 +301,6 @@ or
 
 |Argument|Type| Default | Description                                                                                               |
 |---|---|-------|-----------------------------------------------------------------------------------------------------------|
-|`backgroundColor`|`hex`  `string`| See config | Set placeholder background color                                                                          |
 |`class`|`string`|       | Add class(es) to the wrapper element                                                                      |
 |`imageClass`|`string`|       | Add class(es) to the img element                                                                          |
 |`height`|`int`|       |                                                                                                           |
@@ -357,7 +355,6 @@ See [above section](#preset) about the `preset` method.
 
 | Argument           | Type                                       | Default   | Description                                                                                  |
 |--------------------|--------------------------------------------|-----------|----------------------------------------------------------------------------------------------|
-| `background_color` | `string`                                   | `#e3e3e3` |                                                                                              |
 | `lqip`             | `boolean`                                  | `true`    | Uses Twill LQIP method to generate responsive placeholder                                    |
 | `image_sizer`      | `boolean\|'auto'`                          | `auto`    | Output the sizer element. If left to auto, it will render the sizer if LQIP is set to `true`  |
 | `inline_styles`    | `boolean`                                  | `true`    | Output default inline styles                                                                 |

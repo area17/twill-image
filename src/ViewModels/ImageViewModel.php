@@ -16,11 +16,6 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $alt;
 
     /**
-     * @var null|string $backgroundColor Image background color
-     */
-    protected $backgroundColor;
-
-    /**
      * @var array $data Image source
      */
     protected $data;
@@ -119,8 +114,6 @@ class ImageViewModel extends ViewModel implements Arrayable
 
         $this->styleService = new ImageStyles();
         $this->styleService->setup(
-            $this->needPlaceholderOrSizer,
-            $this->backgroundColor,
             $this->imageStyles,
             $this->imageClass
         );
@@ -134,11 +127,6 @@ class ImageViewModel extends ViewModel implements Arrayable
      */
     protected function setAttributes($overrides)
     {
-        $this->backgroundColor
-            = $overrides['backgroundColor']
-            ?? config('twill-image.background_color')
-            ?? 'transparent';
-
         $this->lqip
             = $overrides['lqip']
             ?? config('twill-image.lqip')
@@ -329,8 +317,8 @@ class ImageViewModel extends ViewModel implements Arrayable
     public function toArray(): array
     {
         // CSS classes and styles
-        $mainStyles = $this->styleService->main($this->loading)['style'];
-        $mainClasses = $this->styleService->main($this->loading)['class'];
+        $mainStyles = $this->styleService->main()['style'];
+        $mainClasses = $this->styleService->main()['class'];
         $placeholderStyles = $this->styleService->placeholder()['style'];
         $placeholderClasses = $this->styleService->placeholder()['class'];
         $wrapperStyles = $this->styleService->wrapper()['style'];

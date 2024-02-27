@@ -4,17 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Placeholder Background Color
-    |--------------------------------------------------------------------------
-    |
-    | The color which should be used to fill the image space on a page.
-    | Examples: 'gray', 'transparent', 'rgba(0, 0, 0, 0.25)'
-    |
-    */
-    'background_color' => '#e3e3e3',
-
-    /*
-    |--------------------------------------------------------------------------
     | Enable Low Quality Placeholder
     |--------------------------------------------------------------------------
     |
@@ -46,19 +35,41 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Inline styles
+    | Mode
     |--------------------------------------------------------------------------
     |
-    | Use inline styles for default styling or disable and use custom classes
-    | instead.
+    | Use inline styles for default styling or use classes instead.
     |
-    | Custom classes can be used for applying Tailwind CSS classes if
-    | inline styles are set to false.
+    | In the example below, classes are used for applying
+    | Tailwind CSS classes.
     |
     */
-    'inline_styles' => true,
+    'mode' => 'inline-styles', // 'inline-styles' | 'classes' | 'both'
 
-    'custom_classes' => [
+    'inline_styles' => [
+        'main' => [
+            'background-color' => '#e3e3e3',
+            'bottom' => 0,
+            'height' => '100%',
+            'left' => 0,
+            'margin' => 0,
+            'max-width' => 'none',
+            'padding' => 0,
+            'position' => 'absolute',
+            'right' => 0,
+            'top' => 0,
+            'width' => '100%',
+            'object-fit' => 'cover',
+            'object-position' => 'center',
+        ],
+        'wrapper' => [
+            'position' => 'relative',
+            'overflow' => 'hidden',
+        ],
+        'placeholder' => [],
+    ],
+
+    'classes' => [
         'main' => [
             'bottom-0',
             'h-full',
@@ -77,10 +88,7 @@ return [
             'relative',
             'overflow-hidden',
         ],
-        'placeholder' => [
-            'bottom-0',
-            'right-0'
-        ],
+        'placeholder' => [],
     ],
 
     /*
