@@ -2,151 +2,115 @@
 
 namespace A17\Twill\Image\Services;
 
-use A17\Twill\Image\ViewModels\ImageViewModel;
-
 class ImageStyles
 {
-    protected $backgroundColor;
+    /**
+     * @var string $mode 'inline-styles'|'classes'|'both'
+     */
+    protected $mode = 'inline-styles';
 
-    protected $baseStyle;
+    /**
+     * @var array $inlineStyles Inline styles to be applied to elements
+     */
+    protected $inlineStyles = [];
 
-    protected $height;
-
-    protected $layout;
-
-    protected $width;
+    /**
+     * @var array $classes Classes to be applied to elements
+     */
+    protected $classes = [];
 
     /**
      * Set up the service to generate view inline styles for the wrapper, main image and placeholder elements
      *
-     * @param string $layout
-     * @param string $backgroundColor
-     * @param int $width
-     * @param int|null $height
-     * @param array $imgStyle
+     * @param array $styles
+     * @param array $classes
      * @return void
      */
-    public function setup($layout, $backgroundColor, $width, $height, $imgStyle = [])
+    public function setup($styles = [], $classes = '')
     {
-        $this->layout = $layout;
-
-        $this->backgroundColor = $backgroundColor;
-
-        $this->width = $width;
-
-        $this->height = $height;
-
-        $this->baseStyle = array_merge(
-            [
-                'bottom' => 0,
-                'height' => '100%',
-                'left' => 0,
-                'margin' => 0,
-                'max-width' => 'none',
-                'padding' => 0,
-                'position' => 'absolute',
-                'right' => 0,
-                'top' => 0,
-                'width' => '100%',
-                'object-fit' => 'cover',
-                'object-position' => 'center center',
-            ],
-            $imgStyle,
-        );
+        $this->mode = config('twill-image.mode');
+        $this->setBaseStyling($styles, $classes);
     }
 
     /**
-     * Return inline styles for the wrapper element
+     * Return inline stylesand classes for the wrapper element
      *
-     * @return string
+     * @return array
      */
     public function wrapper()
     {
-        $layout = $this->layout;
+        $styles = $this->inlineStyles['wrapper'] ?? [];
+        $classes = $this->classes['wrapper'] ?? [];
 
-        $style = [
-            'position' => 'relative',
-            'overflow' => 'hidden',
-        ];
-
-        if ($layout === ImageViewModel::LAYOUT_FIXED) {
-            $style['width'] = $this->width . 'px';
-            $style['height'] = $this->height . 'px';
-        } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
-            $style['display'] = 'inline-block';
-        }
-
-        if (!! $this->backgroundColor) {
-            $style['background-color'] = $this->backgroundColor;
-        }
-
-        return $this->implodeStyles($style);
+        return $this->implode($styles, $classes);
     }
 
     /**
-     * Return inline styles for the placeholder element
+     * Return inline stylesand classes for the placeholder element
      *
-     * @return string
+     * @return array
      */
     public function placeholder()
     {
-        $layout = $this->layout;
+        $styles = array_merge(
+            $this->inlineStyles['main'] ?? [],
+            $this->inlineStyles['placeholder'] ?? []
+        );
+        $classes = array_merge(
+            $this->classes['main'] ?? [],
+            $this->classes['placeholder'] ?? []
+        );
 
-        $style = array_merge($this->baseStyle, [
-            'height' => '100%',
-            'left' => 0,
-            'position' => 'absolute',
-            'top' => 0,
-            'width' => '100%',
-        ]);
-
-        if (!!$this->backgroundColor) {
-            $style['background-color'] = $this->backgroundColor;
-
-            if ($layout === ImageViewModel::LAYOUT_FIXED) {
-                $style['width'] = $this->width . 'px';
-                $style['height'] = $this->height . 'px';
-                $style['background-color'] = $this->backgroundColor;
-                $style['position'] = 'relative';
-            } elseif ($layout === ImageViewModel::LAYOUT_CONSTRAINED) {
-                $style['position'] = 'absolute';
-                $style['top'] = 0;
-                $style['left'] = 0;
-                $style['bottom'] = 0;
-                $style['right'] = 0;
-            } elseif ($layout === ImageViewModel::LAYOUT_FULL_WIDTH) {
-                $style['position'] = 'absolute';
-                $style['top'] = 0;
-                $style['left'] = 0;
-                $style['bottom'] = 0;
-                $style['right'] = 0;
-            }
-        }
-
-        $style['opacity'] = 1;
-        $style['transition'] = 'opacity 500ms linear';
-
-        return $this->implodeStyles($style);
+        return $this->implode($styles, $classes);
     }
 
     /**
-     * Return inline styles for the main image element
+     * Return inline styles and classes for the main image element
      *
-     * @return string
+     * @return array
      */
-    public function main($loading = 'eager')
+    public function main()
     {
-        $style = array_merge(
-            [
-                'transform' => 'translateZ(0px)',
-                'will-change' => 'opacity',
-            ],
-            $this->baseStyle,
+        return $this->implode(
+            $this->inlineStyles['main'] ?? [],
+            $this->classes['main'] ?? []
         );
+    }
 
-        $style['opacity'] = (config('twill-image.js') && $loading === 'lazy') ? 0 : 1;
+    protected function setBaseStyling($style, $class)
+    {
+        $this->inlineStyles['main'] = config('twill-image.inline_styles.main', []);
+        $this->inlineStyles['wrapper'] = config('twill-image.inline_styles.wrapper', []);
+        $this->inlineStyles['placeholder'] = config('twill-image.inline_styles.placeholder', []);
+        $this->classes['main'] = config('twill-image.classes.main', []);
+        $this->classes['wrapper'] = config('twill-image.classes.wrapper', []);
+        $this->classes['placeholder'] = config('twill-image.classes.placeholder', []);
 
-        return $this->implodeStyles($style);
+        switch ($this->mode) {
+            case 'inline-styles':
+                $this->classes['main'] = [];
+                $this->classes['wrapper'] = [];
+                $this->classes['placeholder'] = [];
+                break;
+            case 'classes':
+                $this->inlineStyles['main'] = [];
+                $this->inlineStyles['wrapper'] = [];
+                $this->inlineStyles['placeholder'] = [];
+                break;
+            case 'both':
+            default:
+        }
+
+        $this->inlineStyles['main'] = array_merge($this->inlineStyles['main'], $style);
+        $this->classes['main'] = array_merge($this->classes['main'], [$class]);
+    }
+
+    protected function implode($styles = [], $classes = [])
+    {
+        return [
+            'style' => $this->implodeStyles($styles),
+            'class' => $this->implodeClasses($classes),
+        ];
     }
 
     protected function implodeStyles($style)
@@ -161,5 +125,10 @@ class ImageStyles
                 $style,
             ),
         );
+    }
+
+    protected function implodeClasses($classes)
+    {
+        return implode(' ', $classes);
     }
 }

@@ -9,30 +9,11 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class ImageViewModel extends ViewModel implements Arrayable
 {
-    /**
-     * @var string LAYOUT_FULL_WIDTH Set layout to take full width of container element
-     */
-    const LAYOUT_FULL_WIDTH = 'fullWidth';
-
-    /**
-     * @var string LAYOUT_CONSTRAINED Set layout to take full width of container element up to specified max-width or image original width
-     */
-    const LAYOUT_CONSTRAINED = 'constrained';
-
-    /**
-     * @var string LAYOUT_FIXED Set layout to take a fixed exact width and height
-     */
-    const LAYOUT_FIXED = 'fixed';
 
     /**
      * @var string $alt Description of the image
      */
     protected $alt;
-
-    /**
-     * @var null|string $backgroundColor Image background color
-     */
-    protected $backgroundColor;
 
     /**
      * @var array $data Image source
@@ -45,9 +26,9 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $height;
 
     /**
-     * @var string $layout One of the available layout "fullWidth", "constrained" or "fixed"
+     * @var bool $imageSizer Should render the image sizer markup : false (default) or true
      */
-    protected $layout;
+    protected $imageSizer;
 
     /**
      * @var string $loading <img> loading attribute "lazy" (default) or "eager"
@@ -90,6 +71,11 @@ class ImageViewModel extends ViewModel implements Arrayable
     protected $width;
 
     /**
+     * @var int $imageClass Tailwind CSS class applied to the placeholder and main img tag
+     */
+    protected $imageClass;
+
+    /**
      * @var int $imageStyles Styles applied to the placeholder and main img tag
      */
     protected $imageStyles;
@@ -123,13 +109,13 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->setSourcesAttributes();
         $this->setLqipAttributes();
 
+        $this->needPlaceholder = $this->lqip && $this->lqipSrc;
+        $this->needPlaceholderOrSizer = $this->needPlaceholder || $this->imageSizer;
+
         $this->styleService = new ImageStyles();
         $this->styleService->setup(
-            $this->layout,
-            $this->backgroundColor,
-            $this->width,
-            $this->height,
-            $this->imageStyles
+            $this->imageStyles,
+            $this->imageClass
         );
     }
 
@@ -141,29 +127,26 @@ class ImageViewModel extends ViewModel implements Arrayable
      */
     protected function setAttributes($overrides)
     {
-        $this->backgroundColor
-            = $overrides['backgroundColor']
-            ?? config('twill-image.background_color')
-            ?? 'transparent';
-
-        $this->layout
-            = $overrides['layout']
-            ?? $this->data['layout']
-            ?? self::LAYOUT_FULL_WIDTH;
-
-        $this->loading = $overrides['loading'] ?? 'lazy';
-
         $this->lqip
             = $overrides['lqip']
             ?? config('twill-image.lqip')
             ?? true;
 
+        $this->imageSizer
+            = $overrides['imageSizer']
+            ?? (
+                (config('twill-image.image_sizer') === 'auto' && $this->lqip)
+                || config('twill-image.image_sizer') === true
+            );
+
+        $this->loading = $overrides['loading'] ?? 'lazy';
+
         $this->sizes
             = $overrides['sizes']
             ?? $this->data['sizes']
-            ?? $this->defaultSizesAttribute();
+            ?? null;
 
-        $this->wrapperClass = $overrides['class'] ?? null;
+        $this->wrapperClass = $overrides['wrapperClass'] ?? $overrides['class'] ?? null;
 
         $this->width = $overrides['width'] ?? null;
 
@@ -172,6 +155,10 @@ class ImageViewModel extends ViewModel implements Arrayable
         $this->imageStyles
             = $overrides['imageStyles']
             ?? [];
+
+        $this->imageClass
+            = $overrides['imageClass']
+            ?? '';
     }
 
     /**
@@ -276,41 +263,15 @@ class ImageViewModel extends ViewModel implements Arrayable
         return null;
     }
 
-    /**
-     * Create a default sizes attributes when none is passed to the view
-     *
-     * @return void|string
-     */
-    protected function defaultSizesAttribute()
-    {
-        switch ($this->layout) {
-            case self::LAYOUT_CONSTRAINED:
-                return '(min-width:' .
-                    $this->width .
-                    'px) ' .
-                    $this->width .
-                    'px, 100vw';
-            case self::LAYOUT_FIXED:
-                return $this->width . 'px';
-            case self::LAYOUT_FULL_WIDTH:
-                return '100vw';
-            default:
-                return null;
-        }
-    }
-
     protected function wrapperClasses()
     {
-        $layout = $this->layout;
         $classes = 'twill-image-wrapper';
-
-        if ($layout === self::LAYOUT_CONSTRAINED) {
-            $classes = 'twill-image-wrapper twill-image-wrapper-constrained';
-        }
 
         if (isset($this->wrapperClass)) {
             $classes = join(' ', [$classes, $this->wrapperClass]);
         }
+
+        $classes = join(' ', [$classes, $this->styleService->wrapper()['class']]);
 
         return $classes;
     }
@@ -355,24 +316,32 @@ class ImageViewModel extends ViewModel implements Arrayable
 
     public function toArray(): array
     {
+        // CSS classes and styles
+        $mainStyles = $this->styleService->main()['style'];
+        $mainClasses = $this->styleService->main()['class'];
+        $placeholderStyles = $this->styleService->placeholder()['style'];
+        $placeholderClasses = $this->styleService->placeholder()['class'];
+        $wrapperStyles = $this->styleService->wrapper()['style'];
+
         return array_filter([
             'alt' => $this->alt,
             'aspectRatio' => $this->data['image']['aspectRatio'],
             'height' => $this->height,
-            'layout' => $this->layout,
             'loading' => $this->loading,
-            'mainStyle' => $this->styleService->main($this->loading),
-            'mainNoscriptStyle' => $this->styleService->main(),
+            'mainStyle' => $mainStyles ?? null,
+            'mainClasses' => $mainClasses ?? null,
             'mainSrc' => $this->src,
             'mainSources' => $this->sources,
+            'needPlaceholder' => $this->needPlaceholder,
+            'needSizer' => $this->imageSizer,
+            'placeholderClasses' => $placeholderClasses ?? null,
             'placeholderSrc' => $this->lqipSrc,
             'placeholderSources' => $this->lqipSources,
-            'placeholderStyle' => $this->styleService->placeholder(),
-            'shouldLoad' => $this->loading === 'eager',
+            'placeholderStyle' => $placeholderStyles ?? null,
             'sizes' => $this->sizes,
             'width' => $this->width,
             'wrapperClasses' => $this->wrapperClasses(),
-            'wrapperStyle' => $this->styleService->wrapper(),
+            'wrapperStyle' => $wrapperStyles ?? null,
         ]);
     }
 }

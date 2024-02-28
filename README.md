@@ -4,17 +4,15 @@ Twill Image is a package designed to work with [Twill](https://twill.io) to disp
 
 - `<picture>` with multiple `<source>` elements
 - Twill's low-quality placeholder (LQIP)
-- Background-color placeholder
 - Art direction (multiple crops)
 - WebP and JPEG support
-- Lazy load (fade in) image with `IntersectionOserver`
-- Support native lazy loading with `loading='lazy'`
+- Native lazy loading with `loading='lazy'`
+- Support custom CSS classes to use with Tailwind CSS
 
 ## Contents
 
 - [Installation](#installation)
   - [Configuration file](#configuration-file)
-  - [JavaScript module](#javascript-module)
 - [Usage](#usage)
   - [The `Image` model](#the-image-,model)
     - [Available methods](#available-methods)
@@ -59,38 +57,6 @@ Publish `config/twill-image.php` to your app's config folder.
 ```bash
 php artisan vendor:publish --provider="A17\Twill\Image\TwillImageServiceProvider" --tag=config
 ```
-
-### JavaScript module
-
-You can import the JavaScript module and initialize the lazy loading class in your application.
-
-```js
-import { TwillImage } from '../../vendor/area17/twill-image'
-
-document.addEventListener('DOMContentLoaded', function () {
-  const lazyloading = new TwillImage()
-})
-```
-
-When adding or refreshing content of a page without a reload, you can trigger a recalculation of TwillImage's observers by calling the `reset()` method. This is an example:
-
-```js
-document.addEventListener('page:updated', () => lazyloading.reset());
-```
-
-If you prefer to use a pre-compiled version of the JavaScrip module, you can publish a script `twill-image.js` to your app's public folder and add a `<script>` tag to your project.
-
-```bash
-php artisan vendor:publish --provider="A17\Twill\Image\TwillImageServiceProvider" --tag=js
-```
-
-In a Blade file.
-
-```php
-<script src="{{ asset('/twill-image.js') }}"></script>
-```
-
-The JavaScript module is not required. If you prefer to rely only on the browser's native `loading` attribute, set the [`js` config option](#list-of-options) to `false`.
 
 
 ## Usage
@@ -290,7 +256,6 @@ $image = TwillImage::make($page, 'preview')->preset('art_directed');
 {{-- with arguments --}}
 {!! $image->render([
     'loading' => 'eager',
-    'layout' => 'constrained',
 ]) !!}
 ```
 
@@ -327,7 +292,6 @@ or
 ```php
 <div class="w-1/4">
     {!! TwillImage::render($previewImage, [
-        'layout' => 'constrained',
         'width' => 700,
     ]) !!}
 </div>
@@ -335,17 +299,16 @@ or
 
 #### List of arguments
 
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`backgroundColor`|`hex`  `string`|See config|Set placeholder background color|
-|`class`|`string`|   |Add class(es) to the wrapper element|
-|`height`|`int`|   |   |
-|`layout`|`"fullWidth" \| "constrained" \| "fixed"`|`fullWidth`|By default, the image will spread the full width of its container element, `constrained` will apply a `max-width` and `fixed` will apply hard width and height value|
-|`loading`|`"lazy" \| "eager"`|`lazy`|Set native lazy loading attribute|
-|`lqip`|`boolean`|See config|Use LQIP|
-|`sizes`|`string`|   |The image sizes attributes|
-|`width`|`int`|`1000`|Used with `layout` `constrained` and `fixed`|
-|`imageStyles`|`array`|`[]`|Apply styles to placeholder and main `img` tags (ex.: `[['object-fit' => 'contain']]`|
+|Argument|Type| Default | Description                                                                                               |
+|---|---|-------|-----------------------------------------------------------------------------------------------------------|
+|`class`|`string`|       | Add class(es) to the wrapper element                                                                      |
+|`imageClass`|`string`|       | Add class(es) to the img element                                                                          |
+|`height`|`int`|       |                                                                                                           |
+|`imageSizer`|`boolean`| 'auto'| Render the image sizer markup if `true`, if set to 'auto', the sizer is rendered when LQIP is set to true |
+|`loading`|`"lazy" \| "eager"`| `lazy` | Set native lazy loading attribute                                                                         |
+|`lqip`|`boolean`| See config | Use LQIP                                                                                                  |
+|`sizes`|`string`|       | The image sizes attributes                                                                                |
+|`imageStyles`|`array`| `[]`  | Apply styles to placeholder and main `img` tags (ex.: `[['object-fit' => 'contain']]`                     |
 
 #### Examples
 
@@ -360,17 +323,6 @@ $listingImage = TwillImage::make($item, 'preview_image')->crop('listing');
 {!! TwillImage::render($heroImage) !!}
 
 {!! TwillImage::render($listingImage) !!}
-
-{!! TwillImage::render($listingImage, [
-    'layout' => 'constrained',
-    'width' => 400
-]) !!}
-
-{!! TwillImage::render($listingImage, [
-    'layout' => 'fixed',
-    'width' => 100,
-    'height' => 150
-]) !!}
 ```
 
 ## Configuration
@@ -383,11 +335,7 @@ In `config/twill-image.php`, you can define general options and image presets. A
 
 return [
 
-    'background_color' => '#e3e3e3',
-
-    'lqip' => true,
-
-    'webp_support' => true,
+    // ...
 
     'presets' => [
         'listing' => [
@@ -405,13 +353,14 @@ return [
 See [above section](#preset) about the `preset` method.
 ### List of options
 
-|Argument|Type|Default|Description|
-|---|---|---|---|
-|`background_color`|`string`|`#e3e3e3`|   |
-|`lqip`|`boolean`|`true`|Uses Twill LQIP method to generate responsive placeholder|
-|`webp_support`|`boolean`|`true`|If set to `false`, the `type` attribute is omitted from `<source>` elements|
-|`js`|`boolean`|`true`|If set to `false`, lazy-loading will simply rely on the image's `loading` attribute|
-|`presets`|`object`|   |   |
+| Argument           | Type                                       | Default   | Description                                                                                  |
+|--------------------|--------------------------------------------|-----------|----------------------------------------------------------------------------------------------|
+| `lqip`             | `boolean`                                  | `true`    | Uses Twill LQIP method to generate responsive placeholder                                    |
+| `image_sizer`      | `boolean\|'auto'`                          | `auto`    | Output the sizer element. If left to auto, it will render the sizer if LQIP is set to `true`  |
+| `inline_styles`    | `boolean`                                  | `true`    | Output default inline styles                                                                 |
+| `custom_classes`   | `object['main'\|'wrapper'\|'placeholder']` |           | If inline styles are off, custom classes will be used instead allowing use with Tailwind CSS |
+| `webp_support`     | `boolean`                                  | `true`    | If set to `false`, the `type` attribute is omitted from `<source>` elements                  |
+| `presets`          | `object`                                   |           |                                                                                              |
 
 ## Art directed images
 

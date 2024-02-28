@@ -1,6 +1,3 @@
-@php
-$shouldLoad = $shouldLoad ?? true;
-@endphp
 @if(isset($sources) && count($sources) > 1)
     <picture>
         @isset($sources)
@@ -12,12 +9,10 @@ $shouldLoad = $shouldLoad ?? true;
                     @if(isset($source['mediaQuery']))
                         media="{{ $source['mediaQuery'] }}"
                     @endif
-                    @if($shouldLoad)
-                        srcset="{{ $source['srcset'] }}"
-                    @else
-                        data-srcset="{{ $source['srcset'] }}"
+                    srcset="{{ $source['srcset'] }}"
+                    @if(isset($sizes))
+                        sizes="{{ $sizes }}"
                     @endif
-                    sizes="{{ $sizes }}"
                 />
             @endforeach
         @endisset
