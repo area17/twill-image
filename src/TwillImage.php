@@ -17,7 +17,7 @@ class TwillImage
      * @param Media|null $media
      * @return TwillImageModel
      */
-    public function make($object, string $role, Media $media = null): TwillImageModel
+    public function make($object, string $role, ?Media $media = null): TwillImageModel
     {
         return new TwillImageModel($object, $role, $media);
     }
